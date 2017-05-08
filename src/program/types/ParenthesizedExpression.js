@@ -1,26 +1,5 @@
 import Node from '../Node.js';
-import getPrecedence from '../../utils/getPrecedence.js';
-
-function shouldRemoveParens ( expression, parent ) {
-	const expressionPrecedence = getPrecedence( expression );
-	const parentPrecedence = getPrecedence( parent );
-
-	if ( expression.type === 'FunctionExpression' ) {
-		return (
-			( parent.type === 'CallExpression' && parent.parent.type === 'ExpressionStatement' ) ||
-			( parent.type === 'ExpressionStatement' && parent.parent.type === 'CallExpression' )
-		);
-	}
-
-	if ( parentPrecedence > expressionPrecedence ) return false;
-	if ( expressionPrecedence > parentPrecedence ) return true;
-
-	if ( expression.type === 'UnaryExpression' ) return true;
-	if ( expression.type === 'AssignmentExpression' ) return true;
-	if ( expression.type === 'LogicalExpression' || expression.type === 'BinaryExpression' ) {
-		return ( parent.operator === '**' ? parent.right : parent.left ).contains( expression );
-	}
-}
+import shouldRemoveParens from '../../utils/shouldRemoveParens.js';
 
 export default class ParenthesizedExpression extends Node {
 	getValue () {

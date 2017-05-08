@@ -1,15 +1,33 @@
 import Node from '../Node.js';
+import shouldRemoveParens from '../../utils/shouldRemoveParens.js';
 
 const invalidChars = /[a-zA-Z$_0-9/]/;
+
+function getLeftHandSide ( node ) {
+	if ( node.left ) return getLeftHandSide( node.left );
+	if ( node.type === 'ConditionalExpression' ) return getLeftHandSide( node.test );
+
+	const parent = node.parent;
+
+	while ( node.type === 'ParenthesizedExpression' ) {
+		node = node.expression;
+	}
+
+	if ( node.type === 'ParenthesizedExpression' ) {
+		if ( shouldRemoveParens( node.expression, parent ) ) return getLeftHandSide( node.expression );
+		return node;
+	}
+
+	return node;
+}
 
 export default class ReturnStatement extends Node {
 	minify ( code ) {
 		if ( !this.argument ) return;
 
-		const needsTrailingWhitespace = (
-			this.argument.type === 'ParenthesizedExpression' ||
-			invalidChars.test( code.original[ this.argument.start ] )
-		);
+		const expression = getLeftHandSide( this.argument );
+
+		const needsTrailingWhitespace = invalidChars.test( code.original[ expression.start ] );
 
 		if ( needsTrailingWhitespace && this.argument.start === this.start + 6 ) {
 			// ensure that parenthesized expression isn't too close

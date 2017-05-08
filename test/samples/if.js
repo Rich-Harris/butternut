@@ -451,5 +451,13 @@ module.exports = [
 		description: 'removes trailing curly and adds a semi if appropriate',
 		input: `if(a){b=c}d=e`,
 		output: `a&&(b=c),d=e`
+	},
+
+	{
+		description: 'preserves consequent in inverted ternary if statement',
+		input: `
+			if (!a) b();
+			else c();// }`,
+		output: `a?c():b()`
 	}
 ];

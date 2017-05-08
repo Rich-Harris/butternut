@@ -63,7 +63,7 @@ describe('butternut', () => {
 				const source = fs.readFileSync(path.join('test/fixture/input', file), 'utf-8');
 				const { code, map } = butternut.squash(source);
 
-				fs.writeFileSync(`test/fixture/output/butternut/${file}`, code);
+				fs.writeFileSync(`test/fixture/output/butternut/${file}`, `${code}\n//# sourceMappingURL=${map.toUrl()}`);
 
 				try {
 					acorn.parse( code );

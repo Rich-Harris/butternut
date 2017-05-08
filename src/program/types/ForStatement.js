@@ -14,9 +14,10 @@ export default class ForStatement extends LoopStatement {
 			if ( statement ) {
 				if ( statement.start > c + replacement.length ) {
 					code.overwrite( c, statement.start, replacement );
-					c = statement.end;
-					replacement = '';
 				}
+
+				c = statement.end;
+				replacement = '';
 			}
 
 			replacement += i === 2 ? ')' : ';';

@@ -139,7 +139,7 @@ export default class IfStatement extends Node {
 		const inverted = this.test.type === 'UnaryExpression' && this.test.operator === '!';
 
 		// if we're rewriting as &&, test must be higher precedence than 6
-		// to avoid being wrapped in parents. If ternary, 4
+		// to avoid being wrapped in parens. If ternary, 4
 		const targetPrecedence = this.alternate ? 4 : inverted ? 5 : 6;
 
 		const shouldParenthesiseTest = getPrecedence( this.test ) < targetPrecedence;

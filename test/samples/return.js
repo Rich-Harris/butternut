@@ -15,5 +15,14 @@ module.exports = [
 				return(x);
 			}`,
 		output: `function foo(){return x}`
+	},
+
+	{
+		description: `preserves space after return keyword`,
+		input: `
+			function foo( value ) {
+				return ( value == null ) ? '' : '' + value;
+			}`,
+		output: `function foo(a){return a==null?'':''+a}`
 	}
 ];

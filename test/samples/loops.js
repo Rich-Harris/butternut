@@ -94,5 +94,11 @@ module.exports = [
 			foo();`,
 
 		output: `function foo(a){let b=a;while(b--)bar(b);for(;b<a;b+=1)bar(b)}foo()`
+	},
+
+	{
+		description: 'preserves var declaration in for-loop head',
+		input: `for(var i=0;i<10;i++)console.log(i);`,
+		output: `for(var i=0;i<10;i++)console.log(i)`
 	}
 ];
