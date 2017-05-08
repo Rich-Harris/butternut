@@ -1,1 +1,2 @@
-if(a){b=c}d=e
+if (!a) b();
+else c();// }
