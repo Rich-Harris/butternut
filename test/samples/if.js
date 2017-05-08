@@ -448,9 +448,8 @@ module.exports = [
 	},
 
 	{
-		// solo: true,
 		description: 'removes trailing curly and adds a semi if appropriate',
 		input: `if(a){b=c}d=e`,
-		output: `a&&(b=c);d=e`
+		output: `a&&(b=c),d=e`
 	}
 ];

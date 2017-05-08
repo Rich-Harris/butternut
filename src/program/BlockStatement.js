@@ -167,8 +167,14 @@ export default class BlockStatement extends Node {
 			for ( let i = 0; i < statements.length; i += 1 ) {
 				const statement = statements[i];
 
-				if ( statement.start > lastEnd + 1 || statement.start === lastEnd + 1 && code.original[ lastEnd ] !== nextSeparator ) {
-					code.overwrite( lastEnd, statement.start, nextSeparator );
+				if ( nextSeparator === '' ) {
+					if ( statement.start > lastEnd ) code.remove( lastEnd, statement.start );
+				} else {
+					if ( statement.start === lastEnd ) {
+						code.appendLeft( lastEnd, separator );
+					} else if ( code.original.slice( lastEnd, statement.start ) !== nextSeparator ) {
+						code.overwrite( lastEnd, statement.start, nextSeparator );
+					}
 				}
 
 				lastEnd = statement.end;
@@ -205,7 +211,7 @@ export default class BlockStatement extends Node {
 				if ( this.end > lastEnd ) code.remove( lastEnd, this.end );
 			} else {
 				const closer = removeCurlies ? '' : '}';
-				if ( this.end > lastEnd + 1 ) code.overwrite( lastEnd, this.end, closer );
+				if ( this.end > lastEnd + closer.length ) code.overwrite( lastEnd, this.end, closer );
 			}
 		} else if ( this.end > this.start + 2 ) {
 			if ( this.parent.type === 'Root' ) {
