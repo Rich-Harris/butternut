@@ -3,6 +3,6 @@ node_modules
 dist
 test/**/actual
 research
-text/fixture/output
+test/fixture/output
 sandbox
 research.js
