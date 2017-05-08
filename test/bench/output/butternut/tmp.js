@@ -1,0 +1,1 @@
+function addFunctions(a){if(!a)return;foo()}

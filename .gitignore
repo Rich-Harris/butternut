@@ -1,0 +1,8 @@
+.DS_Store
+node_modules
+dist
+test/**/actual
+research
+bench/output
+sandbox
+research.js

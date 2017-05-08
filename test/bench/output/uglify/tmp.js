@@ -1,0 +1,1 @@
+function addFunctions(n){n&&foo()}
