@@ -212,11 +212,11 @@ export default class BlockStatement extends Node {
 				const closer = removeCurlies ? '' : '}';
 				if ( this.end > lastEnd + closer.length ) code.overwrite( lastEnd, this.end, closer );
 			}
-		} else if ( this.end > this.start + 2 ) {
-			if ( this.parent.type === 'Root' ) {
-				// Entire program is whitespace or comments.
+		} else {
+			// empty block
+			if ( this.removeCurlies || this.parent.type === 'Root' ) {
 				code.remove( this.start, this.end );
-			} else {
+			} else if ( this.end > this.start + 2 ) {
 				code.remove( this.start + 1, this.end - 1 );
 			}
 		}

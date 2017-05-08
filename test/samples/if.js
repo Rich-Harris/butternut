@@ -469,5 +469,42 @@ module.exports = [
 			}`,
 		// TODO `function foo(){}{return a?b:c}`
 		output: `function foo(){if(a)return b;else return c}`
+	},
+
+	{
+		description: 'adds semi after empty block',
+		input: `
+			function foo () {
+				if ( a ) {
+					var b
+				} else if ( c ) {
+					d();
+				}
+			};`,
+		// TODO `function foo(){a||(c&&d())}`
+		output: `function foo(){if(a);else c&&d()}`
+	},
+
+	{
+		solo: true,
+		description: 'adds semi after empty block',
+		input: `
+			function foo () {
+				if ( a ) {
+					a();
+				} else if ( b ) {
+					var c;
+				} else {
+					d();
+				}
+
+				if ( e ) {
+					f();
+				} else {
+					g();
+				}
+			};`,
+		// TODO `function foo(){a?a():b||d();e?f():g()}`
+		output: `function foo(){if(a)a();else if(b);else d();e?f():g()}`
 	}
 ];
