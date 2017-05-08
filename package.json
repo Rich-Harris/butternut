@@ -24,7 +24,8 @@
     "lint": "eslint src"
   },
   "bin": {
-    "squash": "./bin/squash"
+    "squash": "./bin/squash",
+    "butternut": "./bin/squash"
   },
   "repository": {
     "type": "git",
