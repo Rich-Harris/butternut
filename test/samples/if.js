@@ -459,5 +459,15 @@ module.exports = [
 			if (!a) b();
 			else c();// }`,
 		output: `a?c():b()`
+	},
+
+	{
+		description: 'adds space after else if necessary',
+		input: `
+			function foo () {
+				if (a) return b; else return c;
+			}`,
+		// TODO `function foo(){}{return a?b:c}`
+		output: `function foo(){if(a)return b;else return c}`
 	}
 ];

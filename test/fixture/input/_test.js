@@ -1,2 +1,3 @@
-if (!a) b();
-else c();// }
+ function foo() {
+	if (a) return b; else return c;
+}

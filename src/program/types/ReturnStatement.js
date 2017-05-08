@@ -1,25 +1,7 @@
 import Node from '../Node.js';
-import shouldRemoveParens from '../../utils/shouldRemoveParens.js';
+import getLeftHandSide from '../../utils/getLeftHandSide.js';
 
 const invalidChars = /[a-zA-Z$_0-9/]/;
-
-function getLeftHandSide ( node ) {
-	if ( node.left ) return getLeftHandSide( node.left );
-	if ( node.type === 'ConditionalExpression' ) return getLeftHandSide( node.test );
-
-	const parent = node.parent;
-
-	while ( node.type === 'ParenthesizedExpression' ) {
-		node = node.expression;
-	}
-
-	if ( node.type === 'ParenthesizedExpression' ) {
-		if ( shouldRemoveParens( node.expression, parent ) ) return getLeftHandSide( node.expression );
-		return node;
-	}
-
-	return node;
-}
 
 export default class ReturnStatement extends Node {
 	minify ( code ) {

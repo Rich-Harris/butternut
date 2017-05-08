@@ -1,6 +1,9 @@
 import Node from '../Node.js';
+import getLeftHandSide from '../../utils/getLeftHandSide.js';
 import getPrecedence from '../../utils/getPrecedence.js';
 import { UNKNOWN } from '../../utils/sentinels.js';
+
+const invalidChars = /[a-zA-Z$_0-9/]/;
 
 function canRewriteBlockAsSequence ( body ) {
 	let i = body.length;
@@ -254,8 +257,12 @@ export default class IfStatement extends Node {
 			if ( this.consequent.start > this.test.end + 1 ) code.overwrite( this.test.end, this.consequent.start, ')' );
 
 			if ( this.alternate ) {
-				let gap = this.consequent.removeCurlies ? ';' : '';
-				gap += this.alternate.removeCurlies || /^(?:If|For(?:In|Of)?|(?:Do)?While)Statement/.test( this.alternate.type ) ? 'else ' : 'else';
+				const lhs = this.alternate.type === 'BlockStatement' && this.alternate.removeCurlies ?
+					getLeftHandSide( this.alternate.body[0] ) :
+					getLeftHandSide( this.alternate );
+
+				let gap = ( this.consequent.removeCurlies ? ';' : '' ) + 'else';
+				if ( invalidChars.test( code.original[ lhs.start ] ) ) gap += ' ';
 
 				code.overwrite( this.consequent.end, this.alternate.start, gap );
 			}
