@@ -505,5 +505,20 @@ module.exports = [
 			};`,
 		// TODO `function foo(){a?a():b||d();e?f():g()}`
 		output: `function foo(){if(a)a();else if(b);else d();e?f():g()}`
+	},
+
+	{
+		description: 'adds semi after break statement',
+		input: `
+			function foo () {
+				x: {
+					if ( a ) {
+						a();
+					} else break x;
+
+					b();
+				}
+			}`,
+		output: `function foo(){x: {if(a)a();else break x;b()}}`
 	}
 ];
