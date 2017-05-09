@@ -129,5 +129,21 @@ module.exports = [
 				a();
 			} while (b);`,
 		output: `do{a()}while(b)`
+	},
+
+	{
+		solo: true,
+		description: 'handles duplicate var declarations in for-loop head',
+		input: `
+			function x () {
+				for ( var i = 0; i < 10; i += 1 ) {
+					console.log(i);
+				}
+
+				for ( var i = 0; i < 10; i += 1 ) {
+					console.log(i);
+				}
+			}`,
+		output: `function x(){for(var a=0;a<10;a+=1)console.log(a);for(a=0;a<10;a+=1)console.log(a)}`
 	}
 ];
