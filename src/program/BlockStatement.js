@@ -17,7 +17,6 @@ const shouldPreserveAfterReturn = {
 };
 
 const allowsBlockLessStatement = {
-	DoWhileStatement: true,
 	ForStatement: true,
 	ForInStatement: true,
 	ForOfStatement: true,

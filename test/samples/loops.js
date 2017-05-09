@@ -120,5 +120,14 @@ module.exports = [
 				}
 			} while (a = a.next);`,
 		output: `do{a&&b()}while(a=a.next)`
+	},
+
+	{
+		description: 'preserves curlies around do-while body',
+		input: `
+			do {
+				a();
+			} while (b);`,
+		output: `do{a()}while(b)`
 	}
 ];
