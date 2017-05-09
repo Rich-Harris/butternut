@@ -13,5 +13,10 @@ module.exports = [
 		description: 'removes whitespace from anonymous function expression',
 		input: `call(function ( a, b , c ){console.log(a,b,c)})`,
 		output: `call(function(a,b,c){console.log(a,b,c)})`
+	},
+	{
+		description: 'preserves parens around function expression',
+		input: `(function() {}.call());`,
+		output: `(function(){}.call())`
 	}
 ];
