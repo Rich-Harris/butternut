@@ -520,5 +520,11 @@ module.exports = [
 				}
 			}`,
 		output: `function foo(){x: {if(a)a();else break x;b()}}`
+	},
+
+	{
+		description: 'adds closing paren to ternary if necessary',
+		input: `if ('undefined' != typeof module) module.exports = foo; else self.foo = foo;`,
+		output: `'undefined'!=typeof module?(module.exports=foo):(self.foo=foo)`
 	}
 ];

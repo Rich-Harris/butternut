@@ -345,13 +345,19 @@ export default class IfStatement extends Node {
 			if ( shouldParenthesiseConsequent ) replacement += '(';
 
 			code.prependRight( this.consequent.start, replacement );
-			if ( shouldParenthesiseConsequent ) code.appendLeft( this.consequent.end, ')' );
+
+			let c = this.consequent.end;
+			while ( code.original[ c - 1 ] === ';' ) c -= 1;
+			if ( shouldParenthesiseConsequent ) code.appendLeft( c, ')' );
 		} else {
 			let replacement = shouldParenthesiseConsequent ? '):' : ':';
 			if ( shouldParenthesiseAlternate ) replacement += '(';
 
 			code.appendLeft( this.consequent.end, replacement );
-			if ( shouldParenthesiseAlternate ) code.appendLeft( this.alternate.end, ')' );
+
+			let c = this.alternate.end;
+			while ( code.original[ c - 1 ] === ';' ) c -= 1;
+			if ( shouldParenthesiseAlternate ) code.appendLeft( c, ')' );
 		}
 	}
 }
