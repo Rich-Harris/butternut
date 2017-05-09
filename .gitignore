@@ -6,3 +6,4 @@ research
 test/fixture/output
 sandbox
 research.js
+test/fixture/input/_test.js
