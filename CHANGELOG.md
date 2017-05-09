@@ -1,5 +1,10 @@
 # butternut changelog
 
+## 0.3.0
+
+* Loads of fixes (now tested with many of the most popular packages on npm)
+* Add `check` option
+
 ## 0.2.0
 
 * Renamed to Butternut
