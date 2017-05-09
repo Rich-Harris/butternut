@@ -526,5 +526,29 @@ module.exports = [
 		description: 'adds closing paren to ternary if necessary',
 		input: `if ('undefined' != typeof module) module.exports = foo; else self.foo = foo;`,
 		output: `'undefined'!=typeof module?(module.exports=foo):(self.foo=foo)`
+	},
+
+	{
+		description: 'TK',
+		input: `
+			while (a) {
+				if (!b) c();
+				else --d;
+			}`,
+		output: `while(a){b?--d:c()}`
+	},
+
+	{
+		description: 'TK',
+		input: `
+			if (!a)
+				w();
+			else if (b)
+				x();
+			else
+				y();
+
+			if (c) z();`,
+		output: `a?b?x():y():w(),c&&z()`
 	}
 ];

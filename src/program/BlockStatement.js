@@ -174,7 +174,7 @@ export default class BlockStatement extends Node {
 
 		const separator = rewriteAsSequence ? ',' : ';';
 
-		let removeCurlies = !this.synthetic && (
+		let removeCurlies = this.parent.type === 'Root' || !this.synthetic && (
 			this.parent.type === 'IfStatement' ?
 				this.removeCurlies :
 				( allowsBlockLessStatement[ this.parent.type ] && statements.length === 1 && ( statements[0].type === 'ExpressionStatement' || statements[0].kind === 'var' ) )
@@ -196,8 +196,10 @@ export default class BlockStatement extends Node {
 				} else {
 					if ( statement.start === lastEnd ) {
 						code.appendLeft( lastEnd, separator );
-					} else if ( code.original.slice( lastEnd, statement.start ) !== nextSeparator ) {
-						code.overwrite( lastEnd, statement.start, nextSeparator );
+					} else {
+						if ( code.original.slice( lastEnd, statement.start ) !== nextSeparator ) {
+							code.overwrite( lastEnd, statement.start, nextSeparator );
+						}
 					}
 				}
 
@@ -215,12 +217,9 @@ export default class BlockStatement extends Node {
 				}
 			}
 
-			if ( this.parent.type === 'Root' ) {
-				if ( this.end > lastEnd ) code.remove( lastEnd, this.end );
-			} else {
-				const closer = removeCurlies ? '' : '}';
-				if ( this.end > lastEnd + closer.length ) code.overwrite( lastEnd, this.end, closer );
-			}
+			const closer = removeCurlies ? '' : '}';
+			const end = removeCurlies ? this.end : this.end - 1;
+			if ( end > lastEnd ) code.remove( lastEnd, end );
 		} else {
 			// empty block
 			if ( this.removeCurlies || this.parent.type === 'Root' ) {

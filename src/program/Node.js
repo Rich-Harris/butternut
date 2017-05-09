@@ -122,6 +122,10 @@ export default class Node {
 		return true;
 	}
 
+	source () {
+		return this.program.magicString.original.slice( this.start, this.end );
+	}
+
 	toString () {
 		return this.program.magicString.slice( this.start, this.end );
 	}

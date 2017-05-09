@@ -338,17 +338,21 @@ export default class IfStatement extends Node {
 		code.remove( consequentEnd, this.alternate.start );
 
 		if ( inverted ) {
-			code.move( this.alternate.start, this.alternate.end, this.consequent.start );
-			code.move( this.consequent.start, this.consequent.end, this.alternate.end );
+			let alternateEnd = this.alternate.end;
+			while ( code.original[ alternateEnd - 1 ] === ';' ) alternateEnd -= 1;
+
+			let consequentEnd = this.consequent.end;
+			while ( code.original[ consequentEnd - 1 ] === ';' ) consequentEnd -= 1;
+
+			code.move( this.alternate.start, alternateEnd, this.consequent.start );
+			code.move( this.consequent.start, consequentEnd, alternateEnd );
 
 			let replacement = shouldParenthesiseAlternate ? '):' : ':';
 			if ( shouldParenthesiseConsequent ) replacement += '(';
 
 			code.prependRight( this.consequent.start, replacement );
 
-			let c = this.consequent.end;
-			while ( code.original[ c - 1 ] === ';' ) c -= 1;
-			if ( shouldParenthesiseConsequent ) code.appendLeft( c, ')' );
+			if ( shouldParenthesiseConsequent ) code.appendLeft( consequentEnd, ')' );
 		} else {
 			let replacement = shouldParenthesiseConsequent ? '):' : ':';
 			if ( shouldParenthesiseAlternate ) replacement += '(';
