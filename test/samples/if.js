@@ -486,7 +486,6 @@ module.exports = [
 	},
 
 	{
-		solo: true,
 		description: 'adds semi after empty block',
 		input: `
 			function foo () {

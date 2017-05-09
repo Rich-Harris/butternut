@@ -25,6 +25,31 @@ const allowsBlockLessStatement = {
 	WhileStatement: true
 };
 
+function endsWithCurlyBrace ( statement ) {
+	if ( statement.type === 'IfStatement' ) {
+		if ( statement.rewriteAsSequence ) return false;
+
+		if ( statement.alternate ) {
+			if ( statement.alternate.type === 'IfStatement' ) {
+				return endsWithCurlyBrace( statement.alternate );
+			}
+
+			if ( statement.alternate.synthetic ) return false;
+			if ( statement.alternate.removeCurlies ) return false;
+
+			return true;
+		}
+
+		return !statement.consequent.synthetic && !statement.consequent.removeCurlies;
+	}
+
+	if ( /^(?:For(?:In|Of)?|While)Statement/.test( statement.type ) ) {
+		return !statement.body.synthetic && !statement.body.removeCurlies;
+	}
+
+	return /(?:Class|Function)Declaration/.test( statement.type );
+}
+
 export default class BlockStatement extends Node {
 	createScope ( parent ) {
 		this.parentIsFunction = /Function/.test( this.parent.type );
@@ -185,24 +210,8 @@ export default class BlockStatement extends Node {
 					nextSeparator = '';
 				}
 
-				else if ( statement.type === 'IfStatement' ) {
-					if ( statement.rewriteAsSequence ) {
-						nextSeparator = separator;
-					} else if ( statement.alternate ) {
-						nextSeparator = statement.alternate.synthetic || statement.alternate.removeCurlies ? separator : '';
-					} else if ( statement.consequent.synthetic || statement.consequent.removeCurlies ) {
-						nextSeparator = separator;
-					} else {
-						nextSeparator = '';
-					}
-				}
-
-				else if ( /^(?:For(?:In|Of)?|While)Statement/.test( statement.type ) ) {
-					nextSeparator = ( statement.body.synthetic || statement.body.removeCurlies ) ? ';' : '';
-				}
-
 				else {
-					nextSeparator = /(?:Class|Function)Declaration/.test( statement.type ) ? '' : separator;
+					nextSeparator = endsWithCurlyBrace( statement ) ? '' : separator;
 				}
 			}
 
