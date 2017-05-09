@@ -59,7 +59,9 @@ describe('butternut', () => {
 
 	describe('fixtures', () => {
 		fs.readdirSync('test/fixture/input').forEach(file => {
-			it(path.basename(file), () => {
+			const solo = ( file === '_test.js' && !!fs.readFileSync(path.join('test/fixture/input', file), 'utf-8'));
+
+			(solo ? it.only : it)(path.basename(file), () => {
 				const source = fs.readFileSync(path.join('test/fixture/input', file), 'utf-8');
 				const { code, map } = butternut.squash(source);
 

@@ -7,7 +7,12 @@ export default class LogicalExpression extends Node {
 	}
 
 	getPrecedence () {
-		return this.operator === '&&' ? 6 : 5;
+		const leftValue = this.left.getValue();
+		const rightValue = this.right.getValue();
+
+		if ( leftValue === UNKNOWN || rightValue === UNKNOWN ) return this.operator === '&&' ? 6 : 5;
+
+		return 20; // will be replaced by a literal
 	}
 
 	getValue () {

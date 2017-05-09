@@ -3,11 +3,15 @@ import { UNKNOWN, FALSY } from '../../utils/sentinels.js';
 
 export default class ConditionalExpression extends Node {
 	getLeftHandSide () {
-		return this.test.getLeftHandSide();
+		const testValue = this.test.getValue();
+		const node = testValue === UNKNOWN ? this.test : ( testValue && testValue !== FALSY ? this.consequent : this.alternate );
+
+		return node.getLeftHandSide();
 	}
 
 	getPrecedence () {
-		return 4;
+		const testValue = this.test.getValue();
+		return testValue === UNKNOWN ? 4 : ( testValue && testValue !== FALSY ? this.consequent : this.alternate ).getPrecedence();
 	}
 
 	getValue () {

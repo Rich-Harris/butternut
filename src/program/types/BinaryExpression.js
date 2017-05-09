@@ -46,7 +46,12 @@ export default class BinaryExpression extends Node {
 	}
 
 	getPrecedence () {
-		return binaryExpressionPrecedence[ this.operator ];
+		const left = this.left.getValue();
+		const right = this.right.getValue();
+
+		if ( left === UNKNOWN || right === UNKNOWN ) return binaryExpressionPrecedence[ this.operator ];
+
+		return 20; // will be replaced by a literal
 	}
 
 	getValue () {
@@ -68,7 +73,7 @@ export default class BinaryExpression extends Node {
 		else {
 			let operator = this.operator;
 
-			if ( code.original[ this.right.start ] === operator ) {
+			if ( code.original[ this.right.getLeftHandSide().start ] === operator ) {
 				// prevent e.g. `1 - --t` becoming 1---t
 				operator = `${operator} `;
 			} else if ( /\w/.test( this.operator ) ) {

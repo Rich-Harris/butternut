@@ -33,5 +33,23 @@ module.exports = [
 		description: 'rewrites arithmetic expression with value',
 		input: `a = 1 + 2 * 3`,
 		output: `a=7`
+	},
+
+	{
+		description: 'preserves space before --x expression',
+		input: `Math.sqrt(1 - --t * t)`,
+		output: `Math.sqrt(1- --t*t)`
+	},
+
+	{
+		description: 'preserves space before parenthesised --x expression',
+		input: `Math.sqrt(1 - ((--t)) * t)`,
+		output: `Math.sqrt(1- --t*t)`
+	},
+
+	{
+		description: 'preserves space before parenthesised rewritten ternary --x expression',
+		input: `Math.sqrt(1 - (true ? --t : t) * t)`,
+		output: `Math.sqrt(1- --t*t)`
 	}
 ];
