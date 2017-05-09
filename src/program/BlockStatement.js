@@ -1,4 +1,3 @@
-import wrap from './wrap.js';
 import Node from './Node.js';
 import Scope from './Scope.js';
 import extractNames from './extractNames.js';
@@ -163,9 +162,9 @@ export default class BlockStatement extends Node {
 		// if ( this.collapseReturnStatements ) {
 		// 	this.minifyWithCollapsedReturnStatements( code, statements );
 		// } else {
-			statements.forEach( statement => {
-				statement.minify( code );
-			});
+		statements.forEach( statement => {
+			statement.minify( code );
+		});
 		// }
 
 		const rewriteAsSequence = !this.parentIsFunction && ( this.joinStatements || statements.every( statement => {
@@ -218,7 +217,6 @@ export default class BlockStatement extends Node {
 				}
 			}
 
-			const closer = removeCurlies ? '' : '}';
 			const end = removeCurlies ? this.end : this.end - 1;
 			if ( end > lastEnd ) code.remove( lastEnd, end );
 		} else {

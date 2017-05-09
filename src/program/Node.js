@@ -2,16 +2,6 @@ import wrap from './wrap.js';
 import keys from './keys.js';
 import { UNKNOWN } from '../utils/sentinels.js';
 
-const statementsWithBlocks = {
-	IfStatement: 'consequent',
-	ForStatement: 'body',
-	ForInStatement: 'body',
-	ForOfStatement: 'body',
-	WhileStatement: 'body',
-	DoWhileStatement: 'body',
-	ArrowFunctionExpression: 'body'
-};
-
 export default class Node {
 	constructor ( raw, parent ) {
 		raw.parent = parent;

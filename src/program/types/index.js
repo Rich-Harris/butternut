@@ -9,8 +9,6 @@ import ClassDeclaration from './ClassDeclaration.js';
 import ClassExpression from './ClassExpression.js';
 import ConditionalExpression from './ConditionalExpression.js';
 import DoWhileStatement from './DoWhileStatement.js';
-import ExportDefaultDeclaration from './ExportDefaultDeclaration.js';
-import ExportNamedDeclaration from './ExportNamedDeclaration.js';
 import ExpressionStatement from './ExpressionStatement.js';
 import ForStatement from './ForStatement.js';
 import ForInOfStatement from './shared/ForInOfStatement.js';
@@ -18,7 +16,6 @@ import FunctionDeclaration from './FunctionDeclaration.js';
 import FunctionExpression from './FunctionExpression.js';
 import Identifier from './Identifier.js';
 import IfStatement from './IfStatement.js';
-import ImportDeclaration from './ImportDeclaration.js';
 import ImportDefaultSpecifier from './ImportDefaultSpecifier.js';
 import ImportSpecifier from './ImportSpecifier.js';
 import Literal from './Literal.js';
@@ -28,7 +25,6 @@ import MethodDefinition from './MethodDefinition.js';
 import NewExpression from './NewExpression.js';
 import ObjectExpression from './ObjectExpression.js';
 import ParenthesizedExpression from './ParenthesizedExpression.js';
-import Property from './Property.js';
 import ReturnStatement from './ReturnStatement.js';
 import SpreadElement from './SpreadElement.js';
 import SwitchCase from './SwitchCase.js';
@@ -56,8 +52,6 @@ export default {
 	ClassExpression,
 	ConditionalExpression,
 	DoWhileStatement,
-	ExportNamedDeclaration,
-	ExportDefaultDeclaration,
 	ExpressionStatement,
 	ForStatement,
 	ForInStatement: ForInOfStatement,
@@ -66,7 +60,6 @@ export default {
 	FunctionExpression,
 	Identifier,
 	IfStatement,
-	ImportDeclaration,
 	ImportDefaultSpecifier,
 	ImportSpecifier,
 	Literal,
@@ -76,7 +69,6 @@ export default {
 	NewExpression,
 	ObjectExpression,
 	ParenthesizedExpression,
-	Property,
 	ReturnStatement,
 	SpreadElement,
 	SwitchCase,

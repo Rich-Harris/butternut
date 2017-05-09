@@ -6,11 +6,6 @@ const letConst = /^(?:let|const)$/;
 
 const validChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_$';
 
-function isValidAlias () {
-	// TODO handle keywords and globals
-	return true;
-}
-
 export default function Scope ( options ) {
 	options = options || {};
 
