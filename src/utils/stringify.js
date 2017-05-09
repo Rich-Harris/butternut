@@ -10,5 +10,10 @@ export default function stringify ( value ) {
 	// TODO if string, determine which quotes to use
 	// TODO if number, determine whether to use e notation
 
+	if ( isNegativeZero( value ) ) return '-0';
 	return JSON.stringify( value );
+}
+
+function isNegativeZero ( num ) {
+	return num === 0 && ( 1 / num < 0 );
 }
