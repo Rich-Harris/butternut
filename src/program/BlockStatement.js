@@ -131,8 +131,10 @@ export default class BlockStatement extends Node {
 
 		this.body.forEach( node => {
 			if ( node.type === 'VariableDeclaration' && node.kind === 'var' ) {
-				extractNames( node.id ).forEach( identifier => {
-					varsToHoist[ identifier.name ] = true;
+				node.declarations.forEach( declarator => {
+					extractNames( declarator.id ).forEach( identifier => {
+						varsToHoist[ identifier.name ] = true;
+					});
 				});
 			} else {
 				node.findVarDeclarations( varsToHoist );
