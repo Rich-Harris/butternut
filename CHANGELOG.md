@@ -1,5 +1,9 @@
 # butternut changelog
 
+## 0.3.1
+
+* Fix browser build
+
 ## 0.3.0
 
 * Loads of fixes (now tested with many of the most popular packages on npm)
