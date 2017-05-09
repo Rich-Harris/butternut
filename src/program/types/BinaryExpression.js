@@ -1,5 +1,6 @@
 import Node from '../Node.js';
 import { UNKNOWN } from '../../utils/sentinels.js';
+import stringify from '../../utils/stringify.js';
 
 const calculators = {
 	'**' : ( a, b ) => Math.power( a, b ),
@@ -67,7 +68,7 @@ export default class BinaryExpression extends Node {
 		const value = this.getValue();
 
 		if ( value !== UNKNOWN ) {
-			code.overwrite( this.start, this.end, JSON.stringify( value ) );
+			code.overwrite( this.start, this.end, stringify( value ) );
 		}
 
 		else {

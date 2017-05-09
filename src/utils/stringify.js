@@ -11,7 +11,9 @@ export default function stringify ( value ) {
 	// TODO if number, determine whether to use e notation
 
 	if ( isNegativeZero( value ) ) return '-0';
-	return JSON.stringify( value );
+	return JSON.stringify( value )
+		.replace( /\u2028/g, '\\u2028' )
+		.replace( /\u2029/g, '\\u2029' );
 }
 
 function isNegativeZero ( num ) {
