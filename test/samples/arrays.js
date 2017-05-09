@@ -9,5 +9,11 @@ module.exports = [
 		description: 'removes whitespace in empty array',
 		input: `var a = [ ]`,
 		output: `var a=[]`
+	},
+
+	{
+		description: 'handles sparse arrays',
+		input: `var a = [,0,,1,,2,,], b = [3,];`,
+		output: `var a=[,0,,1,,2,,],b=[3]`
 	}
 ];

@@ -85,7 +85,9 @@ export default class Node {
 			if ( value ) {
 				if ( 'length' in value ) {
 					let i = value.length;
-					while ( i-- ) value[i].initialise();
+					while ( i-- ) {
+						if ( value[i] ) value[i].initialise();
+					}
 				} else {
 					value.initialise();
 				}
@@ -100,7 +102,9 @@ export default class Node {
 			if ( value ) {
 				if ( 'length' in value ) {
 					let i = value.length;
-					while ( i-- ) value[i].findVarDeclarations( varsToHoist );
+					while ( i-- ) {
+						if ( value[i] ) value[i].findVarDeclarations( varsToHoist );
+					}
 				} else {
 					value.findVarDeclarations( varsToHoist );
 				}
@@ -115,7 +119,9 @@ export default class Node {
 			if ( value ) {
 				if ( 'length' in value ) {
 					let i = value.length;
-					while ( i-- ) value[i].minify( code );
+					while ( i-- ) {
+						if ( value[i] ) value[i].minify( code );
+					}
 				} else {
 					value.minify( code );
 				}

@@ -23,12 +23,20 @@ export default class ArrayExpression extends Node {
 		let c = this.start;
 
 		if ( this.elements.length ) {
+			let insert = '[';
 			this.elements.forEach( ( element, i ) => {
-				if ( element.start > c + 1 ) code.overwrite( c, element.start, i ? ',' : '[' );
+				if ( !element ) {
+					insert += i === this.elements.length - 1 ? ',]' : ',';
+					return;
+				}
+
+				if ( element.start > c + 1 ) code.overwrite( c, element.start, insert );
 				c = element.end;
+
+				insert = i === this.elements.length - 1 ? ']' : ',';
 			});
 
-			if ( this.end > c + 1 ) code.overwrite( c, this.end, ']' );
+			if ( this.end > insert.length ) code.overwrite( c, this.end, insert );
 		}
 
 		else {
