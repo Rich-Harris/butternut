@@ -63,29 +63,11 @@ describe('butternut', () => {
 
 			(solo ? it.only : it)(path.basename(file), () => {
 				const source = fs.readFileSync(path.join('test/fixture/input', file), 'utf-8');
-				const { code, map } = butternut.squash(source);
+				const { code, map } = butternut.squash(source, {
+					check: true
+				});
 
 				fs.writeFileSync(`test/fixture/output/butternut/${file}`, `${code}\n//# sourceMappingURL=${map.toUrl()}`);
-
-				try {
-					acorn.parse( code );
-				} catch (err) {
-					const { line, column } = err.loc;
-					const mappings = decode( map.mappings );
-					const segments = mappings[ line - 1 ];
-
-					for ( let i = 0; i < segments.length; i += 1 ) {
-						const segment = segments[i];
-						if ( segment[0] >= column ) {
-							const sourceCodeLine = segment[2];
-							const sourceCodeColumn = segment[3];
-
-							throw new Error(`${err.message} (traced: ${sourceCodeLine + 1}:${sourceCodeColumn})`);
-						}
-					}
-
-					throw err;
-				}
 			});
 		});
 	});

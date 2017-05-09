@@ -11,7 +11,7 @@ export function squash ( source, options = {} ) {
 	try {
 		if ( DEBUG ) stats.time( 'parse' );
 		ast = parse( source, {
-			ecmaVersion: 7,
+			ecmaVersion: 8,
 			preserveParens: true,
 			sourceType: 'module'
 		});

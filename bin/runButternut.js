@@ -35,7 +35,8 @@ function compileFile ( from, to, command ) {
 	var source = fs.readFileSync( from, 'utf-8' );
 	var result = butternut.squash( source, {
 		source: from,
-		file: to
+		file: to,
+		check: command.check
 	});
 
 	write( result, to, command );

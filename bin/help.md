@@ -10,6 +10,7 @@ Basic options:
 -i, --input              Input (alternative to <entry file>)
 -o, --output <output>    Output (if absent, prints to stdout)
 -m, --sourcemap          Generate sourcemap (`-m inline` for inline map)
+--check                  Parse the output to check it is valid JS
 
 Examples:
 
