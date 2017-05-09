@@ -7,11 +7,11 @@ The fast, future-friendly minifier
 
 ## Why?
 
-Modern browsers support the newest version of JavaScript (ES2015+, aka ES6), and many JavaScript developers are already using ES2015 features in their code. Unfortunately, the most popular minifier — UglifyJS — doesn't officially support ES2015. That means we have to compile our code to ES5 (e.g. using Babel or Bublé) in order to ship it, even if we're not supporting older browsers.
+Butternut is significantly faster than other JavaScript minifiers, and works with the latest version of JavaScript (ES2015, aka ES6, and beyond). It's typically around 4x faster than UglifyJS and 10-15x faster than Babili.
 
-There are alternatives to Uglify — Babili and Closure Compiler. But both tools are much slower than Uglify, and generate larger output (in Closure's case you can achieve greater compression using the advanced compilation mode, but this requires you to write your code in a particular way and is therefore not a general solution).
+The compression is better than Babili and Closure Compiler (in standard compilation mode — you can get better results with Closure in advanced mode, but only by writing your code in a very particular way). It's *almost* as good as Uglify in its current version.
 
-Butternut is fully ES2015+ aware, delivers superior compression to Babili or Closure, and is typically around 4x faster than Uglify (or 10-15x faster than Babili). It doesn't yet compress ES5 as well as Uglify, but an ES2015 codebase minified with Butternut is often smaller than the same codebase transpiled prior to minification with Uglify.
+*Note: UglifyJS supports ES2015+ as of very recently — see [uglify-es](https://www.npmjs.com/package/uglify-es).*
 
 
 ## Usage
