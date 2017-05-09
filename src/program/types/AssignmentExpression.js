@@ -7,6 +7,10 @@ let commutative = {};
 for ( let operator of '*&^|' ) commutative[ operator ] = true;
 
 export default class AssignmentExpression extends Node {
+	getLeftHandSide () {
+		return this.left.getLeftHandSide();
+	}
+
 	getPrecedence () {
 		return 3;
 	}

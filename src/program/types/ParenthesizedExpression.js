@@ -1,13 +1,47 @@
 import Node from '../Node.js';
-import shouldRemoveParens from '../../utils/shouldRemoveParens.js';
+
+function shouldRemoveParens ( expression, parent ) {
+	const expressionPrecedence = expression.getPrecedence();
+	const parentPrecedence = parent.getPrecedence();
+
+	if ( expression.type === 'FunctionExpression' ) {
+		return (
+			( parent.type === 'CallExpression' && parent.parent.type === 'ExpressionStatement' ) ||
+			( parent.type === 'ExpressionStatement' && parent.parent.type === 'CallExpression' )
+		);
+	}
+
+	if ( parentPrecedence > expressionPrecedence ) return false;
+	if ( expressionPrecedence > parentPrecedence ) return true;
+
+	if ( expression.type === 'UnaryExpression' ) return true;
+	if ( expression.type === 'AssignmentExpression' ) return true;
+	if ( expression.type === 'LogicalExpression' || expression.type === 'BinaryExpression' ) {
+		return ( parent.operator === '**' ? parent.right : parent.left ).contains( expression );
+	}
+}
 
 export default class ParenthesizedExpression extends Node {
+	getLeftHandSide () {
+		let node = this;
+
+		while ( node.type === 'ParenthesizedExpression' ) {
+			node = node.expression;
+		}
+
+		if ( shouldRemoveParens( node, this.parent ) ) return node.getLeftHandSide();
+		return node.parent;
+	}
+
 	getValue () {
 		return this.expression.getValue();
 	}
 
 	minify ( code ) {
 		let parent = this.parent;
+
+		// TODO we can do two remove operations — one at the start, one at the
+		// end. don't need to do it on each descent
 
 		let expression = this.expression;
 		while ( expression.type === 'ParenthesizedExpression' ) {

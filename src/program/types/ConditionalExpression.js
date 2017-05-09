@@ -2,6 +2,10 @@ import Node from '../Node.js';
 import { UNKNOWN, FALSY } from '../../utils/sentinels.js';
 
 export default class ConditionalExpression extends Node {
+	getLeftHandSide () {
+		return this.test.getLeftHandSide();
+	}
+
 	getPrecedence () {
 		return 4;
 	}

@@ -1,5 +1,4 @@
 import Node from '../Node.js';
-import getLeftHandSide from '../../utils/getLeftHandSide.js';
 import { UNKNOWN } from '../../utils/sentinels.js';
 
 const invalidChars = /[a-zA-Z$_0-9/]/;
@@ -256,9 +255,9 @@ export default class IfStatement extends Node {
 			if ( this.consequent.start > this.test.end + 1 ) code.overwrite( this.test.end, this.consequent.start, ')' );
 
 			if ( this.alternate ) {
-				const lhs = this.alternate.type === 'BlockStatement' && this.alternate.removeCurlies ?
-					getLeftHandSide( this.alternate.body[0] ) :
-					getLeftHandSide( this.alternate );
+				const lhs = ( this.alternate.type === 'BlockStatement' && this.alternate.removeCurlies ?
+					this.alternate.body[0] :
+					this.alternate ).getLeftHandSide();
 
 				let gap = ( this.consequent.removeCurlies ? ';' : '' ) + 'else';
 				if ( invalidChars.test( code.original[ lhs.start ] ) ) gap += ' ';

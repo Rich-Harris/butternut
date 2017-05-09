@@ -66,6 +66,10 @@ export default class Node {
 		return lastLine ? /^[ \t]*/.exec( lastLine[1] )[0] : '';
 	}
 
+	getLeftHandSide () {
+		return this;
+	}
+
 	getPrecedence () {
 		return 0;
 	}

@@ -1,5 +1,4 @@
 import Node from '../Node.js';
-import getLeftHandSide from '../../utils/getLeftHandSide.js';
 
 const invalidChars = /[a-zA-Z$_0-9/]/;
 
@@ -7,7 +6,7 @@ export default class ReturnStatement extends Node {
 	minify ( code ) {
 		if ( !this.argument ) return;
 
-		const expression = getLeftHandSide( this.argument );
+		const expression = this.argument.getLeftHandSide();
 
 		const needsTrailingWhitespace = invalidChars.test( code.original[ expression.start ] );
 

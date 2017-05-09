@@ -41,6 +41,10 @@ const binaryExpressionPrecedence = {};
 });
 
 export default class BinaryExpression extends Node {
+	getLeftHandSide () {
+		return this.left.getLeftHandSide();
+	}
+
 	getPrecedence () {
 		return binaryExpressionPrecedence[ this.operator ];
 	}
