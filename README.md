@@ -47,7 +47,7 @@ npm install --save-dev butternut # or npm i -D butternut
 
 ```js
 const butternut = require('butternut');
-const { code, map } = butternut(source, options);
+const { code, map } = butternut.squash(source, options);
 ```
 
 The `options` argument, if supplied, is an object that can have the following properties:
