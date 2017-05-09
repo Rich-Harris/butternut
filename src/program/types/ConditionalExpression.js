@@ -27,6 +27,8 @@ export default class ConditionalExpression extends Node {
 	minify ( code ) {
 		const testValue = this.test.getValue();
 
+		// TODO rewrite `!a ? b() : c()` as `a ? c() : b()`
+
 		if ( testValue === UNKNOWN ) {
 			// remove whitespace
 			if ( this.consequent.start > this.test.end + 1 ) {
