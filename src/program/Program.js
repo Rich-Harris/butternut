@@ -2,7 +2,7 @@ import { parse } from 'acorn';
 import MagicString from 'magic-string';
 import wrap from './wrap.js';
 import BlockStatement from './BlockStatement.js';
-const { decode } = require('sourcemap-codec');
+import { decode } from 'sourcemap-codec';
 
 export default function Program ( source, ast, stats ) {
 	this.stats = stats;

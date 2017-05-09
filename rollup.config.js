@@ -6,7 +6,7 @@ import { resolve } from 'path';
 
 const umd = process.env.UMD;
 
-var external = umd ? null : ['acorn', 'magic-string'];
+var external = umd ? null : ['acorn', 'magic-string', 'sourcemap-codec'];
 
 const config = {
 	entry: 'src/index.js',
@@ -30,7 +30,7 @@ const config = {
 			}
 		}),
 		nodeResolve({
-			jsnext: true,
+			jsnext: true
 		})
 	],
 	external: external,

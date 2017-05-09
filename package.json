@@ -2,7 +2,7 @@
   "name": "butternut",
   "version": "0.3.0",
   "description": "Experimental ES2015-aware minifier",
-  "main": "dist/butternut.umd.js",
+  "main": "dist/butternut.cjs.js",
   "module": "dist/butternut.es.js",
   "files": [
     "bin",
