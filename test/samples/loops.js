@@ -63,7 +63,7 @@ module.exports = [
 
 			baz();`,
 
-		output: `do foo();while(bar);baz()`
+		output: `do{foo()}while(bar);baz()`
 	},
 
 	{
@@ -100,5 +100,25 @@ module.exports = [
 		description: 'preserves var declaration in for-loop head',
 		input: `for(var i=0;i<10;i++)console.log(i);`,
 		output: `for(var i=0;i<10;i++)console.log(i)`
+	},
+
+	{
+		description: 'generates valid code from do-while containing if block',
+		input: `
+			do if (a) {
+				b();
+			} while (a = a.next);`,
+		output: `do{a&&b()}while(a=a.next)`
+	},
+
+	{
+		description: 'removes unnecessary curlies from do-while body',
+		input: `
+			do {
+				if (a) {
+					b();
+				}
+			} while (a = a.next);`,
+		output: `do{a&&b()}while(a=a.next)`
 	}
 ];
