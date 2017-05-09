@@ -25,6 +25,10 @@ export default class MemberExpression extends Node {
 		return objectValue[ this.property.name ];
 	}
 
+	getPrecedence () {
+		return 18;
+	}
+
 	minify ( code ) {
 		const value = this.getValue();
 

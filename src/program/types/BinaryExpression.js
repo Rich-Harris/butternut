@@ -26,7 +26,25 @@ const calculators = {
 	instanceof: ( a, b ) => a instanceof b
 };
 
+const binaryExpressionPrecedence = {};
+[
+	[  7, '|' ],
+	[  8, '^' ],
+	[  9, '&' ],
+	[ 10, '!== === != ==' ],
+	[ 11, 'instanceof in >= > <= <' ],
+	[ 12, '>>> >> <<' ],
+	[ 13, '- +' ],
+	[ 14, '% / * **' ]
+].forEach( ([ precedence, operators ]) => {
+	operators.split( ' ' ).forEach( operator => binaryExpressionPrecedence[ operator ] = precedence );
+});
+
 export default class BinaryExpression extends Node {
+	getPrecedence () {
+		return binaryExpressionPrecedence[ this.operator ];
+	}
+
 	getValue () {
 		const left = this.left.getValue();
 		const right = this.right.getValue();
@@ -44,7 +62,15 @@ export default class BinaryExpression extends Node {
 		}
 
 		else {
-			const operator = /\w/.test( this.operator ) ? ` ${this.operator} ` : this.operator;
+			let operator = this.operator;
+
+			if ( code.original[ this.right.start ] === operator ) {
+				// prevent e.g. `1 - --t` becoming 1---t
+				operator = `${operator} `;
+			} else if ( /\w/.test( this.operator ) ) {
+				// `foo in bar`, not `fooinbar`
+				operator = ` ${operator} `;
+			}
 
 			if ( this.right.start > this.left.end + operator.length ) {
 				code.overwrite( this.left.end, this.right.start, operator );

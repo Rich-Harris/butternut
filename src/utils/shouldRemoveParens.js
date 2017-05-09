@@ -1,8 +1,6 @@
-import getPrecedence from './getPrecedence.js';
-
 export default function shouldRemoveParens ( expression, parent ) {
-	const expressionPrecedence = getPrecedence( expression );
-	const parentPrecedence = getPrecedence( parent );
+	const expressionPrecedence = expression.getPrecedence();
+	const parentPrecedence = parent.getPrecedence();
 
 	if ( expression.type === 'FunctionExpression' ) {
 		return (

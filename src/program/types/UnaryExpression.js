@@ -13,6 +13,10 @@ const calculators = {
 };
 
 export default class UnaryExpression extends Node {
+	getPrecedence () {
+		return 15;
+	}
+
 	getValue () {
 		const arg = this.argument.getValue();
 

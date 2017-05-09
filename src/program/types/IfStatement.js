@@ -1,6 +1,5 @@
 import Node from '../Node.js';
 import getLeftHandSide from '../../utils/getLeftHandSide.js';
-import getPrecedence from '../../utils/getPrecedence.js';
 import { UNKNOWN } from '../../utils/sentinels.js';
 
 const invalidChars = /[a-zA-Z$_0-9/]/;
@@ -145,9 +144,9 @@ export default class IfStatement extends Node {
 		// to avoid being wrapped in parens. If ternary, 4
 		const targetPrecedence = this.alternate ? 4 : inverted ? 5 : 6;
 
-		const shouldParenthesiseTest = getPrecedence( this.test ) < targetPrecedence;
+		const shouldParenthesiseTest = this.test.getPrecedence() < targetPrecedence;
 		const shouldParenthesiseConsequent = this.consequent.body.length === 1 ?
-			getPrecedence( this.consequent.body[0] ) < targetPrecedence :
+			this.consequent.body[0].getPrecedence() < targetPrecedence :
 			true;
 
 		// special case – empty if block
@@ -172,7 +171,7 @@ export default class IfStatement extends Node {
 							5;
 					} else if ( this.alternate.type === 'BlockStatement' ) {
 						alternatePrecedence = this.alternate.body.length === 1 ?
-							getPrecedence( this.alternate.body[0] ) :
+							this.alternate.body[0].getPrecedence() :
 							0; // sequence
 					} else {
 						alternatePrecedence = 0; // err on side of caution
@@ -314,7 +313,7 @@ export default class IfStatement extends Node {
 			if ( this.alternate.body.length > 1 ) {
 				shouldParenthesiseAlternate = true;
 			} else if ( this.alternate.body[0].type !== 'IfStatement' ) {
-				shouldParenthesiseAlternate = getPrecedence( this.alternate.body[0] ) < 4;
+				shouldParenthesiseAlternate = this.alternate.body[0].getPrecedence() < 4;
 			}
 		}
 		// const shouldParenthesiseAlternate = this.alternate.type === 'BlockStatement' ?

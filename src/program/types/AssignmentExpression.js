@@ -7,6 +7,10 @@ let commutative = {};
 for ( let operator of '*&^|' ) commutative[ operator ] = true;
 
 export default class AssignmentExpression extends Node {
+	getPrecedence () {
+		return 3;
+	}
+
 	initialise () {
 		if ( this.left.type === 'Identifier' ) {
 			const declaration = this.findScope( false ).findDeclaration( this.left.name );

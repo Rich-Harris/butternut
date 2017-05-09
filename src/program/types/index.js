@@ -11,6 +11,7 @@ import ConditionalExpression from './ConditionalExpression.js';
 import DoWhileStatement from './DoWhileStatement.js';
 import ExportDefaultDeclaration from './ExportDefaultDeclaration.js';
 import ExportNamedDeclaration from './ExportNamedDeclaration.js';
+import ExpressionStatement from './ExpressionStatement.js';
 import ForStatement from './ForStatement.js';
 import ForInOfStatement from './shared/ForInOfStatement.js';
 import FunctionDeclaration from './FunctionDeclaration.js';
@@ -24,10 +25,12 @@ import Literal from './Literal.js';
 import LogicalExpression from './LogicalExpression.js';
 import MemberExpression from './MemberExpression.js';
 import MethodDefinition from './MethodDefinition.js';
+import NewExpression from './NewExpression.js';
 import ObjectExpression from './ObjectExpression.js';
 import ParenthesizedExpression from './ParenthesizedExpression.js';
 import Property from './Property.js';
 import ReturnStatement from './ReturnStatement.js';
+import SpreadElement from './SpreadElement.js';
 import SwitchCase from './SwitchCase.js';
 import SwitchStatement from './SwitchStatement.js';
 import TaggedTemplateExpression from './TaggedTemplateExpression.js';
@@ -38,6 +41,7 @@ import UpdateExpression from './UpdateExpression.js';
 import VariableDeclaration from './VariableDeclaration.js';
 import VariableDeclarator from './VariableDeclarator.js';
 import WhileStatement from './WhileStatement.js';
+import YieldExpression from './YieldExpression.js';
 
 export default {
 	ArrayExpression: Array,
@@ -54,6 +58,7 @@ export default {
 	DoWhileStatement,
 	ExportNamedDeclaration,
 	ExportDefaultDeclaration,
+	ExpressionStatement,
 	ForStatement,
 	ForInStatement: ForInOfStatement,
 	ForOfStatement: ForInOfStatement,
@@ -68,10 +73,12 @@ export default {
 	LogicalExpression,
 	MemberExpression,
 	MethodDefinition,
+	NewExpression,
 	ObjectExpression,
 	ParenthesizedExpression,
 	Property,
 	ReturnStatement,
+	SpreadElement,
 	SwitchCase,
 	SwitchStatement,
 	TaggedTemplateExpression,
@@ -81,5 +88,6 @@ export default {
 	UpdateExpression,
 	VariableDeclaration,
 	VariableDeclarator,
-	WhileStatement
+	WhileStatement,
+	YieldExpression
 };

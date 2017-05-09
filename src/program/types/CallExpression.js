@@ -32,6 +32,10 @@ const safeFunctions = [
 ];
 
 export default class CallExpression extends Node {
+	getPrecedence () {
+		return 17;
+	}
+
 	getValue () {
 		const calleeValue = this.callee.getValue();
 

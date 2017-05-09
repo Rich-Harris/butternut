@@ -66,6 +66,10 @@ export default class Node {
 		return lastLine ? /^[ \t]*/.exec( lastLine[1] )[0] : '';
 	}
 
+	getPrecedence () {
+		return 0;
+	}
+
 	getValue () {
 		return UNKNOWN;
 	}

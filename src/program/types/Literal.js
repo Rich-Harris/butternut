@@ -1,6 +1,10 @@
 import Node from '../Node.js';
 
 export default class Literal extends Node {
+	getPrecedence () {
+		return 20;
+	}
+
 	getValue () {
 		return this.value;
 	}

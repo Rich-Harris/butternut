@@ -2,6 +2,10 @@ import Node from '../Node.js';
 import { UNKNOWN, FALSY } from '../../utils/sentinels.js';
 
 export default class LogicalExpression extends Node {
+	getPrecedence () {
+		return this.operator === '&&' ? 6 : 5;
+	}
+
 	getValue () {
 		const leftValue = this.left.getValue();
 		const rightValue = this.right.getValue();
