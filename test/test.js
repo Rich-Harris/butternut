@@ -4,7 +4,8 @@ const rimraf = require('rimraf');
 const child_process = require('child_process');
 const assert = require('assert');
 const glob = require('glob');
-const butternut = require('../dist/butternut.cjs.js');
+
+const butternut = require(process.env.TEST_MIN ? '../dist/butternut.min.js' : '../dist/butternut.cjs.js');
 
 require('source-map-support').install();
 require('console-group').install();

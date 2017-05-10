@@ -2,11 +2,13 @@ import buble from 'rollup-plugin-buble';
 import json from 'rollup-plugin-json';
 import replace from 'rollup-plugin-replace';
 import nodeResolve from 'rollup-plugin-node-resolve';
+import butternut from 'rollup-plugin-butternut';
 import { resolve } from 'path';
 
-const umd = process.env.UMD;
+const min = process.env.MIN;
+const umd = min || process.env.UMD;
 
-var external = umd ? null : ['acorn', 'magic-string', 'sourcemap-codec'];
+const external = umd ? null : ['acorn', 'magic-string', 'sourcemap-codec'];
 
 const config = {
 	entry: 'src/index.js',
@@ -31,7 +33,8 @@ const config = {
 		}),
 		nodeResolve({
 			jsnext: true
-		})
+		}),
+		min ? butternut() : {}
 	],
 	external: external,
 	globals: {
@@ -43,7 +46,7 @@ const config = {
 
 if (umd) {
 	config.format = 'umd';
-	config.dest = 'dist/butternut.umd.js';
+	config.dest = min ? 'dist/butternut.min.js' : 'dist/butternut.umd.js';
 } else {
 	const pkg = require('./package.json');
 	config.targets = [
