@@ -579,5 +579,20 @@ module.exports = [
 			else if (c)
 				c()`,
 		output: `if(a)for(var i=0;i<10;++i){var x=42;console.log(x);console.log(x)}else b?b():c&&c()`
+	},
+
+	{
+		description: 'preserves semi after consequent if-statement rewritten as expression',
+		input: `
+			if (a) {
+				if (b) {
+					c();
+				}
+			} else {
+				var x = 42;
+				console.log(x);
+				console.log(x);
+			}`,
+		output: `if(a)b&&c();else{var x=42;console.log(x);console.log(x)}`
 	}
 ];

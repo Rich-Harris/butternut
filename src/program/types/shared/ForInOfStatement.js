@@ -5,6 +5,10 @@ export default class ForInOfStatement extends LoopStatement {
 		return functionScope || !this.createdScope ? this.parent.findScope( functionScope ) : this.body.scope;
 	}
 
+	getRightHandSide () {
+		return this.body.getRightHandSide();
+	}
+
 	minify ( code, transforms ) {
 		if ( this.left.start > this.start + 4 ) {
 			code.overwrite( this.start + 3, this.left.start, '(' );
