@@ -24,6 +24,7 @@ import MemberExpression from './MemberExpression.js';
 import MethodDefinition from './MethodDefinition.js';
 import NewExpression from './NewExpression.js';
 import ObjectExpression from './ObjectExpression.js';
+import ObjectPattern from './ObjectPattern.js';
 import ParenthesizedExpression from './ParenthesizedExpression.js';
 import ReturnStatement from './ReturnStatement.js';
 import SpreadElement from './SpreadElement.js';
@@ -68,6 +69,7 @@ export default {
 	MethodDefinition,
 	NewExpression,
 	ObjectExpression,
+	ObjectPattern,
 	ParenthesizedExpression,
 	ReturnStatement,
 	SpreadElement,

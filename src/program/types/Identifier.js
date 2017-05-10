@@ -24,8 +24,13 @@ export default class Identifier extends Node {
 	}
 
 	minify ( code ) {
-		if ( this.alias ) {
-			code.overwrite( this.start, this.end, this.alias, true );
-		}
+		// TODO should aliasing happen here, rather than in Scope?
+		// if ( this.alias ) {
+		// 	const replacement = this.parent.type === 'Property' && this.parent.shorthand ?
+		// 		`${this.name}:${this.alias}` :
+		// 		this.alias;
+
+		// 	code.overwrite( this.start, this.end, replacement, true );
+		// }
 	}
 }

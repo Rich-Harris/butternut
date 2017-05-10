@@ -18,7 +18,7 @@ export default class VariableDeclaration extends Node {
 			});
 		});
 
-		let c = allDupes ? this.start : this.start + this.kind.length + 1;
+		let c = allDupes ? this.start : this.start + this.kind.length + ( this.declarations[0].id.type === 'Identifier' ? 1 : 0 );
 
 		for ( let i = 0; i < declarations.length; i += 1 ) {
 			const declarator = declarations[i];

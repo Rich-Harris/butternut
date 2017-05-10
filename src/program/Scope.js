@@ -176,7 +176,11 @@ Scope.prototype = {
 			declaration.alias = this.createIdentifier( used );
 
 			declaration.instances.forEach( instance => {
-				code.overwrite( instance.start, instance.end, declaration.alias );
+				const replacement = instance.parent.type === 'Property' && instance.parent.shorthand ?
+					`${instance.name}:${declaration.alias}` :
+					declaration.alias;
+
+				code.overwrite( instance.start, instance.end, replacement, true );
 			});
 		});
 	}

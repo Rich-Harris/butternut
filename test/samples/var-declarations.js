@@ -32,6 +32,7 @@ module.exports = [
 		output: `let a=1,b=2,c=3;console.log(a,b,c)`
 	},
 	{
+		skip: true,
 		description: 'removes unused var in destructured declaration',
 		input: `
 			function x () {
