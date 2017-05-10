@@ -1,8 +1,7 @@
-import { parse } from 'acorn';
 import MagicString from 'magic-string';
 import wrap from './wrap.js';
 import BlockStatement from './BlockStatement.js';
-import { decode } from 'sourcemap-codec';
+import check from './check.js';
 
 export default function Program ( source, ast, stats ) {
 	this.stats = stats;
@@ -40,32 +39,7 @@ Program.prototype = {
 		if ( DEBUG ) stats.timeEnd( 'generate code' );
 
 		if ( options.check ) {
-			try {
-				parse( code, {
-					ecmaVersion: 8,
-					sourceType: 'module'
-				});
-			} catch ( err ) {
-				const map = this.magicString.generateMap();
-				const { line, column } = err.loc;
-				const snippet = code.slice( Math.max( 0, err.pos - 35 ), Math.min( code.length, err.pos + 35 ) );
-
-				const mappings = decode( map.mappings );
-				const segments = mappings[ line - 1 ];
-
-				for ( let i = 0; i < segments.length; i += 1 ) {
-					const segment = segments[i];
-					if ( segment[0] >= column ) {
-						const sourceCodeLine = segment[2];
-						const sourceCodeColumn = segment[3];
-
-						err.message = `Butternut generated invalid JS: code in source file near (${sourceCodeLine + 1}:${sourceCodeColumn}) became\n...${snippet}...`;
-						throw err;
-					}
-				}
-
-				throw err;
-			}
+			check( this.magicString, this.ast );
 		}
 
 		if ( DEBUG ) stats.time( 'generate map' );
