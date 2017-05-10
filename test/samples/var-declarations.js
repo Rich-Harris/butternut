@@ -30,5 +30,14 @@ module.exports = [
 			console.log( a, b, c );`,
 
 		output: `let a=1,b=2,c=3;console.log(a,b,c)`
+	},
+	{
+		description: 'removes unused var in destructured declaration',
+		input: `
+			function x () {
+				var { foo, bar } = baz;
+				console.log( foo );
+			}`,
+		output: `function x(){var{foo:a}=baz;console.log(a)}`
 	}
 ];

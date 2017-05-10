@@ -7,14 +7,14 @@ export default class FunctionDeclaration extends Function {
 	}
 
 	initialise () {
+		this.id.declaration = this;
+
 		const scope = this.findScope( false );
 		this.body.createScope( scope );
 
-		const topLevel = !scope.parent;
-		this.skip = !topLevel; // guilty until proven innocent
+		this.skip = !!scope.parent; // guilty until proven innocent
 
-		scope.addDeclaration( this.id, 'function', topLevel );
-		if ( topLevel ) this.activate();
+		scope.addDeclaration( this.id, 'function' );
 	}
 
 	minify ( code ) {

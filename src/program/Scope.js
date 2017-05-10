@@ -32,26 +32,45 @@ Scope.prototype = {
 		if ( this.parent ) this.parent.addAlias( alias );
 	},
 
-	addDeclaration ( node, kind, topLevel ) {
-		for ( const identifier of extractNames( node ) ) {
-			const { name } = identifier;
-			const existingDeclaration = this.declarations[ name ];
-			if ( existingDeclaration && ( letConst.test( kind ) || letConst.test( existingDeclaration.kind ) ) ) {
+	addDeclaration ( identifier, kind ) {
+		if ( kind === 'var' && this.isBlockScope ) {
+			this.parent.addDeclaration( identifier, kind );
+			return;
+		}
+
+		const { name } = identifier;
+
+		const existingDeclaration = this.declarations[ name ];
+		if ( existingDeclaration ) {
+			if ( letConst.test( kind ) || letConst.test( existingDeclaration.kind ) ) {
 				// TODO warn about double var declarations?
 				throw new CompileError( identifier, `${name} is already declared` );
 			}
 
-			const declaration = { activated: !!topLevel, name, node: identifier, kind, instances: [] };
-			this.declarations[ name ] = declaration;
+			return;
+		}
 
-			if ( this.isBlockScope ) {
-				if ( !this.functionScope.blockScopedDeclarations[ name ] ) this.functionScope.blockScopedDeclarations[ name ] = [];
-				this.functionScope.blockScopedDeclarations[ name ].push( declaration );
-			}
+		const declaration = {
+			activated: !this.parent, // TODO is this necessary?
+			name,
+			node: identifier,
+			kind,
+			instances: []
+		};
 
-			if ( kind === 'param' ) {
-				declaration.instances.push( identifier );
-			}
+		this.declarations[ name ] = declaration;
+
+		if ( this.isBlockScope ) {
+			if ( !this.functionScope.blockScopedDeclarations[ name ] ) this.functionScope.blockScopedDeclarations[ name ] = [];
+			this.functionScope.blockScopedDeclarations[ name ].push( declaration );
+		}
+
+		if ( kind === 'param' ) {
+			declaration.instances.push( identifier );
+		}
+
+		if ( !this.parent ) {
+			identifier.activate();
 		}
 	},
 

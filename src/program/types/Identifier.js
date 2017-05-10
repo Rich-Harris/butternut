@@ -2,6 +2,13 @@ import Node from '../Node.js';
 import isReference from '../../utils/isReference.js';
 
 export default class Identifier extends Node {
+	activate () {
+		if ( !this.declaration.activate ) {
+			console.log( `${this.declaration}`)
+		}
+		this.declaration.activate();
+	}
+
 	getPrecedence () {
 		return 20;
 	}

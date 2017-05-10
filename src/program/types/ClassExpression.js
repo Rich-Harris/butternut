@@ -14,6 +14,8 @@ export default class ClassExpression extends Class {
 		});
 
 		if ( this.id ) {
+			this.id.declaration = this;
+
 			// function expression IDs belong to the child scope...
 			this.scope.addDeclaration( this.id, 'class' );
 			this.scope.addReference( this.id );

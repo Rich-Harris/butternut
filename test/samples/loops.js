@@ -132,7 +132,6 @@ module.exports = [
 	},
 
 	{
-		solo: true,
 		description: 'handles duplicate var declarations in for-loop head',
 		input: `
 			function x () {

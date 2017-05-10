@@ -63,7 +63,9 @@ export default class BlockStatement extends Node {
 
 		if ( params && params.length ) {
 			params.forEach( node => {
-				this.scope.addDeclaration( node, 'param' );
+				extractNames( node ).forEach( identifier => {
+					this.scope.addDeclaration( identifier, 'param' );
+				});
 			});
 		}
 	}

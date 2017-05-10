@@ -1,4 +1,5 @@
 import Node from '../Node.js';
+import extractNames from '../extractNames.js';
 
 export default class VariableDeclarator extends Node {
 	activate () {
@@ -14,11 +15,11 @@ export default class VariableDeclarator extends Node {
 		}
 
 		this.skip = this.parent.skip;
-		const topLevel = !this.skip; // top-level declaration
 
-		this.parent.scope.addDeclaration( this.id, kind, topLevel );
-
-		if ( topLevel ) this.activate();
+		extractNames( this.id ).forEach( node => {
+			node.declaration = this;
+			this.parent.scope.addDeclaration( node, kind );
+		});
 	}
 
 	minify ( code ) {
