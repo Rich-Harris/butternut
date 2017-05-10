@@ -1,6 +1,7 @@
 const babel = require('babel-core');
 
-exports.minify = input => babel.transform(input, {
+exports.minify = (input, sourcemap) => babel.transform(input, {
 	babelrc: false,
-	presets: ['babili']
+	presets: ['babili'],
+	sourceMaps: sourcemap
 });

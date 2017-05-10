@@ -25,29 +25,43 @@ function mkdir(dir) {
 
 mkdir('test/fixture/output');
 
-glob.sync('*.js', { cwd: 'test/fixture/input' }).forEach(fixture => {
+const libs = [
+	'babili',
+	'butternut',
+	'closure',
+	'uglify',
+	'uglify-es'
+];
+
+function test(fixture, sourcemap) {
 	const content = fs.readFileSync(`test/fixture/input/${fixture}`, 'utf8');
 	const size = prettyBytes(Buffer.byteLength(content, 'utf8'));
 
-	console.log(`${fixture} (${size}):`);
-	const results = {};
-	const minified = {};
+	console.log(`${fixture} (${size}) ${sourcemap ? 'with' : 'without'} sourcemap:`);
+	const results = sourcemap ? require(`./results/${fixture}on`) : {};
 
 	const suite = new Suite();
 
-	glob.sync('*-bench.js', { cwd: 'test/bench' }).forEach(id => {
-		const name = /([a-z]+)-bench/.exec(id)[1];
-
-		const { minify } = require(path.resolve('test/bench', id));
+	libs.forEach(name => {
+		const { minify } = require(`./${name}-bench.js`);
 
 		try {
-			const { code } = minify(content);
-			minified[name] = code;
+			const result = minify(content, sourcemap, true);
+
+			if ( ( sourcemap && !result.map ) || ( result.map && !sourcemap ) ) {
+				console.error( chalk.red( `Sourcemap should ${sourcemap ? '' : 'not '} have been created` ) );
+			}
+
+			results[name] = {
+				min: (result.code || '').length,
+				zip: zlib.gzipSync(result.code || '').byteLength
+			};
 
 			suite.add(name, () => {
-				minify(content);
+				minify(content, sourcemap);
 			});
 		} catch (err) {
+			console.log(err.stack);
 			// noop
 		}
 	});
@@ -57,18 +71,12 @@ glob.sync('*.js', { cwd: 'test/fixture/input' }).forEach(fixture => {
 	});
 
 	suite.on('cycle', ({ target }) => {
-		const result = minified[target.name];
-		const zipped = zlib.gzipSync(result);
-
-		results[target.name] = {
-			min: result.length,
-			zip: zipped.length,
-			time: 1e3 / target.hz
-		};
+		const r = results[target.name];
+		r[sourcemap ? 'sourcemap' : 'nosourcemap'] = 1e3 / target.hz;
 
 		let indicator;
 		try {
-			acorn.parse(result);
+			acorn.parse(r.min);
 			indicator = chalk.green('✓');
 		} catch (err) {
 			indicator = chalk.red('✗');
@@ -76,7 +84,7 @@ glob.sync('*.js', { cwd: 'test/fixture/input' }).forEach(fixture => {
 
 		const time = prettyMs(1e3 / target.hz);
 		console.log(
-			`  ${indicator} ${rightPad(target.name, 10)}: ${leftPad(prettyBytes(result.length), 8)} / ${leftPad(prettyBytes(zipped.byteLength), 8)} in ${time}`
+			`  ${indicator} ${rightPad(target.name, 10)}: ${leftPad(prettyBytes(r.min), 8)} / ${leftPad(prettyBytes(r.zip), 8)} in ${time}`
 		);
 	});
 
@@ -89,4 +97,9 @@ glob.sync('*.js', { cwd: 'test/fixture/input' }).forEach(fixture => {
 	});
 
 	suite.run();
+}
+
+glob.sync('*.js', { cwd: 'test/fixture/input' }).forEach(fixture => {
+	test(fixture, false);
+	test(fixture, true);
 });

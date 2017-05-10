@@ -1,10 +1,10 @@
 const compile = require('google-closure-compiler-js').compile;
 
-exports.minify = input => {
+exports.minify = (input, sourcemap) => {
 	const out = compile({
 		jsCode: [{ src: input }],
 		compilationLevel: 'SIMPLE',
-		createSourceMap: true
+		createSourceMap: sourcemap
 	});
 
 	return {
