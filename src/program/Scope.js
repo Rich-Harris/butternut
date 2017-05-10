@@ -1,4 +1,3 @@
-import extractNames from './extractNames.js';
 import reserved from '../utils/reserved.js';
 import CompileError from '../utils/CompileError.js';
 

@@ -1,5 +1,10 @@
 # butternut changelog
 
+## 0.3.2
+
+* Handle duplicate variable declarations ([#3](https://github.com/Rich-Harris/butternut/issues/3))
+* Preserve shorthand property names ([#6](https://github.com/Rich-Harris/butternut/issues/6))
+
 ## 0.3.1
 
 * Fix browser build
