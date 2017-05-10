@@ -11,7 +11,16 @@ Butternut is significantly faster than other JavaScript minifiers, and works wit
 
 The compression is better than Babili and Closure Compiler (in standard compilation mode — you can get better results with Closure in advanced mode, but only by writing your code in a very particular way). It's *almost* as good as Uglify in its current version.
 
+You can test out the different tools with `npm run bench`.
+
 *Note: UglifyJS supports ES2015+ as of very recently — see [uglify-es](https://www.npmjs.com/package/uglify-es).*
+
+
+## How?
+
+The traditional approach to minification is this: parse your source code into an abstract syntax tree (AST) using something like [Acorn](https://github.com/ternjs/acorn), manipulate the AST, and finally generate code from it.
+
+Butternut takes a different approach. It uses Acorn to generate an AST, but instead of steps 2 and 3 it then edits the code *in place* using [magic-string](https://github.com/Rich-Harris/magic-string) — which is much less costly than AST manipulation and code generation.
 
 
 ## Usage
