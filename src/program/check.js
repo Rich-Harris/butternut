@@ -25,11 +25,14 @@ export default function check ( magicString, ast ) {
 				const sourceCodeLine = segment[2];
 				const sourceCodeColumn = segment[3];
 
-				const repro = createRepro( magicString.original, ast, sourceCodeLine, sourceCodeColumn );
-
 				err.message = `Butternut generated invalid JS: code in source file near (${sourceCodeLine + 1}:${sourceCodeColumn}) became\n...${snippet}...`;
 
-				if ( repro ) err.repro = repro;
+				try {
+					const repro = createRepro( magicString.original, ast, sourceCodeLine, sourceCodeColumn );
+					if ( repro ) err.repro = repro;
+				} catch (err) {
+					// do nothing
+				}
 
 				throw err;
 			}
@@ -55,7 +58,8 @@ function createRepro ( source, ast, line, column ) {
 		const ast = parse( slice, {
 			ecmaVersion: 8,
 			preserveParens: true,
-			sourceType: 'module'
+			sourceType: 'module',
+			allowReturnOutsideFunction: true
 		});
 
 		const { code } = new Program( slice, ast, null ).export({});
@@ -63,7 +67,8 @@ function createRepro ( source, ast, line, column ) {
 		try {
 			parse( code, {
 				ecmaVersion: 8,
-				sourceType: 'module'
+				sourceType: 'module',
+				allowReturnOutsideFunction: true
 			});
 		} catch ( err ) {
 			return {
@@ -77,14 +82,23 @@ function createRepro ( source, ast, line, column ) {
 function zoomIn ( node, c ) {
 	if ( !node ) return null;
 
+	if ( c < node.start ) return null;
+	if ( c > node.end ) return null;
+
 	const k = keys[ node.type ];
 	for ( let i = 0; i < k.length; i += 1 ) {
 		const key = k[i];
 
 		if ( Array.isArray( node[key] ) ) {
-			for ( let j = 0; j < node[key].length; j += 1 ) {
-				const child = zoomIn( node[key][j], c );
-				if ( child ) return child;
+			const body = node[key];
+
+			for ( let j = 0; j < body.length; j += 1 ) {
+				if ( body[j] ) {
+					if ( body[j].start > c ) return zoomIn( body[j], body[j].start );
+
+					const child = zoomIn( body[j], c );
+					if ( child ) return child;
+				}
 			}
 		} else {
 			const child = zoomIn( node[key], c );
@@ -92,18 +106,13 @@ function zoomIn ( node, c ) {
 		}
 	}
 
-	if ( c >= node.start && c <= node.end ) return node;
-	return null;
+	return node;
 }
 
 function zoomOut ( node ) {
 	while ( !/Statement|Declaration/.test( node.parent.type ) ) {
 		if ( !node.parent ) return null;
 		node = node.parent;
-	}
-
-	if ( node.parent.type === 'BlockStatement' && /Function/.test( node.parent.parent.type ) ) {
-		return node.parent.parent;
 	}
 
 	return node.parent;
