@@ -1,5 +1,9 @@
 # butternut changelog
 
+## 0.3.3
+
+* Remove curlies around blocks that don't need them, and vice versa ([#9](https://github.com/Rich-Harris/butternut/issues/9))
+
 ## 0.3.2
 
 * Handle duplicate variable declarations ([#3](https://github.com/Rich-Harris/butternut/issues/3))
