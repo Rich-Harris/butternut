@@ -52,6 +52,11 @@ function test(fixture, sourcemap) {
 				console.error( chalk.red( `Sourcemap should ${sourcemap ? '' : 'not '} have been created` ) );
 			}
 
+			if ( name !== 'butternut' ) {
+				mkdir( `test/fixture/output/${name}` );
+				fs.writeFileSync( `test/fixture/output/${name}/${fixture}`, result.code );
+			}
+
 			results[name] = {
 				min: (result.code || '').length,
 				zip: zlib.gzipSync(result.code || '').byteLength
@@ -100,6 +105,8 @@ function test(fixture, sourcemap) {
 }
 
 glob.sync('*.js', { cwd: 'test/fixture/input' }).forEach(fixture => {
+	if ( fixture === '_test.js' ) return;
+
 	test(fixture, false);
 	test(fixture, true);
 });
