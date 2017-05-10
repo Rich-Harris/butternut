@@ -4,11 +4,7 @@ const rimraf = require('rimraf');
 const child_process = require('child_process');
 const assert = require('assert');
 const glob = require('glob');
-const acorn = require('acorn');
-const { decode } = require('sourcemap-codec');
-const SourceMapConsumer = require('source-map').SourceMapConsumer;
-const getLocation = require('./utils/getLocation.js');
-const butternut = require('../dist/butternut.umd.js');
+const butternut = require('../dist/butternut.cjs.js');
 
 require('source-map-support').install();
 require('console-group').install();
