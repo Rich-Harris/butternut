@@ -259,10 +259,13 @@ export default class IfStatement extends Node {
 					this.alternate.body[0] :
 					this.alternate ).getLeftHandSide();
 
-				let gap = ( this.consequent.removeCurlies ? ';' : '' ) + 'else';
+				let gap = ( this.consequent.synthetic || this.consequent.removeCurlies ? ';' : '' ) + 'else';
 				if ( invalidChars.test( code.original[ lhs.start ] ) ) gap += ' ';
 
-				code.overwrite( this.consequent.end, this.alternate.start, gap );
+				let c = this.consequent.end;
+				while ( code.original[ c - 1 ] === ';' ) c -= 1;
+
+				code.overwrite( c, this.alternate.start, gap );
 			}
 		}
 	}

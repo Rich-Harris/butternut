@@ -176,10 +176,11 @@ export default class BlockStatement extends Node {
 
 		const separator = rewriteAsSequence ? ',' : ';';
 
+		// TODO this is confusing
 		let removeCurlies = this.parent.type === 'Root' || !this.synthetic && (
 			this.parent.type === 'IfStatement' ?
 				this.removeCurlies :
-				( allowsBlockLessStatement[ this.parent.type ] && statements.length === 1 && ( statements[0].type === 'ExpressionStatement' || statements[0].kind === 'var' ) )
+				( allowsBlockLessStatement[ this.parent.type ] && rewriteAsSequence )
 		);
 
 		this.removeCurlies = removeCurlies;

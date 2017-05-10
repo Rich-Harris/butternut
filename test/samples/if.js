@@ -535,7 +535,7 @@ module.exports = [
 				if (!b) c();
 				else --d;
 			}`,
-		output: `while(a){b?--d:c()}`
+		output: `while(a)b?--d:c()`
 	},
 
 	{
@@ -550,5 +550,18 @@ module.exports = [
 
 			if (c) z();`,
 		output: `a?b?x():y():w(),c&&z()`
+	},
+
+	{
+		description: 'adds semi when both consequent and alternate are block-less',
+		input: `
+			function foo () {
+				if (a)
+					return b
+				else
+					return c
+			}`,
+		// TODO `function foo(){return a?b:c}`
+		output: `function foo(){if(a)return b;else return c}`
 	}
 ];
