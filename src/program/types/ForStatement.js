@@ -5,6 +5,10 @@ export default class ForStatement extends LoopStatement {
 		return functionScope || !this.createdScope ? this.parent.findScope( functionScope ) : this.body.scope;
 	}
 
+	getRightHandSide () {
+		return this.body.getRightHandSide();
+	}
+
 	minify ( code, transforms ) {
 		let c = this.start + 3;
 

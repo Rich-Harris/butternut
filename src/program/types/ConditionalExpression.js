@@ -14,6 +14,13 @@ export default class ConditionalExpression extends Node {
 		return testValue === UNKNOWN ? 4 : ( testValue && testValue !== FALSY ? this.consequent : this.alternate ).getPrecedence();
 	}
 
+	getRightHandSide () {
+		const testValue = this.test.getValue();
+		const node = testValue === UNKNOWN ? this.alternate : ( testValue && testValue !== FALSY ? this.alternate : this.consequent );
+
+		return node.getRightHandSide();
+	}
+
 	getValue () {
 		const testValue = this.test.getValue();
 		const consequentValue = this.consequent.getValue();

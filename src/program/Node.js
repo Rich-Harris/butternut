@@ -64,6 +64,10 @@ export default class Node {
 		return 0;
 	}
 
+	getRightHandSide () {
+		return this;
+	}
+
 	getValue () {
 		return UNKNOWN;
 	}

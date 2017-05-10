@@ -42,6 +42,12 @@ function isVarDeclaration ( node ) {
 // TODO this whole thing is kinda messy... refactor it
 
 export default class IfStatement extends Node {
+	getRightHandSide () {
+		// TODO what if we know the test value?
+		if ( this.alternate ) return this.alternate.getRightHandSide();
+		return this.consequent.getRightHandSide();
+	}
+
 	initialise () {
 		this.rewriteConsequentAsSequence = canRewriteBlockAsSequence( this.consequent.body );
 		this.rewriteAlternateAsSequence = !this.alternate ||
@@ -150,7 +156,7 @@ export default class IfStatement extends Node {
 
 		// special case – empty if block
 		if ( this.consequent.body.length === 0 ) {
-			const canRemoveTest = this.test.type === 'Identifier' || this.test.getValue() !== UNKNOWN;
+			const canRemoveTest = this.test.type === 'Identifier' || this.test.getValue() !== UNKNOWN; // TODO can this ever happen?
 
 			if ( this.alternate ) {
 				this.alternate.minify( code );
@@ -255,14 +261,19 @@ export default class IfStatement extends Node {
 			if ( this.consequent.start > this.test.end + 1 ) code.overwrite( this.test.end, this.consequent.start, ')' );
 
 			if ( this.alternate ) {
-				const lhs = ( this.alternate.type === 'BlockStatement' && this.alternate.removeCurlies ?
+				const lastNodeOfConsequent = this.consequent.getRightHandSide();
+
+				const firstNodeOfAlternate = ( this.alternate.type === 'BlockStatement' && this.alternate.removeCurlies ?
 					this.alternate.body[0] :
 					this.alternate ).getLeftHandSide();
 
-				let gap = ( this.consequent.removeCurlies ? ';' : '' ) + 'else';
-				if ( invalidChars.test( code.original[ lhs.start ] ) ) gap += ' ';
+				let gap = ( lastNodeOfConsequent.type === 'BlockStatement' ? '' : ';' ) + 'else';
+				if ( invalidChars.test( code.original[ firstNodeOfAlternate.start ] ) ) gap += ' ';
 
-				code.overwrite( this.consequent.end, this.alternate.start, gap );
+				let c = this.consequent.end;
+				while ( code.original[ c - 1 ] === ';' ) c -= 1;
+
+				code.overwrite( c, this.alternate.start, gap );
 			}
 		}
 	}

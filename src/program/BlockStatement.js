@@ -156,6 +156,16 @@ export default class BlockStatement extends Node {
 		return this.scope;
 	}
 
+	getLeftHandSide () {
+		if ( this.removeCurlies || this.synthetic ) return this.body[0].getLeftHandSide();
+		return this;
+	}
+
+	getRightHandSide () {
+		if ( this.removeCurlies || this.synthetic ) return this.body[this.body.length - 1].getRightHandSide();
+		return this;
+	}
+
 	minify ( code ) {
 		this.scope.mangle( code );
 
@@ -169,17 +179,19 @@ export default class BlockStatement extends Node {
 		});
 		// }
 
-		const rewriteAsSequence = !this.parentIsFunction && ( this.joinStatements || statements.every( statement => {
+		// TODO this is confusing
+		const rewriteAsSequence = !this.parentIsFunction && statements.length > 0 && ( this.joinStatements || statements.every( statement => {
 			return statement.type === 'ExpressionStatement' ||
 			       statement.rewriteAsSequence;
 		}) );
 
 		const separator = rewriteAsSequence ? ',' : ';';
 
+		// TODO this is confusing
 		let removeCurlies = this.parent.type === 'Root' || !this.synthetic && (
 			this.parent.type === 'IfStatement' ?
 				this.removeCurlies :
-				( allowsBlockLessStatement[ this.parent.type ] && statements.length === 1 && ( statements[0].type === 'ExpressionStatement' || statements[0].kind === 'var' ) )
+				( allowsBlockLessStatement[ this.parent.type ] && rewriteAsSequence )
 		);
 
 		this.removeCurlies = removeCurlies;
@@ -252,42 +264,42 @@ export default class BlockStatement extends Node {
 	}
 
 	// TODO make this work!
-	minifyWithCollapsedReturnStatements ( code, statements ) {
-		if ( this.returnStatements.length === 1 ) {
-			const returnStatement = this.returnStatements[0];
+	// minifyWithCollapsedReturnStatements ( code, statements ) {
+	// 	if ( this.returnStatements.length === 1 ) {
+	// 		const returnStatement = this.returnStatements[0];
 
-			if ( returnStatement.parent === this ) {
-				// case 1 – a single top-level return with no argument
-				if ( !returnStatement.argument ) {
-					// does this already get skipped above?
-					throw new Error( 'TODO single return statement without arg' );
-				}
+	// 		if ( returnStatement.parent === this ) {
+	// 			// case 1 – a single top-level return with no argument
+	// 			if ( !returnStatement.argument ) {
+	// 				// does this already get skipped above?
+	// 				throw new Error( 'TODO single return statement without arg' );
+	// 			}
 
-				// case 2 – a single top-level return with an argument
-				else {
-					throw new Error( 'TODO single return statement with arg' );
-				}
-			}
+	// 			// case 2 – a single top-level return with an argument
+	// 			else {
+	// 				throw new Error( 'TODO single return statement with arg' );
+	// 			}
+	// 		}
 
-			else {
-				// case 3 – a single conditional return with no argument
-				if ( !returnStatement.argument ) {
-					returnStatement.skip = true;
-				}
+	// 		else {
+	// 			// case 3 – a single conditional return with no argument
+	// 			if ( !returnStatement.argument ) {
+	// 				returnStatement.skip = true;
+	// 			}
 
-				// case 4 – a single conditional return with an argument
-				else {
-					throw new Error( 'TODO single return statement with arg' );
-				}
-			}
-		}
+	// 			// case 4 – a single conditional return with an argument
+	// 			else {
+	// 				throw new Error( 'TODO single return statement with arg' );
+	// 			}
+	// 		}
+	// 	}
 
-		else {
-			throw new Error( 'TODO multiple return statements' );
-		}
+	// 	else {
+	// 		throw new Error( 'TODO multiple return statements' );
+	// 	}
 
-		statements.forEach( statement => {
-			statement.minify( code );
-		});
-	}
+	// 	statements.forEach( statement => {
+	// 		statement.minify( code );
+	// 	});
+	// }
 }
