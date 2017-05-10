@@ -47,6 +47,14 @@ Scope.prototype = {
 				throw new CompileError( identifier, `${name} is already declared` );
 			}
 
+			identifier.isDuplicate = true;
+
+			if ( existingDeclaration.activated ) {
+				identifier.activate();
+			} else {
+				existingDeclaration.duplicates.push( identifier );
+			}
+
 			return;
 		}
 
@@ -55,7 +63,8 @@ Scope.prototype = {
 			name,
 			node: identifier,
 			kind,
-			instances: []
+			instances: [],
+			duplicates: []
 		};
 
 		this.declarations[ name ] = declaration;
@@ -98,13 +107,17 @@ Scope.prototype = {
 
 			if ( !declaration.activated ) {
 				declaration.activated = true;
-				const parent = declaration.node.parent;
+				// const parent = declaration.node.parent;
 
-				if ( declaration.kind === 'param' ) {
-					// TODO is there anything to do here?
-				} else if ( parent.activate ) {
-					parent.activate();
-				}
+				declaration.node.activate();
+				declaration.duplicates.forEach( dupe => {
+					dupe.activate();
+				});
+				// if ( declaration.kind === 'param' ) {
+				// 	// TODO is there anything to do here?
+				// } else if ( parent.activate ) {
+				// 	parent.activate();
+				// }
 			}
 		} else {
 			this.references[ identifier.name ] = true;

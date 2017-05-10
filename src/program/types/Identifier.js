@@ -3,10 +3,9 @@ import isReference from '../../utils/isReference.js';
 
 export default class Identifier extends Node {
 	activate () {
-		if ( !this.declaration.activate ) {
-			console.log( `${this.declaration}`)
+		if ( this.declaration && this.declaration.activate ) {
+			this.declaration.activate();
 		}
-		this.declaration.activate();
 	}
 
 	getPrecedence () {
