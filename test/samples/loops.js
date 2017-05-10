@@ -128,7 +128,6 @@ module.exports = [
 	},
 
 	{
-		// solo: true,
 		description: 'removes unnecessary curlies from for-loop body',
 		input: `
 			if (a)

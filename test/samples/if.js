@@ -563,5 +563,21 @@ module.exports = [
 			}`,
 		// TODO `function foo(){return a?b:c}`
 		output: `function foo(){if(a)return b;else return c}`
+	},
+
+	{
+		description: 'removes semi after block in consequent',
+		input: `
+			if (a)
+				for (var i = 0; i < 10; ++i) {
+					var x = 42;
+					console.log(x);
+					console.log(x);
+				}
+			else if (b)
+				b()
+			else if (c)
+				c()`,
+		output: `if(a)for(var i=0;i<10;++i){var x=42;console.log(x);console.log(x)}else b?b():c&&c()`
 	}
 ];
