@@ -137,5 +137,11 @@ module.exports = [
 			else
 				c()`,
 		output: `if(a)for(var i=0;i<10;++i)whatever&&b();else c()`
+	},
+
+	{
+		description: 'handles empty while loop body',
+		input: `while ( x() ) {}`,
+		output: `while(x()){}`
 	}
 ];

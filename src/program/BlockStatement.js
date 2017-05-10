@@ -179,7 +179,8 @@ export default class BlockStatement extends Node {
 		});
 		// }
 
-		const rewriteAsSequence = !this.parentIsFunction && ( this.joinStatements || statements.every( statement => {
+		// TODO this is confusing
+		const rewriteAsSequence = !this.parentIsFunction && statements.length > 0 && ( this.joinStatements || statements.every( statement => {
 			return statement.type === 'ExpressionStatement' ||
 			       statement.rewriteAsSequence;
 		}) );
