@@ -10,4 +10,4 @@ module.exports = [
 		input: `typeof  banana`,
 		output: `typeof banana`
 	}
-]
+];
