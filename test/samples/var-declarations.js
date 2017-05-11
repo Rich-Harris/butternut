@@ -40,5 +40,14 @@ module.exports = [
 				console.log( foo );
 			}`,
 		output: `function x(){var{foo:a}=baz;console.log(a)}`
+	},
+	{
+		description: 'variable names that clash with function names are not considered duplicates',
+		input: `
+			var x = function thing ( scope ) {
+				var thing = fn();
+				return thing;
+			};`,
+		output: `var x=function(a){var b=fn();return b}`
 	}
 ];
