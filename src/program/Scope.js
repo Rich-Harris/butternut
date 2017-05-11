@@ -46,15 +46,24 @@ Scope.prototype = {
 				throw new CompileError( identifier, `${name} is already declared` );
 			}
 
-			identifier.isDuplicate = true;
-
-			if ( existingDeclaration.activated ) {
-				identifier.activate();
-			} else {
-				existingDeclaration.duplicates.push( identifier );
+			// special case — function expression IDs that are shadowed by
+			// declarations should just be removed (TODO unless the user wishes
+			// to keep function names — https://github.com/Rich-Harris/butternut/issues/17)
+			if ( existingDeclaration.node.parent.type === 'FunctionExpression' ) {
+				existingDeclaration.node.parent.removeId = true;
 			}
 
-			return;
+			else {
+				identifier.isDuplicate = true;
+
+				if ( existingDeclaration.activated ) {
+					identifier.activate();
+				} else {
+					existingDeclaration.duplicates.push( identifier );
+				}
+
+				return;
+			}
 		}
 
 		const declaration = {
@@ -175,6 +184,9 @@ Scope.prototype = {
 			declaration.alias = this.createIdentifier( used );
 
 			declaration.instances.forEach( instance => {
+				// special case — function expression IDs may be removed outright
+				if ( instance.parent.type === 'FunctionExpression' && instance === instance.parent.id && instance.parent.removeId ) return;
+
 				const replacement = instance.parent.type === 'Property' && instance.parent.shorthand ?
 					`${instance.name}:${declaration.alias}` :
 					declaration.alias;

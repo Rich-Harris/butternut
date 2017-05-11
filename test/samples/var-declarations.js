@@ -48,6 +48,6 @@ module.exports = [
 				var thing = fn();
 				return thing;
 			};`,
-		output: `var x=function b(a){var b=fn();return b}`
+		output: `var x=function(a){var b=fn();return b}`
 	}
 ];
