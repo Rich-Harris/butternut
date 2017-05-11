@@ -54,7 +54,9 @@ describe('butternut', () => {
 		});
 	});
 
-	describe('fixtures', () => {
+	describe('fixtures', function () {
+		this.timeout( 10000 );
+
 		try {
 			fs.mkdirSync( `test/fixture/output` );
 			fs.mkdirSync( `test/fixture/output/butternut` );
