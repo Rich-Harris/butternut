@@ -21,7 +21,7 @@
     "test:min": "export TEST_MIN=true && mocha test/test.js",
     "pretest": "npm run build",
     "pretest:min": "npm run build:min",
-    "prepublish": "npm test:min && npm run build && npm run build:browser",
+    "prepublish": "npm run test:min && npm run build && npm run build:browser",
     "compare": "mkdir -p test/comparisons/uglify && mkdir -p test/comparisons/butternut && node test/compare.js",
     "precompare": "npm run build",
     "lint": "eslint src"
