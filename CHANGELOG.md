@@ -1,5 +1,11 @@
 # butternut changelog
 
+## 0.3.4
+
+* Remove ID of shadowed function expressions ([#18](https://github.com/Rich-Harris/butternut/issues/18))
+* Correctly separate SwitchCase consequent statements ([#19](https://github.com/Rich-Harris/butternut/issues/19))
+* Remove whitespace around NewExpression arguments ([#16](https://github.com/Rich-Harris/butternut/issues/16))
+
 ## 0.3.3
 
 * Remove curlies around blocks that don't need them, and vice versa ([#9](https://github.com/Rich-Harris/butternut/issues/9))

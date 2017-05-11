@@ -1,6 +1,6 @@
 {
   "name": "butternut",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Experimental ES2015-aware minifier",
   "main": "dist/butternut.cjs.js",
   "module": "dist/butternut.es.js",
@@ -21,7 +21,7 @@
     "test:min": "export TEST_MIN=true && mocha test/test.js",
     "pretest": "npm run build",
     "pretest:min": "npm run build:min",
-    "prepublish": "npm test && npm run build:browser",
+    "prepublish": "npm test:min && npm run build && npm run build:browser",
     "compare": "mkdir -p test/comparisons/uglify && mkdir -p test/comparisons/butternut && node test/compare.js",
     "precompare": "npm run build",
     "lint": "eslint src"
