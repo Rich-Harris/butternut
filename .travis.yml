@@ -5,4 +5,4 @@ env:
   global:
     - BUILD_TIMEOUT=10000
 install: npm install
-after_success: npm run codecov
+after_success: npm test
