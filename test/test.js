@@ -57,7 +57,7 @@ describe('butternut', () => {
 	describe('fixtures', () => {
 		try {
 			fs.mkdirSync( `test/fixture/output` );
-			fs.mkdirSync( `test/fixture/butternut` );
+			fs.mkdirSync( `test/fixture/output/butternut` );
 		} catch ( err ) {
 			if ( err.code !== 'EEXIST' ) throw err;
 		}
