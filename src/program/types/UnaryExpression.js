@@ -31,18 +31,19 @@ export default class UnaryExpression extends Node {
 	}
 
 	minify ( code ) {
-		const len = this.operator.length;
-		const start = this.start + ( len === 1 ? len : len + 1 );
-
 		const value = this.getValue();
 		if ( value !== UNKNOWN && value !== TRUTHY && value !== FALSY ) {
 			code.overwrite( this.start, this.end, stringify( value ) );
 		}
 
 		else {
-			if ( this.argument.start > start ) {
-				code.remove( start, this.argument.start );
-			}
+			const len = this.operator.length;
+			const start = this.start + len;
+
+			const insertWhitespace = len > 1 && this.argument.getLeftHandSide().type !== 'ParenthesizedExpression';
+			if ( insertWhitespace ) code.appendLeft( start, ' ' );
+
+			code.remove( start, this.argument.start );
 
 			super.minify( code );
 		}
