@@ -15,9 +15,18 @@ export default class ObjectExpression extends Node {
 
 				if ( p.start > c + 1 ) code.overwrite( c, p.start, i ? ',' : '{' );
 
-				if ( p.computed ) {
-					if ( p.key.start > p.start + 1 ) code.overwrite( p.start, p.key.start, '[' );
-					if ( p.value.start > p.key.end + 2 ) code.overwrite( p.key.end, p.value.start, ']:' );
+				if ( p.computed && p.method ) {
+					code.overwrite( p.start, p.key.start, '[' );
+					code.overwrite( p.key.end, p.value.start, ']' );
+				}
+
+				else if ( p.computed ) {
+					code.overwrite( p.start, p.key.start, '[' );
+					code.overwrite( p.key.end, p.value.start, ']:' );
+				}
+
+				else if ( p.method ) {
+					code.remove( p.key.end, p.value.start );
 				}
 
 				else {

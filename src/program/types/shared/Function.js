@@ -6,7 +6,7 @@ export default class Function extends Node {
 	}
 
 	minify ( code ) {
-		const hasFunctionKeyword = this.type !== 'ArrowFunctionExpression' && this.parent.type !== 'MethodDefinition' && !this.parent.shorthand;
+		const hasFunctionKeyword = this.type !== 'ArrowFunctionExpression' && this.parent.type !== 'MethodDefinition' && !this.parent.method;
 
 		let lastEnd = ( this.id && !this.removeId ) ? this.id.end : this.start + ( hasFunctionKeyword ? 8 : 0 );
 
