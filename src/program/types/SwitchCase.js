@@ -5,6 +5,8 @@ export default class SwitchCase extends Node {
 		let c;
 
 		if ( this.test ) {
+			this.test.minify( code );
+
 			if ( this.test.start > this.start + 5 ) {
 				code.remove( this.start + 5, this.test.start );
 			}
@@ -16,12 +18,20 @@ export default class SwitchCase extends Node {
 		}
 
 		this.consequent.forEach( ( statement, i ) => {
-			if ( statement.start > c + 1 ) code.overwrite( c, statement.start, i ? ';' : ':' );
+			statement.minify( code );
+
+			const separator = i ? ';' : ':'; // TODO can consequents be written as sequences?
+
+			if ( statement.start === c ) {
+				code.appendLeft( c, separator );
+			} else {
+				if ( code.original.slice( c, statement.start ) !== separator ) {
+					code.overwrite( c, statement.start, separator );
+				}
+			}
 
 			c = statement.end;
 			while ( code.original[ c - 1 ] === ';' ) c -= 1;
 		});
-
-		super.minify( code );
 	}
 }
