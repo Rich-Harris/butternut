@@ -13,17 +13,14 @@
   ],
   "scripts": {
     "build": "rollup -c",
-    "build:min": "rollup -c --environment MIN",
-    "build:browser": "rollup -c --environment UMD",
+    "build:all": "rollup -c && rollup -c --environment MIN && rollup -c --environment UMD",
     "bench": "node test/bench",
     "prebench": "npm run build",
     "test": "mocha test/test.js",
     "test:min": "export TEST_MIN=true && mocha test/test.js",
     "pretest": "npm run build",
-    "pretest:min": "npm run build:min",
-    "prepublish": "npm run test:min && npm run build && npm run build:browser",
-    "compare": "mkdir -p test/comparisons/uglify && mkdir -p test/comparisons/butternut && node test/compare.js",
-    "precompare": "npm run build",
+    "pretest:min": "npm run build:all",
+    "prepublish": "npm run test:min",
     "lint": "eslint src"
   },
   "bin": {
