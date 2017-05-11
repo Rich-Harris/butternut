@@ -18,14 +18,24 @@ module.exports = [
 	},
 
 	{
-		solo: true,
-		description: 'TK',
+		description: 'Separates statements in switch-case consequent',
 		input: `
 			function foo () {
 				switch (a) {
-					case 0: while (++i < l) { b(); } return;
+					case 0: while (b) { c(); } return;
 				}
 			};`,
-		output: `function foo(){switch(a){case 0:while(++i<l)b();return}}`
+		output: `function foo(){switch(a){case 0:while(b)c();return}}`
+	},
+
+	{
+		description: 'Separates statements in switch-case consequent with no characters originally between them',
+		input: `
+			function foo () {
+				switch (a) {
+					case 0: while (b) { c(); }return;
+				}
+			};`,
+		output: `function foo(){switch(a){case 0:while(b)c();return}}`
 	}
 ];
