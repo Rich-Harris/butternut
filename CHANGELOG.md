@@ -1,5 +1,12 @@
 # butternut changelog
 
+## 0.3.5
+
+* Remove unused class declarations ([#25](https://github.com/Rich-Harris/butternut/pull/25))
+* Remove surplus whitespace around method arguments ([#23](https://github.com/Rich-Harris/butternut/issues/23))
+* Insert space after `typeof` where necessary (#24](https://github.com/Rich-Harris/butternut/issues/24))
+* Handle anonymous function as default export ([#28](https://github.com/Rich-Harris/butternut/issues/28))
+
 ## 0.3.4
 
 * Remove ID of shadowed function expressions ([#18](https://github.com/Rich-Harris/butternut/issues/18))

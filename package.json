@@ -1,6 +1,6 @@
 {
   "name": "butternut",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Experimental ES2015-aware minifier",
   "main": "dist/butternut.cjs.js",
   "module": "dist/butternut.es.js",
