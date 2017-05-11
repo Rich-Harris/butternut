@@ -9,5 +9,11 @@ module.exports = [
 		description: 'only removes excess whitespace in typeof expression',
 		input: `typeof  banana`,
 		output: `typeof banana`
+	},
+
+	{
+		description: 'inserts whitespace after typeof with parenthesized argument',
+		input: `typeof(x)`,
+		output: `typeof x`
 	}
 ];
