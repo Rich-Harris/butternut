@@ -167,7 +167,7 @@ export default class BlockStatement extends Node {
 	}
 
 	minify ( code ) {
-		this.scope.mangle( code );
+		if ( this.scope ) this.scope.mangle( code ); // class declarations do not create their own scope
 
 		const statements = this.body.filter( statement => !statement.skip );
 
