@@ -4,6 +4,19 @@ var butternut = require( '../' );
 var handleError = require( './handleError.js' );
 var EOL = require('os').EOL;
 
+function mkdirp ( dir ) {
+	const parent = path.dirname( dir );
+	if ( dir === parent ) return;
+
+	mkdirp( parent );
+
+	try {
+		fs.mkdirSync( dir );
+	} catch ( err ) {
+		if ( err.code !== 'EEXIST' ) throw err;
+	}
+}
+
 function compile ( from, to, command ) {
 	try {
 		var stats = fs.statSync( from );
@@ -19,6 +32,8 @@ function compile ( from, to, command ) {
 
 function compileDir ( from, to, command ) {
 	if ( !command.output ) handleError({ code: 'MISSING_OUTPUT_DIR' });
+
+	mkdirp( to );
 
 	fs.readdirSync( from ).forEach( function ( file ) {
 		compile( path.resolve( from, file ), path.resolve( to, file ), command );
@@ -75,6 +90,7 @@ module.exports = function ( command ) {
 	}
 
 	if ( command.input ) {
+		if ( command.output ) mkdirp( path.dirname( command.output ) );
 		compile( command.input, command.output, command );
 	}
 
