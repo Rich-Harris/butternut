@@ -55,6 +55,13 @@ describe('butternut', () => {
 	});
 
 	describe('fixtures', () => {
+		try {
+			fs.mkdirSync( `test/fixtures/output` );
+			fs.mkdirSync( `test/fixtures/butternut` );
+		} catch ( err ) {
+			if ( err.code !== 'EEXIST' ) throw err;
+		}
+
 		fs.readdirSync('test/fixture/input').forEach(file => {
 			const solo = ( file === '_test.js' && !!fs.readFileSync(path.join('test/fixture/input', file), 'utf-8'));
 
