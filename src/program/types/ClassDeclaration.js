@@ -7,6 +7,7 @@ export default class ClassDeclaration extends Class {
 	}
 
 	initialise () {
+		this.skip = true;
 		this.id.declaration = this;
 
 		this.name = this.id.name; // TODO what is this used for?
