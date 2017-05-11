@@ -7,18 +7,19 @@ export default class FunctionDeclaration extends Function {
 	}
 
 	initialise () {
-		this.id.declaration = this;
-
 		const scope = this.findScope( false );
 		this.body.createScope( scope );
 
-		this.skip = !!scope.parent; // guilty until proven innocent
+		if ( this.id ) { // if not, it's a default export
+			this.id.declaration = this;
+			scope.addDeclaration( this.id, 'function' );
 
-		scope.addDeclaration( this.id, 'function' );
+			this.skip = !!scope.parent; // guilty until proven innocent
+		}
 	}
 
 	minify ( code ) {
-		if ( this.id.start > this.start + 9 ) {
+		if ( this.id && this.id.start > this.start + 9 ) {
 			code.overwrite( this.start + 8, this.id.start, this.generator ? '*' : ' ' );
 		}
 
