@@ -3,8 +3,8 @@ import Node from '../Node.js';
 export default class DoWhileStatement extends Node {
 	minify ( code ) {
 		// special case
-		if ( this.body.body.length === 0 ) {
-			code.overwrite( this.start + 2, this.test.start, '{}while(' );
+		if ( this.body.body.length === 0 || this.body.body[0].type === 'EmptyStatement' ) {
+			code.overwrite( this.start + 2, this.test.start, ';while(' );
 		}
 
 		else {
