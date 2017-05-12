@@ -14,7 +14,7 @@ export default class Function extends Node {
 			for ( let i = 0; i < this.params.length; i += 1 ) {
 				const param = this.params[i];
 
-				if ( param.start > lastEnd + 1 ) code.overwrite( lastEnd, param.start, i ? ',' : '(' );
+				if ( param.start > lastEnd + 1 ) code.overwrite( lastEnd, param.start, i ? ',' : ( this.generator ? '*(' : '(' ) );
 				lastEnd = param.end;
 			}
 
@@ -22,7 +22,7 @@ export default class Function extends Node {
 		}
 
 		else if ( this.body.start > lastEnd + 2 ) {
-			code.overwrite( lastEnd, this.body.start, '()' );
+			code.overwrite( lastEnd, this.body.start, this.generator ? '*()' : '()' );
 		}
 
 		super.minify( code );

@@ -18,5 +18,13 @@ module.exports = [
 		description: 'preserves parens around function expression',
 		input: `(function() {}.call());`,
 		output: `(function(){}.call())`
+	},
+	{
+		description: 'preserves * in generator functions',
+		input: `
+			foo = function * () {
+				yield 42;
+			};`,
+		output: `foo=function*(){yield 42}`
 	}
 ];
