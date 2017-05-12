@@ -170,6 +170,18 @@ module.exports = [
 	},
 
 	{
+		description: 'expression-less loop head does not bork up scopes',
+		input: `
+			(() => {
+				let foo = 0;
+				for (;;) {
+					f(foo);
+				}
+			})();`,
+		output: `!(()=>{let a=0;for(;;)f(a)})()`
+  },
+  
+  {
 		description: 'preserves semi-colon for body-less while loop at end of body',
 		input: `
 			function f() {
