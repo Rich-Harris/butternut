@@ -1,6 +1,6 @@
 # Butternut
 
-The fast, future-friendly minifier
+The fast, future-friendly minifier. [Try before you buy at butternut.now.sh](https://butternut.now.sh)
 
 *Warning: this is alpha software. Test thoroughly before using in production! Consider using the [check option](#the-check-option). Please report any bugs you find!*
 
