@@ -3,7 +3,7 @@ import { UNKNOWN } from '../../utils/sentinels.js';
 import stringify from '../../utils/stringify.js';
 
 const calculators = {
-	'**' : ( a, b ) => Math.power( a, b ),
+	'**' : ( a, b ) => Math.pow( a, b ),
 	'*'  : ( a, b ) => a * b,
 	'/'  : ( a, b ) => a / b,
 	'%'  : ( a, b ) => a % b,
