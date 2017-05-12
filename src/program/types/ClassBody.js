@@ -1,4 +1,5 @@
 import Node from '../Node.js';
+import minifyPropertyKey from './shared/minifyPropertyKey.js';
 
 export default class ClassBody extends Node {
 	minify ( code ) {
@@ -6,8 +7,10 @@ export default class ClassBody extends Node {
 
 		for ( let i = 0; i < this.body.length; i += 1 ) {
 			const method = this.body[i];
-
 			if ( method.start > c ) code.remove( c, method.start );
+
+			minifyPropertyKey( code, method, false );
+
 			c = method.end;
 		}
 

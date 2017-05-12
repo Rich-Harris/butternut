@@ -71,5 +71,16 @@ module.exports = [
 				}
 			})()`,
 		output: `!function(){}()`
+	},
+
+	{
+		description: 'minifies async method',
+		input: `
+			class Foo {
+				async   bar  () {
+
+				}
+			}`,
+		output: `class Foo{async bar(){}}`
 	}
 ];

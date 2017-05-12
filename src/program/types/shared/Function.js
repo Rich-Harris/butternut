@@ -6,29 +6,38 @@ export default class Function extends Node {
 	}
 
 	minify ( code ) {
-		const hasFunctionKeyword = this.parent.type !== 'MethodDefinition' && !this.parent.method;
-
 		let c = this.start;
-		if ( this.async ) {
-			c += 6;
-			while ( code.original[c] !== 'f' ) c += 1;
-			if ( c > this.start + 6 ) code.remove( this.start + 6, c );
+		let openParams;
+
+		if ( this.parent.type === 'MethodDefinition' || this.parent.method ) {
+			// `async` or `*` are dealt with by the parent
+			openParams = '(';
 		}
 
-		if ( hasFunctionKeyword ) {
-			c += 8; // 'function'.length
-		}
+		else {
+			openParams = this.generator ? '*(' : '(';
 
-		if ( this.id && !this.removeId ) {
-			if ( this.id.start > c + 1 ) code.remove( c + 1, this.id.start );
-			c = this.id.end;
+			if ( this.async ) {
+				c += 6;
+				while ( code.original[c] !== 'f' ) c += 1;
+				if ( c > this.start + 6 ) code.remove( this.start + 6, c );
+			}
+
+			c += 8;
+
+			if ( this.id && !this.removeId ) {
+				c += 1;
+
+				if ( this.id.start > c ) code.remove( c, this.id.start );
+				c = this.id.end;
+			}
 		}
 
 		if ( this.params.length ) {
 			for ( let i = 0; i < this.params.length; i += 1 ) {
 				const param = this.params[i];
 
-				if ( param.start > c + 1 ) code.overwrite( c, param.start, i ? ',' : ( this.generator ? '*(' : '(' ) );
+				if ( param.start > c + 1 ) code.overwrite( c, param.start, i ? ',' : openParams );
 				c = param.end;
 			}
 
@@ -36,7 +45,7 @@ export default class Function extends Node {
 		}
 
 		else if ( this.body.start > c + 2 ) {
-			code.overwrite( c, this.body.start, this.generator ? '*()' : '()' );
+			code.overwrite( c, this.body.start, `${openParams})` );
 		}
 
 		super.minify( code );
