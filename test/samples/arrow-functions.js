@@ -27,5 +27,23 @@ module.exports = [
 		description: 'removes whitespace around parens if many params',
 		input: `var x = ( a, b, c )  =>  a + b + c`,
 		output: `var x=(a,b,c)=>a+b+c`
+	},
+
+	{
+		description: 'async arrow function with no params',
+		input: `var x = async () => y`,
+		output: `var x=async()=>y`
+	},
+
+	{
+		description: 'async arrow function with one param',
+		input: `var x = async y => y + 1`,
+		output: `var x=async a=>a+1`
+	},
+
+	{
+		description: 'async arrow function with multiple params',
+		input: `var x = async ( a, b, c ) => a + b + c`,
+		output: `var x=async(a,b,c)=>a+b+c`
 	}
 ];

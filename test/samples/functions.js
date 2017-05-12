@@ -18,5 +18,29 @@ module.exports = [
 		description: 'preserves parens around function expression',
 		input: `(function() {}.call());`,
 		output: `(function(){}.call())`
+	},
+	{
+		description: 'preserves * in generator functions',
+		input: `
+			foo = function * () {
+				yield 42;
+			};`,
+		output: `foo=function*(){yield 42}`
+	},
+	{
+		description: 'preserves async keyword in function expression',
+		input: `
+			foo = async function () {
+				return await bar;
+			};`,
+		output: `foo=async function(){return await bar}`
+	},
+	{
+		description: 'preserves async keyword in function declaration',
+		input: `
+			async function foo () {
+				return await bar;
+			}`,
+		output: `async function foo(){return await bar}`
 	}
 ];

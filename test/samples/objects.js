@@ -33,5 +33,16 @@ module.exports = [
 		description: 'removes whitespace around shorthand methods',
 		input: `var obj = { foo () {} };`,
 		output: `var obj={foo(){}}`
+	},
+
+	{
+		description: 'minifies async method',
+		input: `
+			var obj = {
+				async   foo  () {
+
+				}
+			}`,
+		output: `var obj={async foo(){}}`
 	}
 ];
