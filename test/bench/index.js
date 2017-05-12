@@ -30,6 +30,7 @@ const libs = [
 	'butternut',
 	'closure',
 	'uglify',
+	'uglify-mangle-only',
 	'uglify-es'
 ];
 
@@ -48,7 +49,7 @@ function printResult (results, name, sourcemap) {
 
 	const time = prettyMs(sourcemap ? r.sourcemap : r.nosourcemap);
 	console.log(
-		`  ${indicator} ${rightPad(name, 10)}: ${leftPad(prettyBytes(r.min), 8)} / ${leftPad(prettyBytes(r.zip), 8)} in ${time}`
+		`  ${indicator} ${rightPad(name, 19)}: ${leftPad(prettyBytes(r.min), 8)} / ${leftPad(prettyBytes(r.zip), 8)} in ${time}`
 	);
 }
 

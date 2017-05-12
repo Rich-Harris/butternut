@@ -7,7 +7,7 @@ The fast, future-friendly minifier. [Try before you buy at butternut.now.sh](htt
 
 ## Why?
 
-Butternut is significantly faster than other JavaScript minifiers, and works with the latest version of JavaScript (ES2015, aka ES6, and beyond). It's typically around 4x faster than [UglifyJS](https://github.com/mishoo/UglifyJS2) and 10-15x faster than [Babili](https://github.com/babel/babili).
+Butternut is significantly faster than other JavaScript minifiers, and works with the latest version of JavaScript (ES2015, aka ES6, and beyond). It's typically around 3x faster than [UglifyJS](https://github.com/mishoo/UglifyJS2) with default minify options, and 10-15x faster than [Babili](https://github.com/babel/babili).
 
 The compression is better than Babili and [closure-compiler-js](https://github.com/google/closure-compiler-js) (in standard compilation mode — you can get better results with Closure in advanced mode, but only by writing your code in a very particular way). It's *almost* as good as Uglify in its current version.
 
