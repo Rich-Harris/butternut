@@ -26,5 +26,21 @@ module.exports = [
 				yield 42;
 			};`,
 		output: `foo=function*(){yield 42}`
+	},
+	{
+		description: 'preserves async keyword in function expression',
+		input: `
+			foo = async function () {
+				return await bar;
+			};`,
+		output: `foo=async function(){return await bar}`
+	},
+	{
+		description: 'preserves async keyword in function declaration',
+		input: `
+			async function foo () {
+				return await bar;
+			}`,
+		output: `async function foo(){return await bar}`
 	}
 ];

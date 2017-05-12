@@ -16,6 +16,7 @@ export default class ArrowFunctionExpression extends Node {
 
 	minify ( code ) {
 		let c = this.start;
+		if ( this.async ) c += 5;
 
 		if ( this.params.length === 0 ) {
 			if ( this.body.start > c + 4 ) {
@@ -24,9 +25,13 @@ export default class ArrowFunctionExpression extends Node {
 		}
 
 		else if ( this.params.length === 1 ) {
+			this.params[0].minify( code );
+
 			if ( this.params[0].type === 'Identifier' ) {
 				// remove parens
-				if ( this.params[0].start > c ) {
+				if ( this.async ) {
+					code.overwrite( c, this.params[0].start, ' ' );
+				} else {
 					code.remove( c, this.params[0].start );
 				}
 
@@ -46,6 +51,7 @@ export default class ArrowFunctionExpression extends Node {
 
 		else {
 			this.params.forEach( ( param, i ) => {
+				param.minify( code );
 				if ( param.start > c + 1 ) code.overwrite( c, param.start, i ? ',' : '(' );
 				c = param.end;
 			});
@@ -55,6 +61,6 @@ export default class ArrowFunctionExpression extends Node {
 			}
 		}
 
-		super.minify( code );
+		this.body.minify( code );
 	}
 }

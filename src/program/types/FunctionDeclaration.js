@@ -17,12 +17,4 @@ export default class FunctionDeclaration extends Function {
 			this.skip = !!scope.parent; // guilty until proven innocent
 		}
 	}
-
-	minify ( code ) {
-		if ( this.id && this.id.start > this.start + 9 ) {
-			code.overwrite( this.start + 8, this.id.start, this.generator ? '*' : ' ' );
-		}
-
-		super.minify( code );
-	}
 }
