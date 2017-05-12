@@ -41,7 +41,14 @@ describe('butternut', () => {
 					if (sample.error) {
 						assert.throws(() => {
 							butternut.squash(sample.input, sample.options);
-						}, sample.error);
+						}, err => {
+							return (
+								err.message === sample.error.message &&
+								err.pos === sample.error.pos &&
+								err.loc.line === sample.error.loc.line &&
+								err.loc.column === sample.error.loc.column
+							);
+						});
 					} else {
 						const { code, stats } = butternut.squash(
 							sample.input,
