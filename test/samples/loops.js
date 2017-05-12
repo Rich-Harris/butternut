@@ -142,7 +142,19 @@ module.exports = [
 	{
 		description: 'handles empty while loop body',
 		input: `while ( x() ) {}`,
-		output: `while(x()){}`
+		output: `while(x());`
+	},
+
+	{
+		description: 'handles empty do-while loop body',
+		input: `do {} while ( x() );`,
+		output: `do;while(x())`
+	},
+
+	{
+		description: 'handles empty for loop body',
+		input: `for ( ; ; x() ) {}`,
+		output: `for(;;x());`
 	},
 
 	{
@@ -167,5 +179,23 @@ module.exports = [
 				}
 			})();`,
 		output: `!(()=>{let a=0;for(;;)f(a)})()`
+  },
+  
+  {
+		description: 'preserves semi-colon for body-less while loop at end of body',
+		input: `
+			function f() {
+				while (g());
+			}`,
+		output: `function f(){while(g());}`
+	},
+
+	{
+		description: 'preserves semi-colon for body-less while loop at end of body',
+		input: `
+			function f() {
+				while (g()) {}
+			}`,
+		output: `function f(){while(g());}`
 	}
 ];

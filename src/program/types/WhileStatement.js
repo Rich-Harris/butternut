@@ -14,6 +14,12 @@ export default class WhileStatement extends Node {
 			code.overwrite( this.test.end, this.body.start, ')' );
 		}
 
+		// special case — empty body
+		if ( this.body.body.length === 0 || this.body.body[0].type === 'EmptyStatement' ) {
+			code.appendLeft( this.body.start, ';' );
+			code.remove( this.body.start, this.body.end );
+		}
+
 		super.minify( code );
 	}
 }

@@ -108,6 +108,7 @@ export default class IfStatement extends Node {
 
 		else { // if ( false ) {...}
 			if ( this.alternate ) {
+				this.alternate.removeCurlies = this.rewriteAlternateAsSequence;
 				this.alternate.initialise();
 			} else {
 				this.skip = true;
