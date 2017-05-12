@@ -9,16 +9,14 @@ export default class VariableDeclarator extends Node {
 	}
 
 	initialise () {
-		let kind = this.parent.kind;
-		if ( kind === 'let' && this.parent.parent.type === 'ForStatement' ) {
-			kind = 'for.let'; // special case... TODO is this necessary in butternet?
-		}
+		const kind = this.parent.kind;
+		this.scope = this.findScope( kind === 'var' );
 
 		this.skip = this.parent.skip;
 
 		extractNames( this.id ).forEach( node => {
 			node.declaration = this;
-			this.parent.scope.addDeclaration( node, kind );
+			this.scope.addDeclaration( node, kind );
 		});
 	}
 

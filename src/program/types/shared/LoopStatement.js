@@ -2,6 +2,9 @@ import Node from '../../Node.js';
 
 export default class LoopStatement extends Node {
 	findScope ( functionScope ) {
-		return functionScope || !this.createdScope ? this.parent.findScope( functionScope ) : this.body.scope;
+		if ( functionScope ) return this.parent.findScope( functionScope );
+
+		if ( !this.body.scope ) this.body.createScope( this.parent.findScope() );
+		return this.body.scope;
 	}
 }

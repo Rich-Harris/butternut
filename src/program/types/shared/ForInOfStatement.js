@@ -1,10 +1,6 @@
 import LoopStatement from './LoopStatement.js';
 
 export default class ForInOfStatement extends LoopStatement {
-	findScope ( functionScope ) {
-		return functionScope || !this.createdScope ? this.parent.findScope( functionScope ) : this.body.scope;
-	}
-
 	getRightHandSide () {
 		return this.body.getRightHandSide();
 	}
