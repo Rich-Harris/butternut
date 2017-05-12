@@ -44,6 +44,8 @@ export default class TemplateLiteral extends Node {
 			const expression = this.expressions[i];
 			const quasi = this.quasis[i];
 
+			expression.minify( code );
+
 			if ( quasi.start > c + 1 ) {
 				code.remove( c, quasi.start - 1 );
 			}
