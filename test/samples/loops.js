@@ -155,5 +155,17 @@ module.exports = [
 				console.log(x);
 			}`,
 		output: `for(let b of a)console.log(b);for(let b of a)console.log(b)`
+	},
+
+	{
+		description: 'expression-less loop head does not bork up scopes',
+		input: `
+			(() => {
+				let foo = 0;
+				for (;;) {
+					f(foo);
+				}
+			})();`,
+		output: `!(()=>{let a=0;for(;;)f(a)})()`
 	}
 ];

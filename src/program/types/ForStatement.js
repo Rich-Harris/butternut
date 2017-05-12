@@ -5,6 +5,10 @@ export default class ForStatement extends LoopStatement {
 		return this.body.getRightHandSide();
 	}
 
+	hasVariableDeclaration () {
+		return this.init && this.init.type === 'VariableDeclaration';
+	}
+
 	minify ( code, transforms ) {
 		let c = this.start + 3;
 

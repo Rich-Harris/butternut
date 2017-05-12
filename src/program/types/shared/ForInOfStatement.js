@@ -5,6 +5,10 @@ export default class ForInOfStatement extends LoopStatement {
 		return this.body.getRightHandSide();
 	}
 
+	hasVariableDeclaration () {
+		return this.left.type === 'VariableDeclaration';
+	}
+
 	minify ( code, transforms ) {
 		if ( this.left.start > this.start + 4 ) {
 			code.overwrite( this.start + 3, this.left.start, '(' );
