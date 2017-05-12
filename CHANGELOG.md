@@ -1,5 +1,14 @@
 # butternut changelog
 
+## 0.3.6
+
+* Correctly minify async and generator functions and methods ([#43](https://github.com/Rich-Harris/butternut/issues/43))
+* Only create scope for loops that declare variables in head ([#46](https://github.com/Rich-Harris/butternut/issues/46))
+* Remove curly braces around else-block in if-statement with falsy condition ([#41](https://github.com/Rich-Harris/butternut/issues/41))
+* Handle duplicate variables in sibling loops ([#33](https://github.com/Rich-Harris/butternut/issues/33))
+* Minify expressions in template literals ([#34](https://github.com/Rich-Harris/butternut/issues/34))
+* Handle loops with empty bodies ([#38](https://github.com/Rich-Harris/butternut/issues/38))
+
 ## 0.3.5
 
 * Remove unused class declarations ([#25](https://github.com/Rich-Harris/butternut/pull/25))
