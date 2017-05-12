@@ -1,12 +1,11 @@
 #!/usr/bin/env node
 'use strict';
 
+// TODO this whole thing is a bit of a horrorshow, tidy it up
+
 const glob = require('glob');
 const { Suite } = require('benchmark');
-
-const Benchmark = require('benchmark');
 const fs = require('fs');
-const path = require('path');
 const zlib = require('zlib');
 const acorn = require('acorn');
 const prettyBytes = require('pretty-bytes');
@@ -24,6 +23,7 @@ function mkdir(dir) {
 }
 
 mkdir('test/fixture/output');
+mkdir('test/bench/results');
 
 const libs = [
 	'babili',
@@ -33,12 +33,39 @@ const libs = [
 	'uglify-es'
 ];
 
+const cold = process.argv.indexOf( 'cold' ) !== -1;
+
+function printResult (results, name, sourcemap) {
+	const r = results[name];
+
+	let indicator;
+	try {
+		acorn.parse(r.min);
+		indicator = chalk.green('✓');
+	} catch (err) {
+		indicator = chalk.red('✗');
+	}
+
+	const time = prettyMs(sourcemap ? r.sourcemap : r.nosourcemap);
+	console.log(
+		`  ${indicator} ${rightPad(name, 10)}: ${leftPad(prettyBytes(r.min), 8)} / ${leftPad(prettyBytes(r.zip), 8)} in ${time}`
+	);
+}
+
+function tryRequire (file) {
+	try {
+		return require(file);
+	} catch (err) {
+		return null;
+	}
+}
+
 function test(fixture, sourcemap) {
 	const content = fs.readFileSync(`test/fixture/input/${fixture}`, 'utf8');
 	const size = prettyBytes(Buffer.byteLength(content, 'utf8'));
 
 	console.log(`${fixture} (${size}) ${sourcemap ? 'with' : 'without'} sourcemap:`);
-	const results = sourcemap ? require(`./results/${fixture}on`) : {};
+	const results = tryRequire(`./results/${fixture}on`) || {};
 
 	const suite = new Suite();
 
@@ -46,62 +73,66 @@ function test(fixture, sourcemap) {
 		const { minify } = require(`./${name}-bench.js`);
 
 		try {
-			const result = minify(content, sourcemap, true);
+			const t1 = process.hrtime();
+			const result = minify(content, sourcemap, !cold);
+			const t2 = process.hrtime(t1);
 
 			if ( ( sourcemap && !result.map ) || ( result.map && !sourcemap ) ) {
 				console.error( chalk.red( `Sourcemap should ${sourcemap ? '' : 'not '} have been created` ) );
 			}
 
+			// strip comments to avoid penalising Closure
+			const code = (result.code || '').replace( /^\/\*[\s\S]+?\*\/\n?/, '' );
+
 			if ( name !== 'butternut' ) {
 				mkdir( `test/fixture/output/${name}` );
-				fs.writeFileSync( `test/fixture/output/${name}/${fixture}`, result.code );
+				fs.writeFileSync( `test/fixture/output/${name}/${fixture}`, code );
 			}
 
-			results[name] = {
-				min: (result.code || '').length,
-				zip: zlib.gzipSync(result.code || '').byteLength
-			};
+			results[name] = results[name] || {};
+			results[name].min = code.length;
+			results[name].zip = zlib.gzipSync(code).byteLength;
+			results[name][sourcemap ? 'sourcemap' : 'nosourcemap'] = ( t2[0] * 1e3 ) + ( t2[1] / 1e6 );
 
-			suite.add(name, () => {
-				minify(content, sourcemap);
-			});
+			if (cold) {
+				printResult(results, name, sourcemap);
+
+				fs.writeFileSync(
+					`test/bench/results/${fixture}on`,
+					JSON.stringify(results, null, '  ')
+				);
+			} else {
+				suite.add(name, () => {
+					minify(content, sourcemap);
+				});
+			}
 		} catch (err) {
 			console.log(err.stack);
 			// noop
 		}
 	});
 
-	suite.on('error', ({ target: { error } }) => {
-		throw error;
-	});
+	if ( !cold ) {
+		suite.on('error', ({ target: { error } }) => {
+			throw error;
+		});
 
-	suite.on('cycle', ({ target }) => {
-		const r = results[target.name];
-		r[sourcemap ? 'sourcemap' : 'nosourcemap'] = 1e3 / target.hz;
+		suite.on('cycle', ({ target }) => {
+			const r = results[target.name];
+			r[sourcemap ? 'sourcemap' : 'nosourcemap'] = 1e3 / target.hz;
 
-		let indicator;
-		try {
-			acorn.parse(r.min);
-			indicator = chalk.green('✓');
-		} catch (err) {
-			indicator = chalk.red('✗');
-		}
+			printResult(results, target.name, sourcemap);
+		});
 
-		const time = prettyMs(1e3 / target.hz);
-		console.log(
-			`  ${indicator} ${rightPad(target.name, 10)}: ${leftPad(prettyBytes(r.min), 8)} / ${leftPad(prettyBytes(r.zip), 8)} in ${time}`
-		);
-	});
+		suite.on('complete', () => {
+			fs.writeFileSync(
+				`test/bench/results/${fixture}on`,
+				JSON.stringify(results, null, '  ')
+			);
+		});
 
-	suite.on('complete', () => {
-		mkdir('test/bench/results');
-		fs.writeFileSync(
-			`test/bench/results/${fixture}on`,
-			JSON.stringify(results, null, '  ')
-		);
-	});
-
-	suite.run();
+		suite.run();
+	}
 }
 
 glob.sync('*.js', { cwd: 'test/fixture/input' }).forEach(fixture => {
