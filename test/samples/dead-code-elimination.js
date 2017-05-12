@@ -108,7 +108,7 @@ module.exports = [
 			} else {
 				console.log( "running in production mode" );
 			}`,
-		output: `console.log "running in production mode")`
+		output: `console.log("running in production mode")`
 	}
 
 	// TODO uncalled functions, unused variables...
