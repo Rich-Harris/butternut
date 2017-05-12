@@ -98,6 +98,17 @@ module.exports = [
 			}`,
 
 		output: `function foo(){before();after()}`
+	},
+
+	{
+		description: 'removes curlies around else-block in if-statement with falsy condition',
+		input: `
+			if ( "development" === "production" ) {
+				console.log( "running in development mode" );
+			} else {
+				console.log( "running in production mode" );
+			}`,
+		output: `console.log("running in production mode")`
 	}
 
 	// TODO uncalled functions, unused variables...
