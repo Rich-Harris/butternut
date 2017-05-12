@@ -143,5 +143,17 @@ module.exports = [
 		description: 'handles empty while loop body',
 		input: `while ( x() ) {}`,
 		output: `while(x()){}`
+	},
+
+	{
+		description: 'handles duplicate let declarations in for-of loop head',
+		input: `
+			for (let x of a) {
+				console.log(x);
+			}
+			for (let x of a) {
+				console.log(x);
+			}`,
+		output: `for(let b of a)console.log(b);for(let b of a)console.log(b)`
 	}
 ];
