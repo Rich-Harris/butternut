@@ -28,6 +28,7 @@ Butternut takes a different approach. It uses Acorn to generate an AST, but inst
 The easiest way to use Butternut is to plug it into your existing build process:
 
 * [rollup-plugin-butternut](https://github.com/rollup/rollup-plugin-butternut)
+* [butternut-webpack-plugin](https://github.com/Apercu/butternut-webpack-plugin)
 
 Alternatively, you can use it directly via the CLI or the JavaScript API:
 
