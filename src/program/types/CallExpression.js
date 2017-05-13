@@ -61,8 +61,8 @@ export default class CallExpression extends Node {
 		return calleeValue.apply( contextValue, argumentValues );
 	}
 
-	initialise () {
-		super.initialise();
+	initialise ( scope ) {
+		super.initialise( scope );
 	}
 
 	minify ( code ) {

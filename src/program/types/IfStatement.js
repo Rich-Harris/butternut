@@ -48,7 +48,7 @@ export default class IfStatement extends Node {
 		return this.consequent.getRightHandSide();
 	}
 
-	initialise () {
+	initialise ( scope ) {
 		this.rewriteConsequentAsSequence = canRewriteBlockAsSequence( this.consequent.body );
 		this.rewriteAlternateAsSequence = !this.alternate ||
 			( this.alternate.type === 'ExpressionStatement' ) ||
@@ -61,9 +61,9 @@ export default class IfStatement extends Node {
 
 		if ( testValue === UNKNOWN ) {
 			// initialise everything
-			this.test.initialise();
-			this.consequent.initialise();
-			if ( this.alternate ) this.alternate.initialise();
+			this.test.initialise( scope );
+			this.consequent.initialise( scope );
+			if ( this.alternate ) this.alternate.initialise( scope );
 
 			if ( this.rewriteConsequentAsSequence || this.consequent.body.every( isVarDeclaration ) ) {
 				this.consequent.removeCurlies = true;
@@ -77,7 +77,7 @@ export default class IfStatement extends Node {
 		}
 
 		else if ( testValue ) { // if ( true ) {...}
-			this.consequent.initialise();
+			this.consequent.initialise( scope );
 
 			// hoist any var declarations in the alternate, so we can
 			// discard the whole thing
@@ -109,7 +109,7 @@ export default class IfStatement extends Node {
 		else { // if ( false ) {...}
 			if ( this.alternate ) {
 				this.alternate.removeCurlies = this.rewriteAlternateAsSequence;
-				this.alternate.initialise();
+				this.alternate.initialise( scope );
 			} else {
 				this.skip = true;
 			}

@@ -5,7 +5,11 @@ const child_process = require('child_process');
 const assert = require('assert');
 const glob = require('glob');
 
-const butternut = require(process.env.TEST_MIN ? '../dist/butternut.min.js' : '../dist/butternut.cjs.js');
+if (process.env.COVERAGE) {
+	require('reify');
+	global.DEBUG = true;
+}
+const butternut = require(process.env.COVERAGE ? '../src/index.js' : process.env.TEST_MIN ? '../dist/butternut.min.js' : '../dist/butternut.cjs.js');
 
 require('source-map-support').install();
 require('console-group').install();
@@ -29,7 +33,9 @@ function repeat(str, times) {
 	return result;
 }
 
-describe('butternut', () => {
+describe('butternut', function () {
+	this.timeout( 10000 );
+
 	fs.readdirSync('test/samples').forEach(file => {
 		const samples = require('./samples/' + file);
 
@@ -61,8 +67,7 @@ describe('butternut', () => {
 		});
 	});
 
-	describe('fixtures', function () {
-		this.timeout( 10000 );
+	describe('fixtures', () => {
 
 		try {
 			fs.mkdirSync( `test/fixture/output` );
@@ -77,18 +82,34 @@ describe('butternut', () => {
 			(solo ? it.only : it)(path.basename(file), () => {
 				const source = fs.readFileSync(path.join('test/fixture/input', file), 'utf-8');
 
+				let result;
+
 				try {
-					const { code, map } = butternut.squash(source, {
+					result = butternut.squash(source, {
 						check: true
 					});
 
-					fs.writeFileSync(`test/fixture/output/butternut/${file}`, `${code}\n//# sourceMappingURL=${map.toUrl()}`);
+					fs.writeFileSync(`test/fixture/output/butternut/${file}`, `${result.code}\n//# sourceMappingURL=${result.map.toUrl()}`);
 				} catch ( err ) {
 					if ( err.repro ) {
 						console.error( `Reproduction:\n-----------\n${err.repro.input}\n-----------\n${err.repro.output}\n-----------` );
 					}
 
 					throw err;
+				}
+
+				// try running the code
+				let canRunInNode;
+				try {
+					require(`./fixture/input/${file}`);
+					canRunInNode = true;
+				} catch (error) {
+					canRunInNode = false;
+				}
+
+				if ( canRunInNode ) {
+					process.env.NODE_ENV = 'production'; // squelch warnings (TODO this doesn't work?)
+					require(`./fixture/output/butternut/${file}`);
 				}
 			});
 		});

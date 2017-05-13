@@ -180,7 +180,7 @@ module.exports = [
 			})();`,
 		output: `!(()=>{let a=0;for(;;)f(a)})()`
   },
-  
+
   {
 		description: 'preserves semi-colon for body-less while loop at end of body',
 		input: `

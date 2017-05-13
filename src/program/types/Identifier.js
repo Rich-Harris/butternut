@@ -6,20 +6,23 @@ export default class Identifier extends Node {
 		if ( this.declaration && this.declaration.activate ) {
 			this.declaration.activate();
 		}
+
+		// TODO in what circumstances would an identifier be 'activated' if it
+		// didn't have a declaration... parameters?
 	}
 
 	getPrecedence () {
 		return 20;
 	}
 
-	initialise () {
+	initialise ( scope ) {
 		// special case
 		if ( ( this.parent.type === 'FunctionExpression' || this.parent.type === 'ClassExpression' ) && this === this.parent.id ) {
 			return;
 		}
 
 		if ( isReference( this, this.parent ) ) {
-			this.findScope( false ).addReference( this );
+			scope.addReference( this );
 		}
 	}
 

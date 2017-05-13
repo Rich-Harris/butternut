@@ -49,33 +49,23 @@ function endsWithCurlyBrace ( statement ) {
 }
 
 export default class BlockStatement extends Node {
-	createScope ( parent ) {
-		this.parentIsFunction = /Function/.test( this.parent.type );
-		this.isFunctionBlock = this.parentIsFunction || this.parent.type === 'Root';
-
-		this.scope = new Scope({
-			block: !this.isFunctionBlock,
-			parent: parent || this.parent.findScope( false ), // TODO always supply parent
-			owner: this
-		});
-
-		const params = this.parent.params || ( this.parent.type === 'CatchClause' && [ this.parent.param ] );
-
-		if ( params && params.length ) {
-			params.forEach( node => {
-				extractNames( node ).forEach( identifier => {
-					this.scope.addDeclaration( identifier, 'param' );
-				});
+	attachScope ( parent ) {
+		if ( this.synthetic ) {
+			super.attachScope( parent ); // TODO get rid of synthetic blocks?
+		} else {
+			this.scope = new Scope({
+				block: true,
+				parent
 			});
+
+			for ( let i = 0; i < this.body.length; i += 1 ) {
+				this.body[i].attachScope( this.scope );
+			}
 		}
 	}
 
-	initialise () {
-		// normally the scope gets created here, during initialisation,
-		// but in some cases (e.g. `for` statements), we need to create
-		// the scope early, as it pertains to both the init block and
-		// the body of the statement
-		if ( !this.scope ) this.createScope( this.parent.findScope( false ) );
+	initialise ( scope ) {
+		this.parentIsFunction = /Function/.test( this.parent.type );
 
 		let executionIsBroken = false;
 		let maybeReturnNode;
@@ -90,7 +80,7 @@ export default class BlockStatement extends Node {
 			if ( executionIsBroken ) {
 				if ( shouldPreserveAfterReturn[ node.type ] ) {
 					hasDeclarationsAfterBreak = true;
-					node.initialise();
+					node.initialise( this.scope || scope );
 				} else {
 					node.skip = true;
 				}
@@ -101,7 +91,7 @@ export default class BlockStatement extends Node {
 			maybeReturnNode = breaksExecution( node );
 			if ( maybeReturnNode ) executionIsBroken = true;
 
-			node.initialise();
+			node.initialise( this.scope || scope );
 
 			if ( canCollapseReturns ) {
 				if ( node.preventsCollapsedReturns( returnStatements ) ) {
@@ -122,13 +112,10 @@ export default class BlockStatement extends Node {
 				maybeReturnNode.skip = true;
 			}
 		}
-
-		this.scope.consolidate();
 	}
 
+	// TODO what is this about?
 	findVarDeclarations ( varsToHoist ) {
-		if ( !this.scope ) this.createScope( this.parent.findScope( false ) );
-
 		this.body.forEach( node => {
 			if ( node.type === 'VariableDeclaration' && node.kind === 'var' ) {
 				node.declarations.forEach( declarator => {
@@ -140,20 +127,6 @@ export default class BlockStatement extends Node {
 				node.findVarDeclarations( varsToHoist );
 			}
 		});
-
-		this.scope.consolidate();
-	}
-
-	findLexicalBoundary () {
-		if ( this.type === 'Program' ) return this;
-		if ( /^Function/.test( this.parent.type ) ) return this;
-
-		return this.parent.findLexicalBoundary();
-	}
-
-	findScope ( functionScope ) {
-		if ( functionScope && !this.isFunctionBlock ) return this.parent.findScope( functionScope );
-		return this.scope;
 	}
 
 	getLeftHandSide () {
@@ -167,9 +140,10 @@ export default class BlockStatement extends Node {
 	}
 
 	minify ( code ) {
-		if ( this.scope ) this.scope.mangle( code ); // class declarations do not create their own scope
+		if ( this.scope ) this.scope.mangle( code );
 
 		const statements = this.body.filter( statement => !statement.skip );
+
 
 		// if ( this.collapseReturnStatements ) {
 		// 	this.minifyWithCollapsedReturnStatements( code, statements );
@@ -179,7 +153,7 @@ export default class BlockStatement extends Node {
 		});
 		// }
 
-		// TODO this is confusing
+		// TODO this is confusing. Also, maybe the parent should be responsible for making this determination
 		const rewriteAsSequence = !this.parentIsFunction && statements.length > 0 && ( this.joinStatements || statements.every( statement => {
 			return statement.type === 'ExpressionStatement' ||
 			       statement.rewriteAsSequence;

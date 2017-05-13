@@ -1,21 +1,11 @@
-import Function from './shared/Function.js';
+import FunctionNode from './shared/FunctionNode.js';
 
-export default class FunctionExpression extends Function {
+export default class FunctionExpression extends FunctionNode {
 	getPrecedence () {
 		return 20;
 	}
 
 	initialise () {
-		this.body.createScope( this.parent.findScope( false ) );
-
-		if ( this.id ) {
-			this.id.declaration = this;
-
-			// function expression IDs belong to the child scope...
-			this.body.scope.addDeclaration( this.id, 'function' );
-			this.body.scope.addReference( this.id );
-		}
-
-		super.initialise();
+		super.initialise( this.scope );
 	}
 }

@@ -2,6 +2,12 @@ import Node from '../Node.js';
 import minifyPropertyKey from './shared/minifyPropertyKey.js';
 
 export default class ClassBody extends Node {
+	attachScope ( parent ) {
+		for ( let i = 0; i < this.body.length; i += 1 ) {
+			this.body[i].value.attachScope( parent );
+		}
+	}
+
 	minify ( code ) {
 		let c = this.start + 1;
 

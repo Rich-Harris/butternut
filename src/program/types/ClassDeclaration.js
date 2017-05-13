@@ -2,15 +2,40 @@ import Class from './shared/Class.js';
 
 export default class ClassDeclaration extends Class {
 	activate () {
+		if ( !this.inited ) {
+			// TODO see comments on VariableDeclarator, this is
+			// unfortunately. maybe all nodes should be skip: true
+			// by default
+			this.shouldActivate = true;
+			return;
+		}
+
+		if ( this.activated ) return;
+		this.activated = true;
+
 		this.skip = false;
-		super.initialise();
+		super.initialise( this.scope );
 	}
 
-	initialise () {
-		this.skip = true;
+	attachScope ( scope ) {
+		this.scope = scope;
+
 		this.id.declaration = this;
 
 		this.name = this.id.name; // TODO what is this used for?
-		this.findScope( true ).addDeclaration( this.id, 'class' );
+		scope.addDeclaration( this.id, 'class' );
+
+		this.body.attachScope( scope );
+	}
+
+	initialise ( scope ) {
+		this.inited = true;
+
+		// see above...
+		if ( this.shouldActivate ) {
+			this.activate();
+		} else {
+			this.skip = !!scope.parent;
+		}
 	}
 }

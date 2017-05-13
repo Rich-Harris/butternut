@@ -49,7 +49,18 @@ export default function wrap ( raw, parent ) {
 		raw.body = synthetic( raw.body );
 	}
 
-	Node( raw, parent );
+	raw.parent = parent;
+	raw.program = parent.program || parent;
+	raw.depth = parent.depth + 1;
+	raw.keys = keys[ raw.type ];
+	raw.indentation = undefined;
+
+	for ( const key of keys[ raw.type ] ) {
+		wrap( raw[ key ], raw );
+	}
+
+	raw.program.magicString.addSourcemapLocation( raw.start );
+	raw.program.magicString.addSourcemapLocation( raw.end );
 
 	const type = ( raw.type === 'BlockStatement' ? BlockStatement : types[ raw.type ] ) || Node;
 	raw.__proto__ = type.prototype;

@@ -8,8 +8,9 @@ const validChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_$';
 export default function Scope ( options ) {
 	options = options || {};
 
+	this.uid = Math.random();
+
 	this.parent = options.parent;
-	this.owner = options.owner;
 	this.isBlockScope = !!options.block;
 
 	let scope = this;
@@ -92,23 +93,6 @@ Scope.prototype = {
 	},
 
 	addReference ( identifier ) {
-		if ( this.consolidated ) {
-			this.consolidateReference( identifier );
-		} else {
-			this.identifiers.push( identifier );
-		}
-	},
-
-	consolidate () {
-		for ( let i = 0; i < this.identifiers.length; i += 1 ) { // we might push to the array during consolidation, so don't cache length
-			const identifier = this.identifiers[i];
-			this.consolidateReference( identifier );
-		}
-
-		this.consolidated = true; // TODO understand why this is necessary... seems bad
-	},
-
-	consolidateReference ( identifier ) {
 		const declaration = this.declarations[ identifier.name ];
 		if ( declaration ) {
 			declaration.instances.push( identifier );

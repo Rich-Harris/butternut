@@ -1,11 +1,45 @@
 import Node from '../../Node.js';
+import Scope from '../../Scope.js';
+import extractNames from '../../extractNames.js';
 
-export default class Function extends Node {
+export default class FunctionNode extends Node {
+	attachScope ( parent ) {
+		this.scope = new Scope({
+			block: false,
+			parent
+		});
+
+		if ( this.id ) {
+			this.id.declaration = this;
+
+			// function expression IDs belong to the child scope...
+			if ( this.type === 'FunctionExpression' ) {
+				this.scope.addDeclaration( this.id, 'function' );
+				this.scope.addReference( this.id );
+			} else {
+				parent.addDeclaration( this.id, 'function' );
+			}
+		}
+
+		this.params.forEach( param => {
+			extractNames( param ).forEach( node => {
+				node.declaration = this;
+				this.scope.addDeclaration( node, 'param' );
+			});
+		});
+
+		this.body.body.forEach( node => {
+			node.attachScope( this.scope );
+		});
+	}
+
 	findVarDeclarations () {
 		// noop
 	}
 
 	minify ( code ) {
+		this.scope.mangle( code );
+
 		let c = this.start;
 		let openParams;
 
