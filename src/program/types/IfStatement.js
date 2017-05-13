@@ -4,20 +4,24 @@ import { UNKNOWN } from '../../utils/sentinels.js';
 const invalidChars = /[a-zA-Z$_0-9/]/;
 
 function canRewriteBlockAsSequence ( body ) {
-	let i = body.length;
-	while ( i-- ) {
-		const child = body[i];
-		if ( child.type !== 'ExpressionStatement' /*&& child.type !== 'ReturnStatement'*/ ) {
-			if ( child.type !== 'IfStatement' ) return false;
-			if ( !canRewriteIfStatementAsSequence( child ) ) return false;
+	if ( body.type === 'BlockStatement' ) {
+		let i = body.body.length;
+		while ( i-- ) {
+			const child = body.body[i];
+			if ( child.type !== 'ExpressionStatement' /*&& child.type !== 'ReturnStatement'*/ ) {
+				if ( child.type !== 'IfStatement' ) return false;
+				if ( !canRewriteIfStatementAsSequence( child ) ) return false;
+			}
 		}
+
+		return true;
 	}
 
-	return true;
+	return body.type === 'ExpressionStatement';
 }
 
 function canRewriteIfStatementAsSequence ( node ) {
-	if ( !canRewriteBlockAsSequence( node.consequent.body ) ) return false;
+	if ( !canRewriteBlockAsSequence( node.consequent ) ) return false;
 
 	if ( node.alternate ) {
 		if ( node.alternate.type === 'IfStatement' ) {
@@ -25,7 +29,7 @@ function canRewriteIfStatementAsSequence ( node ) {
 		}
 
 		if ( node.alternate.type === 'BlockStatement' ) {
-			if ( !canRewriteBlockAsSequence( node.alternate.body ) ) return false;
+			if ( !canRewriteBlockAsSequence( node.alternate ) ) return false;
 			return true;
 		}
 
@@ -51,11 +55,15 @@ export default class IfStatement extends Node {
 	initialise ( scope ) {
 		this.skip = false; // TODO skip if known to be safe
 
-		this.rewriteConsequentAsSequence = canRewriteBlockAsSequence( this.consequent.body );
+		// TODO add a canSequentialise method
+		this.rewriteConsequentAsSequence = this.consequent.type === 'BlockStatement' ?
+			canRewriteBlockAsSequence( this.consequent ) :
+			this.consequent.type === 'ExpressionStatement';
+
 		this.rewriteAlternateAsSequence = !this.alternate ||
 			( this.alternate.type === 'ExpressionStatement' ) ||
 			( this.alternate.type === 'IfStatement' && canRewriteIfStatementAsSequence( this.alternate ) ) ||
-			( this.alternate.type === 'BlockStatement' ) && canRewriteBlockAsSequence( this.alternate.body );
+			( this.alternate.type === 'BlockStatement' ) && canRewriteBlockAsSequence( this.alternate );
 
 		this.rewriteAsSequence = this.rewriteConsequentAsSequence && this.rewriteAlternateAsSequence;
 
@@ -67,7 +75,7 @@ export default class IfStatement extends Node {
 			this.consequent.initialise( scope );
 			if ( this.alternate ) this.alternate.initialise( scope );
 
-			if ( this.rewriteConsequentAsSequence || this.consequent.body.every( isVarDeclaration ) ) {
+			if ( this.rewriteConsequentAsSequence || this.consequent.type === 'BlockStatement' && this.consequent.body.every( isVarDeclaration ) ) {
 				this.consequent.removeCurlies = true;
 			}
 
@@ -91,7 +99,7 @@ export default class IfStatement extends Node {
 			}
 
 			// TODO does this apply equally to else blocks?
-			if ( !this.consequent.synthetic ) {
+			if ( this.consequent.type === 'BlockStatement' ) {
 				// if there are no let/const/class/function declarations, we can
 				// remove the curlies
 				let removeCurlies = true;
@@ -153,12 +161,14 @@ export default class IfStatement extends Node {
 		const targetPrecedence = this.alternate ? 4 : inverted ? 5 : 6;
 
 		const shouldParenthesiseTest = this.test.getPrecedence() < targetPrecedence;
-		const shouldParenthesiseConsequent = this.consequent.body.length === 1 ?
-			this.consequent.body[0].getPrecedence() < targetPrecedence :
-			true;
+
+		// TODO what if nodes in the consequent are skipped...
+		const shouldParenthesiseConsequent = this.consequent.type === 'BlockStatement' ?
+			( this.consequent.body.length === 1 ? this.consequent.body[0].getPrecedence() < targetPrecedence : true ) :
+			this.consequent.getPrecedence() < targetPrecedence;
 
 		// special case – empty if block
-		if ( this.consequent.body.length === 0 ) {
+		if ( this.consequent.skip ) {
 			const canRemoveTest = this.test.type === 'Identifier' || this.test.getValue() !== UNKNOWN; // TODO can this ever happen?
 
 			if ( this.alternate ) {
@@ -282,9 +292,14 @@ export default class IfStatement extends Node {
 	}
 
 	preventsCollapsedReturns ( returnStatements ) {
-		for ( let statement of this.consequent.body ) {
-			if ( statement.skip ) continue;
-			if ( statement.preventsCollapsedReturns( returnStatements ) ) return true;
+		// TODO make this a method of nodes
+		if ( this.consequent.type === 'BlockStatement' ) {
+			for ( let statement of this.consequent.body ) {
+				if ( statement.skip ) continue;
+				if ( statement.preventsCollapsedReturns( returnStatements ) ) return true;
+			}
+		} else {
+			if ( this.consequent.preventsCollapsedReturns( returnStatements ) ) return true;
 		}
 
 		if ( this.alternate ) {
@@ -297,6 +312,10 @@ export default class IfStatement extends Node {
 					if ( statement.skip ) continue;
 					if ( statement.preventsCollapsedReturns( returnStatements ) ) return true;
 				}
+			}
+
+			else {
+				if ( this.alternate.preventsCollapsedReturns( returnStatements ) ) return true;
 			}
 		}
 	}
@@ -322,13 +341,23 @@ export default class IfStatement extends Node {
 		this.alternate.joinStatements = true;
 
 		let shouldParenthesiseAlternate = false;
-		if ( this.alternate.type === 'BlockStatement' ) {
-			if ( this.alternate.body.length > 1 ) {
-				shouldParenthesiseAlternate = true;
-			} else if ( this.alternate.body[0].type !== 'IfStatement' ) {
-				shouldParenthesiseAlternate = this.alternate.body[0].getPrecedence() < 4;
-			}
+		// TODO simplify this
+		if ( this.alternate.type === 'IfStatement' ) {
+			shouldParenthesiseAlternate = false;
+		} else if ( this.alternate.type === 'BlockStatement' ) {
+			shouldParenthesiseAlternate = this.alternate.body.length > 1 || this.alternate.body[0].getPrecedence() < 4;
+		} else {
+			shouldParenthesiseAlternate = this.alternate.getPrecedence() < 4;
 		}
+
+		// if ( this.alternate.type === 'BlockStatement' ) {
+		// 	if ( this.alternate.body.length > 1 ) {
+		// 		shouldParenthesiseAlternate = true;
+		// 	} else if ( this.alternate.body[0].type !== 'IfStatement' ) {
+		// 		shouldParenthesiseAlternate = this.alternate.body[0].getPrecedence() < 4;
+		// 	}
+		// }
+
 		// const shouldParenthesiseAlternate = this.alternate.type === 'BlockStatement' ?
 		// 	( this.alternate.body.length === 1 ? getPrecedence( this.alternate.body[0] ) < 4 : true ) :
 		// 	false; // TODO <-- is this right? Ternaries are r-to-l, so... maybe?

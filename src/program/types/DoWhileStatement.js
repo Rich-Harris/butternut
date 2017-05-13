@@ -3,20 +3,20 @@ import Node from '../Node.js';
 export default class DoWhileStatement extends Node {
 	minify ( code ) {
 		// special case
-		if ( this.body.body.length === 0 || this.body.body.every( node => node.type === 'EmptyStatement' ) ) {
+		if ( this.body.skip ) {
 			code.overwrite( this.start + 2, this.test.start, ';while(' );
 		}
 
 		else {
-			if ( this.body.synthetic ) {
-				code.overwrite( this.start + 2, this.body.body[0].start, '{' );
-
-				let c = this.body.body[ this.body.body.length - 1 ].end;
-				while ( code.original[ c - 1 ] === ';' ) c -= 1;
-				code.overwrite( c, this.test.start, '}while(' );
-			} else {
+			if ( this.body.type === 'BlockStatement' ) {
 				code.remove( this.start + 2, this.body.start );
 				code.overwrite( this.body.end, this.test.start, 'while(' );
+			} else {
+				code.overwrite( this.start + 2, this.body.start, '{' );
+
+				let c = this.body.end;
+				while ( code.original[ c - 1 ] === ';' ) c -= 1;
+				code.overwrite( c, this.test.start, '}while(' );
 			}
 		}
 

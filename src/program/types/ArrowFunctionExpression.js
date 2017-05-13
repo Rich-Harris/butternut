@@ -1,6 +1,31 @@
-import FunctionNode from './shared/FunctionNode.js';
+import Node from '../Node.js';
+import Scope from '../Scope.js';
+import extractNames from '../extractNames.js';
 
-export default class ArrowFunctionExpression extends FunctionNode {
+export default class ArrowFunctionExpression extends Node {
+	attachScope ( parent ) {
+		this.scope = new Scope({
+			block: false,
+			parent
+		});
+
+		this.params.forEach( param => {
+			extractNames( param ).forEach( node => {
+				node.declaration = this;
+				this.scope.addDeclaration( node, 'param' );
+			});
+		});
+
+		if ( this.body.type === 'BlockStatement' ) {
+			this.body.body.forEach( node => {
+				node.attachScope( this.scope );
+			});
+		} else {
+			this.body.attachScope( this.scope );
+		}
+
+	}
+
 	initialise () {
 		super.initialise( this.scope );
 	}

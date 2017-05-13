@@ -23,7 +23,7 @@ const allowsBlockLessStatement = {
 	WhileStatement: true
 };
 
-function endsWithCurlyBrace ( statement ) {
+function endsWithCurlyBrace ( statement ) { // TODO can we just use getRightHandSide?
 	if ( statement.type === 'IfStatement' ) {
 		if ( statement.rewriteAsSequence ) return false;
 
@@ -32,17 +32,17 @@ function endsWithCurlyBrace ( statement ) {
 				return endsWithCurlyBrace( statement.alternate );
 			}
 
-			if ( statement.alternate.synthetic ) return false;
+			if ( statement.alternate.type !== 'BlockStatement' ) return false;
 			if ( statement.alternate.removeCurlies ) return false;
 
 			return true;
 		}
 
-		return !statement.consequent.synthetic && !statement.consequent.removeCurlies;
+		return statement.consequent.type === 'BlockStatement' && !statement.consequent.removeCurlies;
 	}
 
 	if ( /^(?:For(?:In|Of)?|While)Statement/.test( statement.type ) ) {
-		return !statement.body.synthetic && !statement.body.removeCurlies;
+		return statement.body.type === 'BlockStatement' && !statement.body.removeCurlies;
 	}
 
 	return /(?:Class|Function)Declaration/.test( statement.type );
@@ -50,18 +50,43 @@ function endsWithCurlyBrace ( statement ) {
 
 export default class BlockStatement extends Node {
 	attachScope ( parent ) {
-		if ( this.synthetic ) {
-			super.attachScope( parent ); // TODO get rid of synthetic blocks?
-		} else {
-			this.scope = new Scope({
-				block: true,
-				parent
-			});
+		this.scope = new Scope({
+			block: true,
+			parent
+		});
 
-			for ( let i = 0; i < this.body.length; i += 1 ) {
-				this.body[i].attachScope( this.scope );
-			}
+		for ( let i = 0; i < this.body.length; i += 1 ) {
+			this.body[i].attachScope( this.scope );
 		}
+	}
+
+	// TODO what is this about?
+	findVarDeclarations ( varsToHoist ) {
+		this.body.forEach( node => {
+			if ( node.type === 'VariableDeclaration' && node.kind === 'var' ) {
+				node.declarations.forEach( declarator => {
+					extractNames( declarator.id ).forEach( identifier => {
+						varsToHoist[ identifier.name ] = true;
+					});
+				});
+			} else {
+				node.findVarDeclarations( varsToHoist );
+			}
+		});
+	}
+
+	getLeftHandSide () {
+		if ( this.removeCurlies ) {
+			return this.body[0].getLeftHandSide();
+		}
+		return this;
+	}
+
+	getRightHandSide () {
+		if ( this.removeCurlies ) {
+			return this.body[this.body.length - 1].getRightHandSide();
+		}
+		return this;
 	}
 
 	initialise ( scope ) {
@@ -81,6 +106,8 @@ export default class BlockStatement extends Node {
 				if ( shouldPreserveAfterReturn[ node.type ] ) {
 					hasDeclarationsAfterBreak = true;
 					node.initialise( this.scope || scope );
+
+					if ( !node.skip ) this.skip = false;
 				}
 
 				continue;
@@ -98,6 +125,9 @@ export default class BlockStatement extends Node {
 					// console.log( `${node.type} preventsCollapsedReturns`)
 				}
 			}
+
+			// TODO be smarter about declarations
+			if ( /Declaration/.test( node.type ) || !node.skip ) this.skip = false;
 		}
 
 		this.collapseReturnStatements = canCollapseReturns && returnStatements.length;
@@ -110,47 +140,12 @@ export default class BlockStatement extends Node {
 				maybeReturnNode.skip = true;
 			}
 		}
-
-		this.skip = false; // TODO skip if this is now (or always was) an empty block
-	}
-
-	// TODO what is this about?
-	findVarDeclarations ( varsToHoist ) {
-		this.body.forEach( node => {
-			if ( node.type === 'VariableDeclaration' && node.kind === 'var' ) {
-				node.declarations.forEach( declarator => {
-					extractNames( declarator.id ).forEach( identifier => {
-						varsToHoist[ identifier.name ] = true;
-					});
-				});
-			} else {
-				node.findVarDeclarations( varsToHoist );
-			}
-		});
-	}
-
-	getLeftHandSide () {
-		if ( this.removeCurlies || this.synthetic ) return this.body[0].getLeftHandSide();
-		return this;
-	}
-
-	getRightHandSide () {
-		if ( this.removeCurlies || this.synthetic ) return this.body[this.body.length - 1].getRightHandSide();
-		return this;
 	}
 
 	minify ( code ) {
 		if ( this.scope ) this.scope.mangle( code );
 
 		const statements = this.body.filter( statement => !statement.skip );
-
-		// if ( this.collapseReturnStatements ) {
-		// 	this.minifyWithCollapsedReturnStatements( code, statements );
-		// } else {
-		statements.forEach( statement => {
-			statement.minify( code );
-		});
-		// }
 
 		// TODO this is confusing. Also, maybe the parent should be responsible for making this determination
 		// TODO make a special case for 'use strict' — ensure it is at the start of the function block
@@ -162,7 +157,7 @@ export default class BlockStatement extends Node {
 		const separator = rewriteAsSequence ? ',' : ';';
 
 		// TODO this is confusing
-		let removeCurlies = this.parent.type === 'Root' || !this.synthetic && (
+		let removeCurlies = this.parent.type === 'Root' || (
 			this.parent.type === 'IfStatement' ?
 				this.removeCurlies :
 				( allowsBlockLessStatement[ this.parent.type ] && rewriteAsSequence )
@@ -178,6 +173,7 @@ export default class BlockStatement extends Node {
 
 			for ( let i = 0; i < statements.length; i += 1 ) {
 				const statement = statements[i];
+				statement.minify( code );
 
 				if ( nextSeparator === '' ) {
 					if ( statement.start > lastEnd ) code.remove( lastEnd, statement.start );
@@ -193,7 +189,7 @@ export default class BlockStatement extends Node {
 
 				lastEnd = statement.end;
 
-				// remove superfluous semis
+				// remove superfluous semis (TODO is this necessary?)
 				while ( code.original[ lastEnd - 1 ] === ';' ) lastEnd -= 1;
 
 				if ( statement.removed ) {

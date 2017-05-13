@@ -3,25 +3,6 @@ import BlockStatement from './BlockStatement.js';
 import Node from './Node.js';
 import keys from './keys.js';
 
-const statementsWithBlocks = {
-	ForStatement: 'body',
-	ForInStatement: 'body',
-	ForOfStatement: 'body',
-	WhileStatement: 'body',
-	DoWhileStatement: 'body',
-	ArrowFunctionExpression: 'body'
-};
-
-function synthetic ( expression ) {
-	return {
-		start: expression.start,
-		end: expression.end,
-		type: 'BlockStatement',
-		body: [ expression ],
-		synthetic: true
-	};
-}
-
 export default function wrap ( raw, parent ) {
 	if ( !raw ) return;
 
@@ -38,15 +19,6 @@ export default function wrap ( raw, parent ) {
 
 	if ( !keys[ raw.type ] ) {
 		keys[ raw.type ] = Object.keys( raw ).filter( key => typeof raw[ key ] === 'object' );
-	}
-
-	// create synthetic block statements, otherwise all hell
-	// breaks loose when it comes to block scoping
-	if ( raw.type === 'IfStatement' ) {
-		if ( raw.consequent.type !== 'BlockStatement' ) raw.consequent = synthetic( raw.consequent );
-		if ( raw.alternate && raw.alternate.type !== 'BlockStatement' ) raw.alternate = synthetic( raw.alternate );
-	} else if ( statementsWithBlocks[ raw.type ] && raw.body.type !== 'BlockStatement' ) {
-		raw.body = synthetic( raw.body );
 	}
 
 	raw.skip = true;
