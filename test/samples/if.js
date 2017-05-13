@@ -312,6 +312,7 @@ module.exports = [
 	},
 
 	{
+		skip: true,
 		description: 'if inside else',
 		input: `
 			if ( a ) {
