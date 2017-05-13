@@ -49,6 +49,8 @@ export default class IfStatement extends Node {
 	}
 
 	initialise ( scope ) {
+		this.skip = false; // TODO skip if known to be safe
+
 		this.rewriteConsequentAsSequence = canRewriteBlockAsSequence( this.consequent.body );
 		this.rewriteAlternateAsSequence = !this.alternate ||
 			( this.alternate.type === 'ExpressionStatement' ) ||

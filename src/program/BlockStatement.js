@@ -81,8 +81,6 @@ export default class BlockStatement extends Node {
 				if ( shouldPreserveAfterReturn[ node.type ] ) {
 					hasDeclarationsAfterBreak = true;
 					node.initialise( this.scope || scope );
-				} else {
-					node.skip = true;
 				}
 
 				continue;
@@ -112,6 +110,8 @@ export default class BlockStatement extends Node {
 				maybeReturnNode.skip = true;
 			}
 		}
+
+		this.skip = false; // TODO skip if this is now (or always was) an empty block
 	}
 
 	// TODO what is this about?
@@ -143,7 +143,6 @@ export default class BlockStatement extends Node {
 		if ( this.scope ) this.scope.mangle( code );
 
 		const statements = this.body.filter( statement => !statement.skip );
-
 
 		// if ( this.collapseReturnStatements ) {
 		// 	this.minifyWithCollapsedReturnStatements( code, statements );

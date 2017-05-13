@@ -9,8 +9,15 @@ export default class VariableDeclaration extends Node {
 	}
 
 	initialise ( scope ) {
-		this.skip = !!scope.parent;
-		super.initialise( scope );
+		let _scope = scope;
+		if ( this.kind === 'var' ) while ( _scope.isBlockScope ) _scope = _scope.parent;
+
+		if ( _scope.parent ) {
+			// noop — we wait for this declaration to be activated
+			// TODO what about `var a = b()` — need to init the init
+		} else {
+			super.initialise( scope );
+		}
 	}
 
 	minify ( code ) {
