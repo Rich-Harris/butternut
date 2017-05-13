@@ -1,6 +1,5 @@
 export default function stringify ( value ) {
 	if ( typeof value === 'function' ) return null;
-	if ( typeof value === 'object' ) return null;
 
 	if ( value !== value ) return 'NaN';
 	if ( value === true ) return '!0';
