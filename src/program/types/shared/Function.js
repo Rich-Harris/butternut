@@ -13,9 +13,12 @@ export default class Function extends Node {
 			this.id.declaration = this;
 
 			// function expression IDs belong to the child scope...
-			const scope = this.type === 'FunctionExpression' ? this.scope : parent;
-
-			scope.addDeclaration( this.id, 'function' );
+			if ( this.type === 'FunctionExpression' ) {
+				this.scope.addDeclaration( this.id, 'function' );
+				this.scope.addReference( this.id );
+			} else {
+				parent.addDeclaration( this.id, 'function' );
+			}
 		}
 
 		this.params.forEach( param => {
@@ -32,10 +35,6 @@ export default class Function extends Node {
 
 	findVarDeclarations () {
 		// noop
-	}
-
-	initialise () {
-		super.initialise( this.scope );
 	}
 
 	minify ( code ) {

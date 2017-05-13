@@ -14,7 +14,12 @@ export default class FunctionDeclaration extends Function {
 		this.activated = true;
 
 		this.skip = false;
-		super.initialise( this.scope );
+
+		this.id.initialise( this.scope.parent );
+		this.params.forEach( param => {
+			param.initialise( this.scope );
+		});
+		this.body.initialise( this.scope );
 	}
 
 	attachScope ( scope ) {

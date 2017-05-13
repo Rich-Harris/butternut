@@ -89,6 +89,26 @@ module.exports = [
 			}`,
 
 		output: `try{foo()}catch(a){console.error(a)}`
+	},
+
+	{
+		description: 'mangles function IDs consistently',
+		input: `
+			(function () {
+				function Foo () {}
+				function bar ( bar ) {}
+				Foo.prototype.bar = bar;
+			}());`,
+		output: `!function(){function a(){}function b(a){}a.prototype.bar=b}()`
+	},
+
+	{
+		description: 'does not mangle top-level function IDs',
+		input: `
+			function Foo () {}
+			function bar ( bar ) {}
+			Foo.prototype.bar = bar;`,
+		output: `function Foo(){}function bar(a){}Foo.prototype.bar=bar`
 	}
 	// {
 	// 	solo: true,
