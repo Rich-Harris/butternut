@@ -45,5 +45,14 @@ module.exports = [
 		description: 'async arrow function with multiple params',
 		input: `var x = async ( a, b, c ) => a + b + c`,
 		output: `var x=async(a,b,c)=>a+b+c`
+	},
+
+	{
+		description: 'inserts space before returned single-param arrow function',
+		input: `
+			function foo() {
+				return (a) => a;
+			}`,
+		output: `function foo(){return a=>a}`
 	}
 ];

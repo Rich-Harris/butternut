@@ -9,6 +9,10 @@ export default class ArrowFunctionExpression extends FunctionNode {
 		// noop
 	}
 
+	getLeftHandSide () {
+		return this.params.length === 1 ? this.params[0] : this;
+	}
+
 	minify ( code ) {
 		this.scope.mangle( code );
 
