@@ -46,7 +46,7 @@ export default class TemplateLiteral extends Node {
 			const expression = this.expressions[i];
 
 			const value = expression.getValue();
-			if ( typeof value !== 'object' ) {
+			if ( typeof value === 'object' ) { // includes both UNKNOWN and known non-primitives
 				expression.minify( code );
 
 				if ( expression.start > quasi.end + 2 ) {
