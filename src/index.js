@@ -21,7 +21,7 @@ export function squash ( source, options = {} ) {
 		throw err;
 	}
 
-	return new Program( source, ast, stats ).export( options );
+	return new Program( source, ast, options, stats ).export( options );
 }
 
 export { version as VERSION } from '../package.json';

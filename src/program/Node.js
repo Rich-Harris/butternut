@@ -1,4 +1,5 @@
 import { UNKNOWN } from '../utils/sentinels.js';
+import CompileError from '../utils/CompileError.js';
 
 export default class Node {
 	ancestor ( level ) {
@@ -35,6 +36,10 @@ export default class Node {
 		}
 
 		return false;
+	}
+
+	error ( message ) {
+		throw new CompileError( this, message );
 	}
 
 	getLeftHandSide () {
