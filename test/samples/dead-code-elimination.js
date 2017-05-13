@@ -101,6 +101,12 @@ module.exports = [
 				console.log( "running in production mode" );
 			}`,
 		output: `console.log("running in production mode")`
+	},
+
+	{
+		description: 'removes side-effect-free statement',
+		input: `"use strict"; 1; "test"; foo(); null; bar();`,
+		output: `"use strict";foo();bar()`
 	}
 
 	// TODO uncalled functions, unused variables...

@@ -153,8 +153,9 @@ export default class BlockStatement extends Node {
 		// }
 
 		// TODO this is confusing. Also, maybe the parent should be responsible for making this determination
+		// TODO make a special case for 'use strict' — ensure it is at the start of the function block
 		const rewriteAsSequence = !this.parentIsFunction && statements.length > 0 && ( this.joinStatements || statements.every( statement => {
-			return statement.type === 'ExpressionStatement' ||
+			return ( statement.type === 'ExpressionStatement' && statement.expression.value !== 'use strict' ) ||
 			       statement.rewriteAsSequence;
 		}) );
 
