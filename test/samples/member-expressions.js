@@ -1,12 +1,10 @@
 module.exports = [
 	{
 		description: 'removes whitespace in dot notation',
-
 		input: `
 			get('file.json')
 				.then( JSON.parse )
 				.then( log );`,
-
 		output: `get('file.json').then(JSON.parse).then(log)`
 	},
 

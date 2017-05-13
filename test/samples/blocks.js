@@ -1,13 +1,12 @@
 module.exports = [
 	{
 		description: 'removes whitespace between statements',
-
 		input: `
 			var a=1;
 			console.log(a);    `,
-
 		output: `var a=1;console.log(a)`
 	},
+
 	{
 		description: 'removes whitespace between statements without semis',
 		input: `a()\nb()`,
@@ -16,34 +15,32 @@ module.exports = [
 
 	{
 		description: 'removes whitespace inside a function block',
-
 		input: `
 			function foo ( a, b ) {
 				console.log(a);
 				console.log(b);
 			}`,
-
 		output: `function foo(a,b){console.log(a);console.log(b)}`
 	},
+
 	{
 		description: 'removes whitespace inside a function expression block',
-
 		input: `
 			var foo = function foo ( a, b ) {
 				console.log(a);
 				console.log(b);
 			}`,
-
 		output: `var foo=function a(b,c){console.log(b);console.log(c)}`
 	},
+
 	{
 		description: 'removes superfluous semis',
 		input: `console.log(1);;;console.log(2);`,
 		output: `console.log(1);console.log(2)`
 	},
+
 	{
 		description: 'does not insert semicolon after function declaration',
-
 		input: `
 			function foo () {
 				// code goes here
@@ -52,12 +49,11 @@ module.exports = [
 			function bar () {
 				// code goes here
 			}`,
-
 		output: `function foo(){}function bar(){}`
 	},
+
 	{
 		description: 'does not insert semicolon after class declaration',
-
 		input: `
 			class Foo {
 				// code goes here
@@ -66,7 +62,6 @@ module.exports = [
 			class Bar {
 				// code goes here
 			}`,
-
 		output: `class Foo{}class Bar{}`
 	},
 
@@ -78,14 +73,12 @@ module.exports = [
 
 	{
 		description: 'collapses truthy if statement with else',
-
 		input: `
 			if ( true ) {
 				console.log( 'a' );
 			} else {
 				console.log( 'b' );
 			}`,
-
 		output: `console.log('a')`
 	},
 
@@ -114,33 +107,28 @@ module.exports = [
 
 	{
 		description: 'minifies try-catch',
-
 		input: `
 			try {
 				foo();
 			} catch ( a ) {
 				console.error( a );
 			}`,
-
 		output: `try{foo()}catch(a){console.error(a)}`
 	},
 
 	{
 		description: 'minifies try-finally',
-
 		input: `
 			try {
 				foo();
 			} finally {
 				bar();
 			}`,
-
 		output: `try{foo()}finally{bar()}`
 	},
 
 	{
 		description: 'minifies try-catch-finally',
-
 		input: `
 			try {
 				foo();
@@ -149,7 +137,6 @@ module.exports = [
 			} finally {
 				bar();
 			}`,
-
 		output: `try{foo()}catch(a){console.error(a)}finally{bar()}`
 	},
 

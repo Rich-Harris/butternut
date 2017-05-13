@@ -1,20 +1,17 @@
 module.exports = [
 	{
 		description: 'removes statements after a return',
-
 		input: `
 			function foo () {
 				console.log( 'a' );
 				return;
 				console.log( 'b' );
 			}`,
-
 		output: `function foo(){console.log('a')}`
 	},
 
 	{
 		description: 'preserves variable declarations after a return',
-
 		input: `
 			function foo () {
 				x = 42;
@@ -23,13 +20,11 @@ module.exports = [
 				console.log( 'b' );
 				var x;
 			}`,
-
 		output: `function foo(){a=42;console.log(a);return;var a}`
 	},
 
 	{
 		description: 'preserves function declarations after a return',
-
 		input: `
 			function foo () {
 				bar();
@@ -40,7 +35,6 @@ module.exports = [
 					console.log( 'bar' );
 				}
 			}`,
-
 		output: `function foo(){a();return;function a(){console.log('bar')}}`
 	},
 
@@ -86,7 +80,6 @@ module.exports = [
 
 	{
 		description: 'unused function declaration is removed',
-
 		input: `
 			function foo () {
 				before();
@@ -96,7 +89,6 @@ module.exports = [
 				}
 				after();
 			}`,
-
 		output: `function foo(){before();after()}`
 	},
 
