@@ -27,17 +27,5 @@ module.exports = [
 		description: 'preserves whitespace around instanceof',
 		input: `var a = b instanceof c`,
 		output: `var a=b instanceof c`
-	},
-
-	{
-		description: 'rewrites && expression if value is known',
-		input: `var a = false && true`,
-		output: `var a=!1`
-	},
-
-	{
-		description: 'rewrites || expression if value is known',
-		input: `var a = false || true`,
-		output: `var a=!0`
 	}
 ];

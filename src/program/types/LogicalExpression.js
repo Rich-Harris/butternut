@@ -45,7 +45,7 @@ export default class LogicalExpression extends Node {
 				code.remove( this.start, this.right.start );
 				this.right.minify( code );
 			} else {
-				code.remove( this.left.start, this.end );
+				code.remove( this.left.end, this.end );
 				this.left.minify( code );
 			}
 		}
