@@ -6,6 +6,9 @@ export default class Identifier extends Node {
 		if ( this.declaration && this.declaration.activate ) {
 			this.declaration.activate();
 		}
+
+		// TODO in what circumstances would an identifier be 'activated' if it
+		// didn't have a declaration... parameters?
 	}
 
 	getPrecedence () {

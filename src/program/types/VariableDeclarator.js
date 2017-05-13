@@ -11,8 +11,10 @@ export default class VariableDeclarator extends Node {
 			return;
 		}
 
+		if ( this.activated ) return;
+		this.activated = true;
+
 		this.skip = this.parent.skip = false;
-		this.parent.uid = Math.random();
 		this.id.initialise( this.scope );
 		if ( this.init ) this.init.initialise( this.scope );
 	}

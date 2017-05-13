@@ -10,36 +10,24 @@ export default class FunctionDeclaration extends Function {
 			return;
 		}
 
+		if ( this.activated ) return;
+		this.activated = true;
+
 		this.skip = false;
 		super.initialise( this.scope );
 	}
 
 	attachScope ( scope ) {
+		this.skip = !!scope.parent; // always preserve top-level declarations
 		super.attachScope( scope );
-
-		if ( this.id ) { // if not, it's a default export
-			this.id.declaration = this;
-
-			// function expression IDs belong to the child scope...
-			scope.addDeclaration( this.id, 'function' );
-			scope.addReference( this.id );
-
-			this.skip = !!scope.parent; // guilty until proven innocent
-		} else {
-			// must be a default function export — only time a
-			// function declaration can be anonymous
-			this.skip = false;
-		}
 	}
 
-	initialise ( scope ) {
+	initialise () {
 		this.inited = true;
 
 		// see above...
 		if ( this.shouldActivate ) {
 			this.activate();
-		} else {
-			this.skip = !!scope.parent;
 		}
 	}
 }

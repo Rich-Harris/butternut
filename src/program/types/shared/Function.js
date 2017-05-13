@@ -9,6 +9,15 @@ export default class Function extends Node {
 			parent
 		});
 
+		if ( this.id ) {
+			this.id.declaration = this;
+
+			// function expression IDs belong to the child scope...
+			const scope = this.type === 'FunctionExpression' ? this.scope : parent;
+
+			scope.addDeclaration( this.id, 'function' );
+		}
+
 		this.params.forEach( param => {
 			extractNames( param ).forEach( node => {
 				node.declaration = this;

@@ -167,7 +167,7 @@ Scope.prototype = {
 			const declaration = this.declarations[ name ];
 			declaration.alias = this.createIdentifier( used );
 
-			declaration.instances.forEach( instance => {
+			declaration.instances.concat( declaration.node ).forEach( instance => {
 				// special case — function expression IDs may be removed outright
 				if ( instance.parent.type === 'FunctionExpression' && instance === instance.parent.id && instance.parent.removeId ) return;
 

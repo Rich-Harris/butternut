@@ -10,11 +10,16 @@ export default class ClassDeclaration extends Class {
 			return;
 		}
 
+		if ( this.activated ) return;
+		this.activated = true;
+
 		this.skip = false;
 		super.initialise( this.scope );
 	}
 
 	attachScope ( scope ) {
+		this.scope = scope;
+
 		this.id.declaration = this;
 
 		this.name = this.id.name; // TODO what is this used for?
