@@ -27,5 +27,23 @@ module.exports = [
 		description: 'minifies expressions in tagged template string elements',
 		input: 'x`${  a  +  b  }`',
 		output: 'x`${a+b}`'
+	},
+
+	{
+		description: 'folds in known values',
+		input: '`3 * 3 = ${3 * 3}, x * x = ${x * x}`',
+		output: '`3 * 3 = 9, x * x = ${x*x}`'
+	},
+
+	{
+		description: 'folds in known values at start',
+		input: '`${3 * 3} = 3 * 3, x * x = ${x * x}`',
+		output: '`9 = 3 * 3, x * x = ${x*x}`'
+	},
+
+	{
+		description: 'folds in known values at end',
+		input: '`x * x = ${x * x}, 3 * 3 = ${3 * 3}`',
+		output: '`x * x = ${x*x}, 3 * 3 = 9`'
 	}
 ];

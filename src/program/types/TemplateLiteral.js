@@ -41,20 +41,25 @@ export default class TemplateLiteral extends Node {
 		let c = this.start;
 		let i;
 		for ( i = 0; i < this.expressions.length; i += 1 ) {
-			const expression = this.expressions[i];
 			const quasi = this.quasis[i];
+			const nextQuasi = this.quasis[i+1];
+			const expression = this.expressions[i];
 
-			expression.minify( code );
+			const value = expression.getValue();
+			if ( typeof value !== 'object' ) {
+				expression.minify( code );
 
-			if ( quasi.start > c + 1 ) {
-				code.remove( c, quasi.start - 1 );
+				if ( expression.start > quasi.end + 2 ) {
+					code.remove( quasi.end + 2, expression.start );
+				}
+
+				c = ( nextQuasi ? nextQuasi.start : this.end ) - 1;
+				if ( expression.end < c ) code.remove( expression.end, c );
+			} else {
+				code.overwrite( quasi.end, expression.end, stringify( value ) );
+				c = ( nextQuasi ? nextQuasi.start : this.end - 1 );
+				if ( expression.end < c ) code.remove( expression.end, c );
 			}
-
-			if ( expression.start > quasi.end + 2 ) {
-				code.remove( quasi.end + 2, expression.start );
-			}
-
-			c = expression.end;
 		}
 
 		const lastQuasi = this.quasis[i];
