@@ -33,7 +33,9 @@ function repeat(str, times) {
 	return result;
 }
 
-describe('butternut', () => {
+describe('butternut', function () {
+	this.timeout( 10000 );
+
 	fs.readdirSync('test/samples').forEach(file => {
 		const samples = require('./samples/' + file);
 
@@ -58,8 +60,7 @@ describe('butternut', () => {
 		});
 	});
 
-	describe('fixtures', function () {
-		this.timeout( 10000 );
+	describe('fixtures', () => {
 
 		try {
 			fs.mkdirSync( `test/fixture/output` );

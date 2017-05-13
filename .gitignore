@@ -10,3 +10,4 @@ test/fixture/input/_test.js
 test/bench/results/**
 .reify-cache
 .nyc_output
+coverage.lcov
