@@ -62,11 +62,14 @@ const { code, map } = butternut.squash(source, options);
 
 The `options` argument, if supplied, is an object that can have the following properties:
 
-* `sourceMap` — set to `false` if you don't want to generate a sourcemap. Defaults to `true`
-* `file` — the destination filename, used in sourcemap generation
-* `source` — the source filename, used in sourcemap generation
-* `includeContent` — whether to include the original source in the sourcemap. Defaults to `true`
-* `check` — see [below](#the-check-option)
+| Option             | CLI equivalent  | Default value | Description                                                                                    |
+|--------------------|-----------------|---------------|------------------------------------------------------------------------------------------------|
+| check              | --check         | `false`       | Parse output. See [below](#the-check-option)                                                   |
+| allowDangerousEval | n/a             | `false`       | Whether to allow direct `eval` calls                                                           |
+| sourceMap          | -m, --sourcemap | `true`        | Whether to create a sourcemap. Set to `inline` to append to the output (not recommended)       |
+| file               | n/a (automatic) | `null`        | The output filename, used in sourcemap generation                                              |
+| source             | n/a (automatic) | `null`        | The source filename, used in sourcemap generation                                              |
+| includeContent     | n/a             | `true`        | Whether to include the source file in the `sourcesContent` property of the generated sourcemap |
 
 
 ### The `check` option

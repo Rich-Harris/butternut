@@ -1,5 +1,13 @@
 # butternut changelog
 
+## 0.4.0
+
+* Disallow direct `eval` calls by default, and deopt if explicitly allowed ([#31](https://github.com/Rich-Harris/butternut/issues/31))
+* Fold exponentiation expressions ([#50](https://github.com/Rich-Harris/butternut/pull/50))
+* Remove code correctly from LogicalExpression nodes if neft hand side is truthy ([#54](https://github.com/Rich-Harris/butternut/issues/54))
+* Handle blocks with leading empty statements ([#57](https://github.com/Rich-Harris/butternut/issues/57))
+* Insert space before returned arrow function with single parameter ([#52](https://github.com/Rich-Harris/butternut/issues/52))
+
 ## 0.3.6
 
 * Correctly minify async and generator functions and methods ([#43](https://github.com/Rich-Harris/butternut/issues/43))
