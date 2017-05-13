@@ -179,9 +179,9 @@ module.exports = [
 				}
 			})();`,
 		output: `!(()=>{let a=0;for(;;)f(a)})()`
-  },
+	},
 
-  {
+	{
 		description: 'preserves semi-colon for body-less while loop at end of body',
 		input: `
 			function f() {
@@ -197,5 +197,12 @@ module.exports = [
 				while (g()) {}
 			}`,
 		output: `function f(){while(g());}`
+	},
+
+	{
+		description: 'handles empty statement as first item in body',
+		input: `while (a) { ; b(); }`,
+		// TODO `while(a)b()`
+		output: `while(a){;b()}`
 	}
 ];
