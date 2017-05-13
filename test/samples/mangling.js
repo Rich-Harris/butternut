@@ -104,34 +104,18 @@ module.exports = [
 			function bar ( bar ) {}
 			Foo.prototype.bar = bar;`,
 		output: `function Foo(){}function bar(a){}Foo.prototype.bar=bar`
+	},
+
+	{
+		description: 'disregards unused vars for mangling',
+		input: `
+			function foo () {
+				var bar = 1;
+				var baz = 2;
+				var bop = 3;
+
+				console.log( bop );
+			}`,
+		output: `function foo(){var a=3;console.log(a)}`
 	}
-	// {
-	// 	solo: true,
-	// 	description: 'function expression IDs are mangled',
-	//
-	// 	input: `
-	// 		function foo () {
-	// 			return function baz ( i ) {
-	// 				if ( i-- ) baz( i );
-	// 			}
-	// 		}`,
-	//
-	// 	output: `function foo(){return function a(b){b--&&a(b)}}`
-	// },
-	// {
-	// 	description: 'mangled function declarations can still be called',
-	//
-	// 	input: `
-	// 		function foo () {
-	// 			function bar () {
-	// 				// code goes here
-	// 			}
-	//
-	// 			return function baz () {
-	// 				bar();
-	// 			}
-	// 		}`,
-	//
-	// 	output: `function foo(){function a(){}return function b(){a()}}`
-	// }
 ];

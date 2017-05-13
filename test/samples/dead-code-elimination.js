@@ -55,7 +55,7 @@ module.exports = [
 				var a = 1, b = 2, c = 3;
 				console.log( a, c );
 			}`,
-		output: `function foo(){var a=1,c=3;console.log(a,c)}`
+		output: `function foo(){var a=1,b=3;console.log(a,b)}`
 	},
 
 	{
@@ -65,7 +65,7 @@ module.exports = [
 				var a = 1, b = 2, c = 3;
 				console.log( b, c );
 			}`,
-		output: `function foo(){var b=2,c=3;console.log(b,c)}`
+		output: `function foo(){var a=2,b=3;console.log(a,b)}`
 	},
 
 	{
