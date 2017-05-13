@@ -1,6 +1,6 @@
-import Function from './shared/Function.js';
+import FunctionNode from './shared/FunctionNode.js';
 
-export default class ArrowFunctionExpression extends Function {
+export default class ArrowFunctionExpression extends FunctionNode {
 	initialise () {
 		super.initialise( this.scope );
 	}

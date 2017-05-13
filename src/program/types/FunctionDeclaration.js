@@ -1,6 +1,6 @@
-import Function from './shared/Function.js';
+import FunctionNode from './shared/FunctionNode.js';
 
-export default class FunctionDeclaration extends Function {
+export default class FunctionDeclaration extends FunctionNode {
 	activate () {
 		if ( !this.inited ) {
 			// TODO see comments on VariableDeclarator, this is

@@ -1,23 +1,6 @@
-import wrap from './wrap.js';
-import keys from './keys.js';
 import { UNKNOWN } from '../utils/sentinels.js';
 
 export default class Node {
-	constructor ( raw, parent ) {
-		raw.parent = parent;
-		raw.program = parent.program || parent;
-		raw.depth = parent.depth + 1;
-		raw.keys = keys[ raw.type ];
-		raw.indentation = undefined;
-
-		for ( const key of keys[ raw.type ] ) {
-			wrap( raw[ key ], raw );
-		}
-
-		raw.program.magicString.addSourcemapLocation( raw.start );
-		raw.program.magicString.addSourcemapLocation( raw.end );
-	}
-
 	ancestor ( level ) {
 		let node = this;
 		while ( level-- ) {

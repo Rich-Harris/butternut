@@ -2,7 +2,7 @@ import Node from '../../Node.js';
 import Scope from '../../Scope.js';
 import extractNames from '../../extractNames.js';
 
-export default class Function extends Node {
+export default class FunctionNode extends Node {
 	attachScope ( parent ) {
 		this.scope = new Scope({
 			block: false,
