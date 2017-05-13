@@ -36,7 +36,7 @@ module.exports = [
 	{
 		description: 'removes superfluous semis',
 		input: `console.log(1);;;console.log(2);`,
-		output: `console.log(1);console.log(2)`
+		output: `console.log(1),console.log(2)`
 	},
 
 	{
