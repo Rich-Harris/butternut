@@ -4,20 +4,36 @@ import extractNames from '../extractNames.js';
 export default class VariableDeclarator extends Node {
 	activate () {
 		this.skip = this.parent.skip = false;
-		this.id.initialise();
-		if ( this.init ) this.init.initialise();
+		this.parent.uid = Math.random();
+		this.id.initialise( this.scope );
+		if ( this.init ) this.init.initialise( this.scope );
 	}
 
-	initialise () {
+	attachScope ( scope ) {
+		this.scope = scope;
 		const kind = this.parent.kind;
-		this.scope = this.findScope( kind === 'var' );
 
-		this.skip = this.parent.skip;
+		if ( this.init ) {
+			this.init.attachScope( scope );
+		}
 
 		extractNames( this.id ).forEach( node => {
 			node.declaration = this;
-			this.scope.addDeclaration( node, kind );
+			scope.addDeclaration( node, kind );
 		});
+	}
+
+	initialise ( scope ) {
+		this.scope = scope;
+		// const kind = this.parent.kind;
+		this.skip = !!scope.parent; // TODO get rid
+
+		// this.scope = scope;
+
+		// extractNames( this.id ).forEach( node => {
+		// 	node.declaration = this;
+		// 	scope.addDeclaration( node, kind );
+		// });
 	}
 
 	minify ( code ) {

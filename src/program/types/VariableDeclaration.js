@@ -2,11 +2,16 @@ import Node from '../Node.js';
 import extractNames from '../extractNames.js';
 
 export default class VariableDeclaration extends Node {
-	initialise () {
-		this.scope = this.findScope( this.kind === 'var' );
-		this.skip = !!this.scope.parent; // TODO get rid of this
+	attachScope ( scope ) {
+		this.declarations.forEach( declarator => {
+			declarator.attachScope( scope );
+		});
+	}
 
-		this.declarations.forEach( declarator => declarator.initialise() );
+	initialise ( scope ) {
+		this.skip = !!scope.parent; // TODO get rid of this
+
+		this.declarations.forEach( declarator => declarator.initialise( scope ) );
 	}
 
 	minify ( code ) {

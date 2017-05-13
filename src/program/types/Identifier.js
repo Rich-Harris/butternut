@@ -12,14 +12,14 @@ export default class Identifier extends Node {
 		return 20;
 	}
 
-	initialise () {
+	initialise ( scope ) {
 		// special case
 		if ( ( this.parent.type === 'FunctionExpression' || this.parent.type === 'ClassExpression' ) && this === this.parent.id ) {
 			return;
 		}
 
 		if ( isReference( this, this.parent ) ) {
-			this.findScope( false ).addReference( this );
+			scope.addReference( this );
 		}
 	}
 

@@ -28,6 +28,23 @@ export default class Node {
 		return node;
 	}
 
+	attachScope ( scope ) {
+		for ( var key of this.keys ) {
+			const value = this[ key ];
+
+			if ( value ) {
+				if ( 'length' in value ) {
+					let i = value.length;
+					while ( i-- ) {
+						if ( value[i] ) value[i].attachScope( scope );
+					}
+				} else {
+					value.attachScope( scope );
+				}
+			}
+		}
+	}
+
 	contains ( node ) {
 		while ( node ) {
 			if ( node === this ) return true;
@@ -35,25 +52,6 @@ export default class Node {
 		}
 
 		return false;
-	}
-
-	findLexicalBoundary () {
-		return this.parent.findLexicalBoundary();
-	}
-
-	findNearest ( type ) {
-		if ( typeof type === 'string' ) type = new RegExp( `^${type}$` );
-		if ( type.test( this.type ) ) return this;
-		return this.parent.findNearest( type );
-	}
-
-	findScope ( functionScope ) {
-		return this.parent.findScope( functionScope );
-	}
-
-	getIndentation () {
-		const lastLine = /\n(.+)$/.exec( this.program.magicString.original.slice( 0, this.start ) );
-		return lastLine ? /^[ \t]*/.exec( lastLine[1] )[0] : '';
 	}
 
 	getLeftHandSide () {
@@ -72,7 +70,7 @@ export default class Node {
 		return UNKNOWN;
 	}
 
-	initialise () {
+	initialise ( scope ) {
 		for ( var key of this.keys ) {
 			const value = this[ key ];
 
@@ -80,10 +78,10 @@ export default class Node {
 				if ( 'length' in value ) {
 					let i = value.length;
 					while ( i-- ) {
-						if ( value[i] ) value[i].initialise();
+						if ( value[i] ) value[i].initialise( scope );
 					}
 				} else {
-					value.initialise();
+					value.initialise( scope );
 				}
 			}
 		}

@@ -3,14 +3,20 @@ import Class from './shared/Class.js';
 export default class ClassDeclaration extends Class {
 	activate () {
 		this.skip = false;
-		super.initialise();
+		super.initialise( this.scope );
 	}
 
-	initialise () {
+	attachScope ( parent ) {
+		this.body.attachScope( parent );
+	}
+
+	initialise ( scope ) {
+		this.scope = scope;
+
 		this.skip = true;
 		this.id.declaration = this;
 
 		this.name = this.id.name; // TODO what is this used for?
-		this.findScope( true ).addDeclaration( this.id, 'class' );
+		scope.addDeclaration( this.id, 'class' );
 	}
 }

@@ -2,17 +2,16 @@ import Class from './shared/Class.js';
 import Scope from '../Scope.js';
 
 export default class ClassExpression extends Class {
-	findScope () {
-		return this.scope;
-	}
-
-	initialise () {
+	attachScope ( parent ) {
 		this.scope = new Scope({
 			block: true,
-			parent: this.parent.findScope( false ),
-			owner: this
+			parent
 		});
 
+		this.body.attachScope( this.scope );
+	}
+
+	initialise ( scope ) {
 		if ( this.id ) {
 			this.id.declaration = this;
 
@@ -21,9 +20,7 @@ export default class ClassExpression extends Class {
 			this.scope.addReference( this.id );
 		}
 
-		super.initialise();
-
-		this.scope.consolidate();
+		super.initialise( scope );
 	}
 
 	minify ( code ) {

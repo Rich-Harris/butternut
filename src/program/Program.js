@@ -1,6 +1,7 @@
 import MagicString from 'magic-string';
 import wrap from './wrap.js';
 import BlockStatement from './BlockStatement.js';
+import Scope from './Scope.js';
 import check from './check.js';
 
 export default function Program ( source, ast, stats ) {
@@ -22,7 +23,16 @@ export default function Program ( source, ast, stats ) {
 
 	this.templateElements = [];
 	if ( DEBUG ) stats.time( 'init body' );
-	this.body.initialise();
+	const scope = new Scope({
+		block: false,
+		parent: null
+	});
+
+	this.body.body.forEach( node => {
+		node.attachScope( scope );
+	});
+
+	this.body.initialise( scope );
 	if ( DEBUG ) stats.timeEnd( 'init body' );
 
 	if ( DEBUG ) stats.time( 'minify' );
@@ -57,13 +67,5 @@ Program.prototype = {
 		}
 
 		return { code, map, stats };
-	},
-
-	findNearest () {
-		return null;
-	},
-
-	findScope () {
-		return this.body.scope;
 	}
 };

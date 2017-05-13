@@ -1,13 +1,8 @@
-import Node from '../Node.js';
+import Function from './shared/Function.js';
 
-export default class ArrowFunctionExpression extends Node {
-	findScope () {
-		return this.body.scope;
-	}
-
+export default class ArrowFunctionExpression extends Function {
 	initialise () {
-		this.body.createScope( this.parent.findScope( false ) );
-		super.initialise();
+		super.initialise( this.scope );
 	}
 
 	findVarDeclarations () {
@@ -15,6 +10,8 @@ export default class ArrowFunctionExpression extends Node {
 	}
 
 	minify ( code ) {
+		this.scope.mangle( code );
+
 		let c = this.start;
 		if ( this.async ) c += 5;
 

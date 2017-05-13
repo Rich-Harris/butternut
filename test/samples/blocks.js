@@ -13,6 +13,7 @@ module.exports = [
 		input: `a()\nb()`,
 		output: `a(),b()`
 	},
+
 	{
 		description: 'removes whitespace inside a function block',
 
