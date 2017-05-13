@@ -14,6 +14,7 @@ export default class CompileError extends Error {
 		this.stack = new Error().stack.replace( new RegExp( `.+new ${this.name}.+\\n`, 'm' ), '' );
 
 		this.loc = loc;
+		this.pos = loc.char;
 		this.snippet = getSnippet( source, loc, node.end - node.start );
 	}
 }

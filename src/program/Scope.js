@@ -11,6 +11,7 @@ export default function Scope ( options ) {
 	this.uid = Math.random();
 
 	this.parent = options.parent;
+	this.canMangle = !!this.parent;
 	this.isBlockScope = !!options.block;
 
 	let scope = this;
@@ -148,13 +149,26 @@ Scope.prototype = {
 		return alias;
 	},
 
+	deopt () {
+		if ( !this.deopted ) {
+			this.deopted = true;
+			this.canMangle = false;
+
+			if ( this.parent ) this.parent.deopt();
+
+			Object.keys( this.declarations ).forEach( name => {
+				this.declarations[name].node.activate();
+			});
+		}
+	},
+
 	findDeclaration ( name ) {
 		return this.declarations[ name ] ||
 		       ( this.parent && this.parent.findDeclaration( name ) );
 	},
 
 	mangle ( code ) {
-		if ( !this.parent ) return;
+		if ( !this.canMangle ) return;
 
 		let used = Object.create( null );
 

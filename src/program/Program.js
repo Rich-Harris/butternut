@@ -4,7 +4,8 @@ import BlockStatement from './BlockStatement.js';
 import Scope from './Scope.js';
 import check from './check.js';
 
-export default function Program ( source, ast, stats ) {
+export default function Program ( source, ast, options, stats ) {
+	this.options = options;
 	this.stats = stats;
 	this.type = 'Root';
 

@@ -62,6 +62,13 @@ export default class CallExpression extends Node {
 	}
 
 	initialise ( scope ) {
+		if ( this.callee.type === 'Identifier' && this.callee.name === 'eval' && !scope.contains( 'eval' ) ) {
+			if ( this.program.options.allowDangerousEval ) {
+				scope.deopt();
+			} else {
+				this.error( 'Use of direct eval prevents effective minification and can introduce security vulnerabilities. Use `allowDangerousEval: true` if you know what you\'re doing' );
+			}
+		}
 		super.initialise( scope );
 	}
 
