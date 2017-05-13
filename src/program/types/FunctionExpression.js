@@ -1,6 +1,6 @@
-import Function from './shared/Function.js';
+import FunctionNode from './shared/FunctionNode.js';
 
-export default class FunctionExpression extends Function {
+export default class FunctionExpression extends FunctionNode {
 	getPrecedence () {
 		return 20;
 	}

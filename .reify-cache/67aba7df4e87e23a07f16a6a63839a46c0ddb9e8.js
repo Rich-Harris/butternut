@@ -1,6 +1,6 @@
-import FunctionNode from './shared/FunctionNode.js';
+"use strict";module.export({default:()=>ArrowFunctionExpression});var FunctionNode;module.watch(require('./shared/FunctionNode.js'),{default:function(v){FunctionNode=v}},0);
 
-export default class ArrowFunctionExpression extends FunctionNode {
+class ArrowFunctionExpression extends FunctionNode {
 	initialise () {
 		super.initialise( this.scope );
 	}

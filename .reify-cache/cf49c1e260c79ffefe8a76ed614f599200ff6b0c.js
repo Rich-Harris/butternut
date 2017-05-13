@@ -1,6 +1,6 @@
-import { UNKNOWN } from '../utils/sentinels.js';
+"use strict";module.export({default:()=>Node});var UNKNOWN;module.watch(require('../utils/sentinels.js'),{UNKNOWN:function(v){UNKNOWN=v}},0);
 
-export default class Node {
+class Node {
 	ancestor ( level ) {
 		let node = this;
 		while ( level-- ) {

@@ -1,8 +1,8 @@
-import Node from '../../Node.js';
-import Scope from '../../Scope.js';
-import extractNames from '../../extractNames.js';
+"use strict";module.export({default:()=>FunctionNode});var Node;module.watch(require('../../Node.js'),{default:function(v){Node=v}},0);var Scope;module.watch(require('../../Scope.js'),{default:function(v){Scope=v}},1);var extractNames;module.watch(require('../../extractNames.js'),{default:function(v){extractNames=v}},2);
 
-export default class Function extends Node {
+
+
+class FunctionNode extends Node {
 	attachScope ( parent ) {
 		this.scope = new Scope({
 			block: false,

@@ -1,7 +1,7 @@
-import types from './types/index.js';
-import BlockStatement from './BlockStatement.js';
-import Node from './Node.js';
-import keys from './keys.js';
+"use strict";module.export({default:()=>wrap});var types;module.watch(require('./types/index.js'),{default:function(v){types=v}},0);var BlockStatement;module.watch(require('./BlockStatement.js'),{default:function(v){BlockStatement=v}},1);var Node;module.watch(require('./Node.js'),{default:function(v){Node=v}},2);var keys;module.watch(require('./keys.js'),{default:function(v){keys=v}},3);
+
+
+
 
 const statementsWithBlocks = {
 	ForStatement: 'body',
@@ -22,7 +22,7 @@ function synthetic ( expression ) {
 	};
 }
 
-export default function wrap ( raw, parent ) {
+function wrap ( raw, parent ) {
 	if ( !raw ) return;
 
 	if ( 'length' in raw ) {
@@ -49,18 +49,7 @@ export default function wrap ( raw, parent ) {
 		raw.body = synthetic( raw.body );
 	}
 
-	raw.parent = parent;
-	raw.program = parent.program || parent;
-	raw.depth = parent.depth + 1;
-	raw.keys = keys[ raw.type ];
-	raw.indentation = undefined;
-
-	for ( const key of keys[ raw.type ] ) {
-		wrap( raw[ key ], raw );
-	}
-
-	raw.program.magicString.addSourcemapLocation( raw.start );
-	raw.program.magicString.addSourcemapLocation( raw.end );
+	Node( raw, parent );
 
 	const type = ( raw.type === 'BlockStatement' ? BlockStatement : types[ raw.type ] ) || Node;
 	raw.__proto__ = type.prototype;

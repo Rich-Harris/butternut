@@ -5,7 +5,11 @@ const child_process = require('child_process');
 const assert = require('assert');
 const glob = require('glob');
 
-const butternut = require(process.env.TEST_MIN ? '../dist/butternut.min.js' : '../dist/butternut.cjs.js');
+if (process.env.COVERAGE) {
+	require('reify');
+	global.DEBUG = true;
+}
+const butternut = require(process.env.COVERAGE ? '../src/index.js' : process.env.TEST_MIN ? '../dist/butternut.min.js' : '../dist/butternut.cjs.js');
 
 require('source-map-support').install();
 require('console-group').install();

@@ -1,6 +1,6 @@
-import FunctionNode from './shared/FunctionNode.js';
+"use strict";module.export({default:()=>FunctionDeclaration});var FunctionNode;module.watch(require('./shared/FunctionNode.js'),{default:function(v){FunctionNode=v}},0);
 
-export default class FunctionDeclaration extends FunctionNode {
+class FunctionDeclaration extends FunctionNode {
 	activate () {
 		if ( !this.inited ) {
 			// TODO see comments on VariableDeclarator, this is

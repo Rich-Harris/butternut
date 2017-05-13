@@ -1,7 +1,7 @@
-import types from './types/index.js';
-import BlockStatement from './BlockStatement.js';
-import Node from './Node.js';
-import keys from './keys.js';
+"use strict";module.export({default:()=>wrap});var types;module.watch(require('./types/index.js'),{default:function(v){types=v}},0);var BlockStatement;module.watch(require('./BlockStatement.js'),{default:function(v){BlockStatement=v}},1);var Node;module.watch(require('./Node.js'),{default:function(v){Node=v}},2);var keys;module.watch(require('./keys.js'),{default:function(v){keys=v}},3);
+
+
+
 
 const statementsWithBlocks = {
 	ForStatement: 'body',
@@ -22,7 +22,7 @@ function synthetic ( expression ) {
 	};
 }
 
-export default function wrap ( raw, parent ) {
+function wrap ( raw, parent ) {
 	if ( !raw ) return;
 
 	if ( 'length' in raw ) {
