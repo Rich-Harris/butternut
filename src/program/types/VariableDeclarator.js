@@ -3,6 +3,14 @@ import extractNames from '../extractNames.js';
 
 export default class VariableDeclarator extends Node {
 	activate () {
+		if ( !this.inited ) {
+			// TODO this is gross... a declaration can activate before it's
+			// initialised if it comes after a reference. but would be nice
+			// to have a neater solution than this
+			this.shouldActivate = true;
+			return;
+		}
+
 		this.skip = this.parent.skip = false;
 		this.parent.uid = Math.random();
 		this.id.initialise( this.scope );
@@ -24,16 +32,15 @@ export default class VariableDeclarator extends Node {
 	}
 
 	initialise ( scope ) {
+		this.inited = true; // TODO this is messy, see above
+
 		this.scope = scope;
-		// const kind = this.parent.kind;
-		this.skip = !!scope.parent; // TODO get rid
 
-		// this.scope = scope;
-
-		// extractNames( this.id ).forEach( node => {
-		// 	node.declaration = this;
-		// 	scope.addDeclaration( node, kind );
-		// });
+		if ( this.shouldActivate ) {
+			this.activate();
+		} else {
+			this.skip = !!scope.parent;
+		}
 	}
 
 	minify ( code ) {

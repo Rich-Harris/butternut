@@ -25,6 +25,10 @@ export default class Function extends Node {
 		// noop
 	}
 
+	initialise () {
+		super.initialise( this.scope );
+	}
+
 	minify ( code ) {
 		this.scope.mangle( code );
 

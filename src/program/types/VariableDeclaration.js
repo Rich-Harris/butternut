@@ -8,12 +8,6 @@ export default class VariableDeclaration extends Node {
 		});
 	}
 
-	initialise ( scope ) {
-		this.skip = !!scope.parent; // TODO get rid of this
-
-		this.declarations.forEach( declarator => declarator.initialise( scope ) );
-	}
-
 	minify ( code ) {
 		const declarations = this.declarations.filter( d => !d.skip );
 
