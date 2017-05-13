@@ -175,6 +175,8 @@ Scope.prototype = {
 
 		Object.keys( this.declarations ).forEach( name => {
 			const declaration = this.declarations[ name ];
+			if ( declaration.instances.length === 0 ) return;
+
 			declaration.alias = this.createIdentifier( used );
 
 			declaration.instances.forEach( instance => {
