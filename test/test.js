@@ -70,18 +70,34 @@ describe('butternut', () => {
 			(solo ? it.only : it)(path.basename(file), () => {
 				const source = fs.readFileSync(path.join('test/fixture/input', file), 'utf-8');
 
+				let result;
+
 				try {
-					const { code, map } = butternut.squash(source, {
+					result = butternut.squash(source, {
 						check: true
 					});
 
-					fs.writeFileSync(`test/fixture/output/butternut/${file}`, `${code}\n//# sourceMappingURL=${map.toUrl()}`);
+					fs.writeFileSync(`test/fixture/output/butternut/${file}`, `${result.code}\n//# sourceMappingURL=${result.map.toUrl()}`);
 				} catch ( err ) {
 					if ( err.repro ) {
 						console.error( `Reproduction:\n-----------\n${err.repro.input}\n-----------\n${err.repro.output}\n-----------` );
 					}
 
 					throw err;
+				}
+
+				// try running the code
+				let canRunInNode;
+				try {
+					require(`./fixture/input/${file}`);
+					canRunInNode = true;
+				} catch (error) {
+					canRunInNode = false;
+				}
+
+				if ( canRunInNode ) {
+					process.env.NODE_ENV = 'production'; // squelch warnings (TODO this doesn't work?)
+					require(`./fixture/output/butternut/${file}`);
 				}
 			});
 		});

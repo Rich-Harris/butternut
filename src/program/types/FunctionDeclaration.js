@@ -2,19 +2,37 @@ import Function from './shared/Function.js';
 
 export default class FunctionDeclaration extends Function {
 	activate () {
+		if ( !this.inited ) {
+			// TODO see comments on VariableDeclarator, this is
+			// unfortunately. maybe all nodes should be skip: true
+			// by default
+			this.shouldActivate = true;
+			return;
+		}
+
+		if ( this.activated ) return;
+		this.activated = true;
+
 		this.skip = false;
-		super.initialise();
+
+		this.id.initialise( this.scope.parent );
+		this.params.forEach( param => {
+			param.initialise( this.scope );
+		});
+		this.body.initialise( this.scope );
+	}
+
+	attachScope ( scope ) {
+		this.skip = !!scope.parent; // always preserve top-level declarations
+		super.attachScope( scope );
 	}
 
 	initialise () {
-		const scope = this.findScope( false );
-		this.body.createScope( scope );
+		this.inited = true;
 
-		if ( this.id ) { // if not, it's a default export
-			this.id.declaration = this;
-			scope.addDeclaration( this.id, 'function' );
-
-			this.skip = !!scope.parent; // guilty until proven innocent
+		// see above...
+		if ( this.shouldActivate ) {
+			this.activate();
 		}
 	}
 }

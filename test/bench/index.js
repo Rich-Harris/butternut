@@ -25,7 +25,7 @@ function mkdir(dir) {
 mkdir('test/fixture/output');
 mkdir('test/bench/results');
 
-const libs = [
+let libs = [
 	'babili',
 	'butternut',
 	'closure',
@@ -34,7 +34,16 @@ const libs = [
 	'uglify-es'
 ];
 
-const cold = process.argv.indexOf( 'cold' ) !== -1;
+let fixtures = glob.sync('*.js', { cwd: 'test/fixture/input' });
+
+let cold = false;
+
+for ( let i = 2; i < process.argv.length; i += 1 ) {
+	const arg = process.argv[i];
+	if ( arg === 'cold' ) cold = true;
+	if ( arg.startsWith( 'libs=' ) ) libs = arg.slice( 5 ).split( ',' );
+	if ( arg.startsWith( 'fixtures=' ) ) fixtures = arg.slice( 9 ).split( ',' ).map( x => x + '.js' );
+}
 
 function printResult (results, name, sourcemap) {
 	const r = results[name];
@@ -136,7 +145,7 @@ function test(fixture, sourcemap) {
 	}
 }
 
-glob.sync('*.js', { cwd: 'test/fixture/input' }).forEach(fixture => {
+fixtures.forEach(fixture => {
 	if ( fixture === '_test.js' ) return;
 
 	test(fixture, false);

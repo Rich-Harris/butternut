@@ -1,10 +1,10 @@
 import Node from '../Node.js';
 
 export default class ImportSpecifier extends Node {
-	initialise () {
+	initialise ( scope ) {
 		this.local.declaration = this;
 
-		this.findScope( true ).addDeclaration( this.local, 'import' );
-		super.initialise();
+		scope.addDeclaration( this.local, 'import' );
+		super.initialise( scope );
 	}
 }

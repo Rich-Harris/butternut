@@ -15,15 +15,15 @@ export default class AssignmentExpression extends Node {
 		return 3;
 	}
 
-	initialise () {
+	initialise ( scope ) {
 		if ( this.left.type === 'Identifier' ) {
-			const declaration = this.findScope( false ).findDeclaration( this.left.name );
+			const declaration = scope.findDeclaration( this.left.name );
 			if ( declaration && declaration.kind === 'const' ) {
 				throw new CompileError( this.left, `${this.left.name} is read-only` );
 			}
 		}
 
-		super.initialise();
+		super.initialise( scope );
 	}
 
 	minify ( code ) {

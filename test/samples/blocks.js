@@ -13,6 +13,7 @@ module.exports = [
 		input: `a()\nb()`,
 		output: `a(),b()`
 	},
+
 	{
 		description: 'removes whitespace inside a function block',
 
@@ -33,7 +34,7 @@ module.exports = [
 				console.log(b);
 			}`,
 
-		output: `var foo=function c(a,b){console.log(a);console.log(b)}`
+		output: `var foo=function a(b,c){console.log(b);console.log(c)}`
 	},
 	{
 		description: 'removes superfluous semis',
