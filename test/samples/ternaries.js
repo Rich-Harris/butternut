@@ -1,12 +1,10 @@
 module.exports = [
 	{
 		description: 'removes whitespace from ternary expression',
-
 		input: `
 			var a = x ?
 				y :
 				z;`,
-
 		output: `var a=x?y:z`
 	},
 

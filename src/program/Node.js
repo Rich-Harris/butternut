@@ -59,6 +59,8 @@ export default class Node {
 	}
 
 	initialise ( scope ) {
+		this.skip = false;
+
 		for ( var key of this.keys ) {
 			const value = this[ key ];
 

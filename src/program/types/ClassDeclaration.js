@@ -2,14 +2,6 @@ import Class from './shared/Class.js';
 
 export default class ClassDeclaration extends Class {
 	activate () {
-		if ( !this.inited ) {
-			// TODO see comments on VariableDeclarator, this is
-			// unfortunately. maybe all nodes should be skip: true
-			// by default
-			this.shouldActivate = true;
-			return;
-		}
-
 		if ( this.activated ) return;
 		this.activated = true;
 
@@ -29,13 +21,10 @@ export default class ClassDeclaration extends Class {
 	}
 
 	initialise ( scope ) {
-		this.inited = true;
-
-		// see above...
-		if ( this.shouldActivate ) {
-			this.activate();
+		if ( scope.parent ) {
+			// noop — we wait for this declaration to be activated
 		} else {
-			this.skip = !!scope.parent;
+			super.initialise( scope );
 		}
 	}
 }

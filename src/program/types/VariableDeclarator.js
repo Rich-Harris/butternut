@@ -3,14 +3,6 @@ import extractNames from '../extractNames.js';
 
 export default class VariableDeclarator extends Node {
 	activate () {
-		if ( !this.inited ) {
-			// TODO this is gross... a declaration can activate before it's
-			// initialised if it comes after a reference. but would be nice
-			// to have a neater solution than this
-			this.shouldActivate = true;
-			return;
-		}
-
 		if ( this.activated ) return;
 		this.activated = true;
 
@@ -31,18 +23,6 @@ export default class VariableDeclarator extends Node {
 			node.declaration = this;
 			scope.addDeclaration( node, kind );
 		});
-	}
-
-	initialise ( scope ) {
-		this.inited = true; // TODO this is messy, see above
-
-		this.scope = scope;
-
-		if ( this.shouldActivate ) {
-			this.activate();
-		} else {
-			this.skip = !!scope.parent;
-		}
 	}
 
 	minify ( code ) {

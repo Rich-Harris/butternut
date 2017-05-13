@@ -202,7 +202,6 @@ module.exports = [
 	{
 		description: 'handles empty statement as first item in body',
 		input: `while (a) { ; b(); }`,
-		// TODO `while(a)b()`
-		output: `while(a){;b()}`
+		output: `while(a)b()`
 	}
 ];

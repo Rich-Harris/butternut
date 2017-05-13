@@ -87,10 +87,6 @@ Scope.prototype = {
 		if ( kind === 'param' ) {
 			declaration.instances.push( identifier );
 		}
-
-		if ( !this.parent ) {
-			identifier.activate();
-		}
 	},
 
 	addReference ( identifier ) {

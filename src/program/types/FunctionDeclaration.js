@@ -2,36 +2,22 @@ import FunctionNode from './shared/FunctionNode.js';
 
 export default class FunctionDeclaration extends FunctionNode {
 	activate () {
-		if ( !this.inited ) {
-			// TODO see comments on VariableDeclarator, this is
-			// unfortunately. maybe all nodes should be skip: true
-			// by default
-			this.shouldActivate = true;
-			return;
-		}
-
 		if ( this.activated ) return;
 		this.activated = true;
 
 		this.skip = false;
 
-		this.id.initialise( this.scope.parent );
+		if ( this.id ) this.id.initialise( this.scope.parent );
 		this.params.forEach( param => {
 			param.initialise( this.scope );
 		});
 		this.body.initialise( this.scope );
 	}
 
-	attachScope ( scope ) {
-		this.skip = !!scope.parent; // always preserve top-level declarations
-		super.attachScope( scope );
-	}
-
-	initialise () {
-		this.inited = true;
-
-		// see above...
-		if ( this.shouldActivate ) {
+	initialise ( scope ) {
+		if ( scope.parent ) {
+			// noop — we wait for this declaration to be activated
+		} else {
 			this.activate();
 		}
 	}

@@ -9,6 +9,7 @@ import ClassDeclaration from './ClassDeclaration.js';
 import ClassExpression from './ClassExpression.js';
 import ConditionalExpression from './ConditionalExpression.js';
 import DoWhileStatement from './DoWhileStatement.js';
+import EmptyStatement from './EmptyStatement.js';
 import ExpressionStatement from './ExpressionStatement.js';
 import ForStatement from './ForStatement.js';
 import ForInOfStatement from './shared/ForInOfStatement.js';
@@ -52,6 +53,7 @@ export default {
 	ClassExpression,
 	ConditionalExpression,
 	DoWhileStatement,
+	EmptyStatement,
 	ExpressionStatement,
 	ForStatement,
 	ForInStatement: ForInOfStatement,

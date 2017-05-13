@@ -1,25 +1,21 @@
 module.exports = [
 	{
 		description: 'replaces if with &&',
-
 		input: `
 			if ( foo ) {
 				bar();
 				baz();
 			}`,
-
 		output: `foo&&(bar(),baz())`
 	},
 
 	{
 		description: 'replaces if with ||',
-
 		input: `
 			if ( !foo ) {
 				bar();
 				baz();
 			}`,
-
 		output: `foo||(bar(),baz())`
 	},
 
@@ -31,33 +27,28 @@ module.exports = [
 
 	{
 		description: 'replaces if-else with ternary',
-
 		input: `
 			if ( foo ) {
 				bar()
 			} else {
 				baz();
 			}`,
-
 		output: `foo?bar():baz()`
 	},
 
 	{
 		description: 'replaces if-else with backwards ternary',
-
 		input: `
 			if ( !foo ) {
 				bar()
 			} else {
 				baz();
 			}`,
-
 		output: `foo?baz():bar()`
 	},
 
 	{
 		description: 'replaces if-else-if with ternaries',
-
 		input: `
 			if ( foo ) {
 				bar()
@@ -66,23 +57,21 @@ module.exports = [
 			} else {
 				lol()
 			}`,
-
 		output: `foo?bar():baz?qux():lol()`
 	},
+
 	{
 		description: 'does not rewrite as && if statement contains declaration',
-
 		input: `
 			if ( foo ) {
 				var bar = 1;
 				console.log( bar );
 			}`,
-
 		output: `if(foo){var bar=1;console.log(bar)}`
 	},
+
 	{
 		description: 'does not rewrite as ternary if statement contains declaration',
-
 		input: `
 			if ( foo ) {
 				var bar = 1;
@@ -91,7 +80,6 @@ module.exports = [
 				var baz = 2;
 				console.log( baz );
 			}`,
-
 		output: `if(foo){var bar=1;console.log(bar)}else{var baz=2;console.log(baz)}`
 	},
 
@@ -109,20 +97,17 @@ module.exports = [
 
 	{
 		description: 'parenthesizes body of body-less && statement inside block',
-
 		input: `
 			function foo () {
 				if ( lol ) wut = {};
 			}
 			foo()`,
-
 		output: `function foo(){lol&&(wut={})}foo()`
 	},
 
 	{
 		skip: true,
 		description: 'collapses multiple return statements',
-
 		input: `
 			function foo ( a ) {
 				if ( a > 1e6 ) return 'millions';
@@ -130,27 +115,23 @@ module.exports = [
 				return 'ones';
 			}
 			foo()`,
-
 		output: `function foo(a){return a>1e6?'millions':a>1e3?'thousands':'ones'}foo()`
 	},
 
 	{
 		skip: true,
 		description: 'collapses early return',
-
 		input: `
 			function foo () {
 				if ( x ) return;
 				console.log( 42 );
 			}`,
-
 		output: `function foo(){x||console.log(42)}`
 	},
 
 	{
 		skip: true,
 		description: 'collapses early return with sibling statement',
-
 		input: `
 			function foo () {
 				if ( x ) {
@@ -159,33 +140,28 @@ module.exports = [
 				}
 				console.log( 42 );
 			}`,
-
 		output: `function foo(){x&&(console.log('returning early'),1)||console.log(42)}`
 	},
 
 	{
 		description: 'parenthesizes both parts of a ternary, if necessary',
-
 		input: `
 			if ( foo ) {
 				a = b;
 			} else {
 				a = c;
 			}`,
-
 		output: `foo?(a=b):(a=c)`
 	},
 
 	{
 		description: 'parenthesizes both parts of an inverted ternary, if necessary',
-
 		input: `
 			if ( !foo ) {
 				a = b;
 			} else {
 				a = c;
 			}`,
-
 		output: `foo?(a=c):(a=b)`
 	},
 
@@ -221,27 +197,23 @@ module.exports = [
 
 	{
 		description: 'removes empty else in if block',
-
 		input: `
 			if ( foo ) {
 				bar();
 			} else {
 				// code goes here
 			}`,
-
 		output: `foo&&bar()`
 	},
 
 	{
 		description: 'removes empty else in complex if block',
-
 		input: `
 			if ( foo ) {
 				var bar = baz;
 			} else {
 				// code goes here
 			}`,
-
 		output: `if(foo)var bar=baz`
 	},
 
@@ -289,7 +261,6 @@ module.exports = [
 
 	{
 		description: 'omits semicolon after if block',
-
 		input: `
 			if ( x ) {
 				var a = 1;
@@ -297,13 +268,11 @@ module.exports = [
 			}
 
 			y();`,
-
 		output: `if(x){var a=1;console.log(a)}y()`
 	},
 
 	{
 		description: 'omits semicolon after else block',
-
 		input: `
 			if ( x ) {
 				y();
@@ -313,13 +282,11 @@ module.exports = [
 			}
 
 			z();`,
-
 		output: `if(x)y();else{var a=1;console.log(a)}z()`
 	},
 
 	{
 		description: 'allows empty else block with parenthesised if block',
-
 		input: `
 			if ( foo ) {
 				a = b;
@@ -328,13 +295,11 @@ module.exports = [
 			else {
 				// empty
 			}`,
-
 		output: `foo&&(a=b)`
 	},
 
 	{
 		description: 'parenthesises consequent ternary with empty if block',
-
 		input: `
 			if ( foo ) {
 				// empty
@@ -343,13 +308,11 @@ module.exports = [
 			} else {
 				qux();
 			}`,
-
 		output: `foo||(bar?baz():qux())`
 	},
 
 	{
 		description: 'if inside else',
-
 		input: `
 			if ( a ) {
 				foo();
@@ -360,13 +323,11 @@ module.exports = [
 					baz()
 				}
 			}`,
-
 		output: `a?foo():b?bar():baz()`
 	},
 
 	{
 		description: 'adds semi-colon after rewritten if block',
-
 		input: `
 			function foo ( x ) {
 				if ( bar ) {
@@ -377,13 +338,11 @@ module.exports = [
 			}
 
 			foo( x );`,
-
 		output: `function foo(a){bar&&baz(a);return a}foo(x)`
 	},
 
 	{
 		description: 'adds semi after synthetic body',
-
 		input: `
 			function foo ( a, b, c ) {
 				if ( a === b ) return null;
@@ -395,26 +354,22 @@ module.exports = [
 			}
 
 			foo()`,
-
 		output: `function foo(a,b,c){if(a===b)return null;if(c){var d=c+1;console.log(d)}}foo()`
 	},
 
 	{
 		description: 'separates if from else',
-
 		input: `
 			if ( a ) {
 				foo();
 			} else if ( b ) {
 				var x = y;
 			}`,
-
 		output: `if(a)foo();else if(b)var x=y`
 	},
 
 	{
 		description: 'TK',
-
 		input: `
 			if ( a ) {
 				if ( b ) {
@@ -425,13 +380,11 @@ module.exports = [
 
 				baz();
 			}`,
-
 		output: `a&&(b?foo():bar(),baz())`
 	},
 
 	{
 		description: 'activates declaration from inside if block',
-
 		input: `
 			function x () {
 				var getAnswer = function () {
@@ -443,7 +396,6 @@ module.exports = [
 					console.log( answer );
 				}
 			}`,
-
 		output: `function x(){var a=function(){return 42};if(y){var b=a();console.log(b)}}`
 	},
 

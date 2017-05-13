@@ -49,6 +49,7 @@ export default function wrap ( raw, parent ) {
 		raw.body = synthetic( raw.body );
 	}
 
+	raw.skip = true;
 	raw.parent = parent;
 	raw.program = parent.program || parent;
 	raw.depth = parent.depth + 1;
