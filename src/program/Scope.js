@@ -153,7 +153,8 @@ Scope.prototype = {
 		if ( !this.deopted ) {
 			this.deopted = true;
 			this.canMangle = false;
-			this.parent.deopt();
+
+			if ( this.parent ) this.parent.deopt();
 
 			Object.keys( this.declarations ).forEach( name => {
 				this.declarations[name].node.activate();
