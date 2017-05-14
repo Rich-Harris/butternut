@@ -1,5 +1,5 @@
 import Node from '../Node.js';
-import { UNKNOWN, FALSY } from '../../utils/sentinels.js';
+import { UNKNOWN } from '../../utils/sentinels.js';
 
 export default class LogicalExpression extends Node {
 	getLeftHandSide () {
@@ -22,9 +22,9 @@ export default class LogicalExpression extends Node {
 		if ( leftValue === UNKNOWN || rightValue === UNKNOWN ) return UNKNOWN;
 
 		if ( this.operator === '&&' ) {
-			if ( leftValue && leftValue !== FALSY ) return rightValue;
+			if ( leftValue ) return rightValue;
 		} else {
-			if ( leftValue && leftValue !== FALSY ) return leftValue;
+			if ( leftValue ) return leftValue;
 			return rightValue;
 		}
 	}
@@ -40,7 +40,7 @@ export default class LogicalExpression extends Node {
 			super.minify( code );
 		}
 
-		else if ( leftValue && leftValue !== FALSY ) {
+		else if ( leftValue ) {
 			if ( this.operator === '&&' ) {
 				code.remove( this.start, this.right.start );
 				this.right.minify( code );

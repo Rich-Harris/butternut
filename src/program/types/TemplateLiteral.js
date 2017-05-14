@@ -1,5 +1,5 @@
 import Node from '../Node.js';
-import { UNKNOWN, TRUTHY, FALSY } from '../../utils/sentinels.js';
+import { UNKNOWN } from '../../utils/sentinels.js';
 import stringify from '../../utils/stringify.js';
 
 export default class TemplateLiteral extends Node {
@@ -11,7 +11,7 @@ export default class TemplateLiteral extends Node {
 			const expression = this.expressions[i];
 			const value = expression.getValue();
 
-			if ( value === UNKNOWN || value === TRUTHY || value === FALSY ) return UNKNOWN;
+			if ( value === UNKNOWN ) return UNKNOWN;
 
 			values[i] = value;
 		}

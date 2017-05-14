@@ -1,5 +1,5 @@
 import Node from '../Node.js';
-import { UNKNOWN, TRUTHY, FALSY } from '../../utils/sentinels.js';
+import { UNKNOWN } from '../../utils/sentinels.js';
 import stringify from '../../utils/stringify.js';
 
 const safeFunctions = [
@@ -47,14 +47,15 @@ export default class CallExpression extends Node {
 	}
 
 	getValue () {
-		const calleeValue = this.callee.getValue();
+		if ( this.callee.type !== 'MemberExpression' || this.callee.property.computed ) return UNKNOWN;
+
+		const contextValue = this.callee.object.getValue();
+		if ( contextValue === UNKNOWN ) return UNKNOWN;
+
+		const calleeValue = contextValue[ this.callee.property.name ];
 
 		if ( typeof calleeValue !== 'function' ) return UNKNOWN;
 		if ( !~safeFunctions.indexOf( calleeValue ) ) return UNKNOWN;
-
-		let contextValue = this.callee.type === 'MemberExpression' ?
-			this.callee.object.getValue() :
-			null;
 
 		let argumentValues = new Array( this.arguments.length );
 		for ( let i = 0; i < this.arguments.length; i += 1 ) {
@@ -62,7 +63,7 @@ export default class CallExpression extends Node {
 
 			if ( argument ) {
 				const value = argument.getValue();
-				if ( value === UNKNOWN || value === TRUTHY || value === FALSY ) return UNKNOWN;
+				if ( value === UNKNOWN ) return UNKNOWN;
 
 				argumentValues[i] = value;
 			}

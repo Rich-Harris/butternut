@@ -57,5 +57,11 @@ module.exports = [
 		description: 'rewrites || expression if left value is falsy and right is unknown',
 		input: `var a = false || b`,
 		output: `var a=b`
+	},
+
+	{
+		description: 'does not consider environment-specific methods when folding',
+		input: `var includes = [].includes || function(x) { return this.indexOf(x) !== -1; };`,
+		output: `var includes=[].includes||function(a){return this.indexOf(a)!==-1}`
 	}
 ];
