@@ -1,5 +1,5 @@
 import Node from '../Node.js';
-import { UNKNOWN } from '../../utils/sentinels.js';
+import { TRUTHY, FALSY, UNKNOWN } from '../../utils/sentinels.js';
 import stringify from '../../utils/stringify.js';
 
 const calculators = {
@@ -50,7 +50,10 @@ export default class BinaryExpression extends Node {
 		const left = this.left.getValue();
 		const right = this.right.getValue();
 
-		if ( left === UNKNOWN || right === UNKNOWN ) return binaryExpressionPrecedence[ this.operator ];
+		if (
+			left === UNKNOWN || left === TRUTHY || left === FALSY ||
+			right === UNKNOWN || right === TRUTHY || right === FALSY
+		) return binaryExpressionPrecedence[ this.operator ];
 
 		return 20; // will be replaced by a literal
 	}
@@ -59,7 +62,10 @@ export default class BinaryExpression extends Node {
 		const left = this.left.getValue();
 		const right = this.right.getValue();
 
-		if ( left === UNKNOWN || right === UNKNOWN ) return UNKNOWN;
+		if (
+			left === UNKNOWN || left === TRUTHY || left === FALSY ||
+			right === UNKNOWN || right === TRUTHY || right === FALSY
+		) return UNKNOWN;
 
 		return calculators[ this.operator ]( left, right );
 	}
