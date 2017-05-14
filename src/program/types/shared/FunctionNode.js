@@ -28,9 +28,7 @@ export default class FunctionNode extends Node {
 			});
 		});
 
-		this.body.body.forEach( node => {
-			node.attachScope( this.scope );
-		});
+		this.body.attachScope( this.scope );
 	}
 
 	findVarDeclarations () {
@@ -38,8 +36,6 @@ export default class FunctionNode extends Node {
 	}
 
 	minify ( code ) {
-		this.scope.mangle( code );
-
 		let c = this.start;
 		let openParams;
 
@@ -70,6 +66,7 @@ export default class FunctionNode extends Node {
 		if ( this.params.length ) {
 			for ( let i = 0; i < this.params.length; i += 1 ) {
 				const param = this.params[i];
+				param.minify( code );
 
 				if ( param.start > c + 1 ) code.overwrite( c, param.start, i ? ',' : openParams );
 				c = param.end;
@@ -82,6 +79,6 @@ export default class FunctionNode extends Node {
 			code.overwrite( c, this.body.start, `${openParams})` );
 		}
 
-		super.minify( code );
+		this.body.minify( code );
 	}
 }

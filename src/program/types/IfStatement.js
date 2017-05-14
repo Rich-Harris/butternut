@@ -40,6 +40,12 @@ export default class IfStatement extends Node {
 
 		else if ( testValue ) { // if ( true ) {...}
 			this.consequent.initialise( scope );
+
+			if ( this.alternate && this.alternate.type === 'BlockStatement' ) {
+				this.alternate.scope.varDeclarations.forEach( name => {
+					scope.functionScope.hoistedVars.add( name );
+				});
+			}
 		}
 
 		else { // if ( false ) {...}
@@ -47,6 +53,12 @@ export default class IfStatement extends Node {
 				this.alternate.initialise( scope );
 			} else {
 				this.skip = true;
+			}
+
+			if ( this.consequent.type === 'BlockStatement' ) {
+				this.consequent.scope.varDeclarations.forEach( name => {
+					scope.functionScope.hoistedVars.add( name );
+				});
 			}
 		}
 	}

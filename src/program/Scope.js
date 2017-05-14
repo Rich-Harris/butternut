@@ -8,12 +8,19 @@ const validChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_$';
 export default function Scope ( options ) {
 	options = options || {};
 
-	this.uid = Math.random();
-
 	this.parent = options.parent;
 	this.canMangle = !!this.parent;
 	this.isBlockScope = !!options.block;
 	this.useStrict = this.parent && this.parent.useStrict;
+
+	// vars declared in blocks are stored here, so that we
+	// can hoist them if those blocks are removed but the
+	// declarations are used. TODO an alternative approach
+	// would be to replace instances of the hoisted var
+	// with `void 0`
+	this.varDeclarations = new Set();
+	this.hoistedVars = new Set();
+	this.varDeclarationNodes = [];
 
 	let scope = this;
 	while ( scope.isBlockScope ) scope = scope.parent;
@@ -36,6 +43,7 @@ Scope.prototype = {
 
 	addDeclaration ( identifier, kind ) {
 		if ( kind === 'var' && this.isBlockScope ) {
+			this.varDeclarations.add( identifier.name );
 			this.parent.addDeclaration( identifier, kind );
 			return;
 		}
