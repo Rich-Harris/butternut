@@ -56,11 +56,14 @@ describe('butternut', function () {
 							);
 						});
 					} else {
-						const { code, stats } = butternut.squash(
+						const { code } = butternut.squash(
 							sample.input,
 							sample.options
 						);
 						equal(code, sample.output);
+
+						// idempotency test
+						equal(butternut.squash(code, sample.options).code, code);
 					}
 				});
 			});
