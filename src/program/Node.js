@@ -29,6 +29,10 @@ export default class Node {
 		}
 	}
 
+	canSequentialise () {
+		return false;
+	}
+
 	contains ( node ) {
 		while ( node ) {
 			if ( node === this ) return true;
@@ -75,6 +79,10 @@ export default class Node {
 				}
 			}
 		}
+	}
+
+	isEmpty () {
+		return this.skip;
 	}
 
 	findVarDeclarations ( varsToHoist ) {

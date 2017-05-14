@@ -312,6 +312,7 @@ module.exports = [
 	},
 
 	{
+		skip: true,
 		description: 'if inside else',
 		input: `
 			if ( a ) {
@@ -424,7 +425,7 @@ module.exports = [
 	},
 
 	{
-		description: 'adds semi after empty block',
+		description: 'rewrites if-block with empty consequent',
 		input: `
 			function foo () {
 				if ( a ) {
@@ -433,12 +434,11 @@ module.exports = [
 					d();
 				}
 			};`,
-		// TODO `function foo(){a||(c&&d())}`
-		output: `function foo(){if(a);else c&&d()}`
+		output: `function foo(){a||c&&d()}`
 	},
 
 	{
-		description: 'adds semi after empty block',
+		description: 'rewrites empty if-block with empty else block',
 		input: `
 			function foo () {
 				if ( a ) {
@@ -455,8 +455,7 @@ module.exports = [
 					g();
 				}
 			};`,
-		// TODO `function foo(){a?a():b||d();e?f():g()}`
-		output: `function foo(){if(a)a();else if(b);else d();e?f():g()}`
+		output: `function foo(){a?a():b||d();e?f():g()}`
 	},
 
 	{

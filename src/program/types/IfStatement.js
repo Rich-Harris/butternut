@@ -4,20 +4,24 @@ import { UNKNOWN } from '../../utils/sentinels.js';
 const invalidChars = /[a-zA-Z$_0-9/]/;
 
 function canRewriteBlockAsSequence ( body ) {
-	let i = body.length;
-	while ( i-- ) {
-		const child = body[i];
-		if ( child.type !== 'ExpressionStatement' /*&& child.type !== 'ReturnStatement'*/ ) {
-			if ( child.type !== 'IfStatement' ) return false;
-			if ( !canRewriteIfStatementAsSequence( child ) ) return false;
+	if ( body.type === 'BlockStatement' ) {
+		let i = body.body.length;
+		while ( i-- ) {
+			const child = body.body[i];
+			if ( child.type !== 'ExpressionStatement' /*&& child.type !== 'ReturnStatement'*/ ) {
+				if ( child.type !== 'IfStatement' ) return false;
+				if ( !canRewriteIfStatementAsSequence( child ) ) return false;
+			}
 		}
+
+		return true;
 	}
 
-	return true;
+	return body.type === 'ExpressionStatement';
 }
 
 function canRewriteIfStatementAsSequence ( node ) {
-	if ( !canRewriteBlockAsSequence( node.consequent.body ) ) return false;
+	if ( !canRewriteBlockAsSequence( node.consequent ) ) return false;
 
 	if ( node.alternate ) {
 		if ( node.alternate.type === 'IfStatement' ) {
@@ -25,7 +29,7 @@ function canRewriteIfStatementAsSequence ( node ) {
 		}
 
 		if ( node.alternate.type === 'BlockStatement' ) {
-			if ( !canRewriteBlockAsSequence( node.alternate.body ) ) return false;
+			if ( !canRewriteBlockAsSequence( node.alternate ) ) return false;
 			return true;
 		}
 
@@ -42,6 +46,20 @@ function isVarDeclaration ( node ) {
 // TODO this whole thing is kinda messy... refactor it
 
 export default class IfStatement extends Node {
+	canSequentialise () {
+		const testValue = this.test.getValue();
+
+		if ( testValue === UNKNOWN ) {
+			return this.consequent.canSequentialise() && ( !this.alternate || this.alternate.canSequentialise() );
+		}
+
+		if ( testValue ) {
+			return this.consequent.canSequentialise();
+		}
+
+		return this.alternate ? this.alternate.canSequentialise() : false;
+	}
+
 	getRightHandSide () {
 		// TODO what if we know the test value?
 		if ( this.alternate ) return this.alternate.getRightHandSide();
@@ -51,14 +69,6 @@ export default class IfStatement extends Node {
 	initialise ( scope ) {
 		this.skip = false; // TODO skip if known to be safe
 
-		this.rewriteConsequentAsSequence = canRewriteBlockAsSequence( this.consequent.body );
-		this.rewriteAlternateAsSequence = !this.alternate ||
-			( this.alternate.type === 'ExpressionStatement' ) ||
-			( this.alternate.type === 'IfStatement' && canRewriteIfStatementAsSequence( this.alternate ) ) ||
-			( this.alternate.type === 'BlockStatement' ) && canRewriteBlockAsSequence( this.alternate.body );
-
-		this.rewriteAsSequence = this.rewriteConsequentAsSequence && this.rewriteAlternateAsSequence;
-
 		const testValue = this.test.getValue();
 
 		if ( testValue === UNKNOWN ) {
@@ -66,60 +76,18 @@ export default class IfStatement extends Node {
 			this.test.initialise( scope );
 			this.consequent.initialise( scope );
 			if ( this.alternate ) this.alternate.initialise( scope );
-
-			if ( this.rewriteConsequentAsSequence || this.consequent.body.every( isVarDeclaration ) ) {
-				this.consequent.removeCurlies = true;
-			}
-
-			if ( this.alternate ) {
-				if ( this.rewriteAlternateAsSequence || isVarDeclaration( this.alternate ) || ( this.alternate.type === 'BlockStatement' && this.alternate.body.every( isVarDeclaration ) ) ) {
-					this.alternate.removeCurlies = true;
-				}
-			}
 		}
 
 		else if ( testValue ) { // if ( true ) {...}
 			this.consequent.initialise( scope );
-
-			// hoist any var declarations in the alternate, so we can
-			// discard the whole thing
-			if ( this.alternate ) {
-				let varsToHoist = {};
-				this.alternate.findVarDeclarations( varsToHoist );
-
-				// TODO do something with varsToHoist
-			}
-
-			// TODO does this apply equally to else blocks?
-			if ( !this.consequent.synthetic ) {
-				// if there are no let/const/class/function declarations, we can
-				// remove the curlies
-				let removeCurlies = true;
-				let i = this.consequent.body.length;
-				while ( i-- ) {
-					const node = this.consequent.body[i];
-					if ( /Declaration/.test( node.type ) && node.kind !== 'var' ) {
-						removeCurlies = false;
-						break;
-					}
-				}
-
-				this.consequent.removeCurlies = removeCurlies;
-			}
 		}
 
 		else { // if ( false ) {...}
 			if ( this.alternate ) {
-				this.alternate.removeCurlies = this.rewriteAlternateAsSequence;
 				this.alternate.initialise( scope );
 			} else {
 				this.skip = true;
 			}
-
-			let varsToHoist = {};
-			this.consequent.findVarDeclarations( varsToHoist );
-
-			// TODO do something with varsToHoist
 		}
 	}
 
@@ -153,12 +121,14 @@ export default class IfStatement extends Node {
 		const targetPrecedence = this.alternate ? 4 : inverted ? 5 : 6;
 
 		const shouldParenthesiseTest = this.test.getPrecedence() < targetPrecedence;
-		const shouldParenthesiseConsequent = this.consequent.body.length === 1 ?
-			this.consequent.body[0].getPrecedence() < targetPrecedence :
-			true;
 
-		// special case – empty if block
-		if ( this.consequent.body.length === 0 ) {
+		// TODO what if nodes in the consequent are skipped...
+		const shouldParenthesiseConsequent = this.consequent.type === 'BlockStatement' ?
+			( this.consequent.body.length === 1 ? this.consequent.body[0].getPrecedence() < targetPrecedence : true ) :
+			this.consequent.getPrecedence() < targetPrecedence;
+
+		// special case – empty consequent
+		if ( this.consequent.isEmpty() ) {
 			const canRemoveTest = this.test.type === 'Identifier' || this.test.getValue() !== UNKNOWN; // TODO can this ever happen?
 
 			if ( this.alternate ) {
@@ -169,9 +139,7 @@ export default class IfStatement extends Node {
 						code.remove( this.start, this.end );
 						this.removed = true;
 					}
-				} else if ( canRewriteIfStatementAsSequence( this ) ) {
-					this.alternate.joinStatements = true;
-
+				} else if ( this.alternate.canSequentialise() ) {
 					let alternatePrecedence;
 					if ( this.alternate.type === 'IfStatement' ) {
 						alternatePrecedence = this.alternate.alternate ?
@@ -216,13 +184,13 @@ export default class IfStatement extends Node {
 			return;
 		}
 
-		// special case - empty else block
-		if ( this.alternate && this.alternate.type === 'BlockStatement' && this.alternate.body.length === 0 ) {
+		// special case - empty alternate
+		if ( this.alternate && this.alternate.isEmpty() ) {
+			// don't minify alternate
+			this.consequent.minify( code );
 			code.remove( this.consequent.end, this.end );
 
-			if ( canRewriteIfStatementAsSequence( this ) ) {
-				this.consequent.joinStatements = true;
-
+			if ( this.consequent.canSequentialise() ) {
 				code.overwrite( this.start, ( inverted ? this.test.argument.start : this.test.start ), shouldParenthesiseTest ? '(' : '' );
 
 				let replacement = shouldParenthesiseTest ? ')' : '';
@@ -232,24 +200,22 @@ export default class IfStatement extends Node {
 				code.overwrite( this.test.end, this.consequent.start, replacement );
 
 				if ( shouldParenthesiseConsequent ) code.appendRight( this.consequent.end, ')' );
-			} else {
+			}
+
+			else {
 				if ( this.test.start > this.start + 3 ) code.overwrite( this.start, this.test.start, 'if(' );
 
 				if ( this.consequent.start > this.test.end + 1 ) code.overwrite( this.test.end, this.consequent.start, ')' );
 				if ( this.end > this.consequent.end + 1 ) code.remove( this.consequent.end, this.end - 1 );
 			}
 
-			// don't minify alternate
-			this.consequent.minify( code );
 			return;
 		}
 
 		this.consequent.minify( code );
 		if ( this.alternate ) this.alternate.minify( code );
 
-		if ( canRewriteIfStatementAsSequence( this ) ) {
-			this.consequent.joinStatements = true;
-
+		if ( this.canSequentialise() ) {
 			if ( inverted ) code.remove( this.test.start, this.test.start + 1 );
 
 			if ( this.alternate ) {
@@ -265,10 +231,7 @@ export default class IfStatement extends Node {
 
 			if ( this.alternate ) {
 				const lastNodeOfConsequent = this.consequent.getRightHandSide();
-
-				const firstNodeOfAlternate = ( this.alternate.type === 'BlockStatement' && this.alternate.removeCurlies ?
-					this.alternate.body[0] :
-					this.alternate ).getLeftHandSide();
+				const firstNodeOfAlternate = this.alternate.getLeftHandSide();
 
 				let gap = ( lastNodeOfConsequent.type === 'BlockStatement' ? '' : ';' ) + 'else';
 				if ( invalidChars.test( code.original[ firstNodeOfAlternate.start ] ) ) gap += ' ';
@@ -282,9 +245,14 @@ export default class IfStatement extends Node {
 	}
 
 	preventsCollapsedReturns ( returnStatements ) {
-		for ( let statement of this.consequent.body ) {
-			if ( statement.skip ) continue;
-			if ( statement.preventsCollapsedReturns( returnStatements ) ) return true;
+		// TODO make this a method of nodes
+		if ( this.consequent.type === 'BlockStatement' ) {
+			for ( let statement of this.consequent.body ) {
+				if ( statement.skip ) continue;
+				if ( statement.preventsCollapsedReturns( returnStatements ) ) return true;
+			}
+		} else {
+			if ( this.consequent.preventsCollapsedReturns( returnStatements ) ) return true;
 		}
 
 		if ( this.alternate ) {
@@ -298,12 +266,14 @@ export default class IfStatement extends Node {
 					if ( statement.preventsCollapsedReturns( returnStatements ) ) return true;
 				}
 			}
+
+			else {
+				if ( this.alternate.preventsCollapsedReturns( returnStatements ) ) return true;
+			}
 		}
 	}
 
 	rewriteAsLogicalExpression ( code, inverted, shouldParenthesiseTest, shouldParenthesiseConsequent ) {
-		this.rewriteAsSequence = true;
-
 		code.overwrite( this.start, this.test.start, shouldParenthesiseTest ? '(' : '' );
 
 		let replacement = ( shouldParenthesiseTest ? ')' : '' ) + ( inverted ? '||' : '&&' ) + ( shouldParenthesiseConsequent ? '(' : '' );
@@ -319,16 +289,24 @@ export default class IfStatement extends Node {
 	rewriteAsTernaryExpression ( code, inverted, shouldParenthesiseTest, shouldParenthesiseConsequent ) {
 		this.rewriteAsSequence = true;
 
-		this.alternate.joinStatements = true;
-
 		let shouldParenthesiseAlternate = false;
-		if ( this.alternate.type === 'BlockStatement' ) {
-			if ( this.alternate.body.length > 1 ) {
-				shouldParenthesiseAlternate = true;
-			} else if ( this.alternate.body[0].type !== 'IfStatement' ) {
-				shouldParenthesiseAlternate = this.alternate.body[0].getPrecedence() < 4;
-			}
+		// TODO simplify this
+		if ( this.alternate.type === 'IfStatement' ) {
+			shouldParenthesiseAlternate = false;
+		} else if ( this.alternate.type === 'BlockStatement' ) {
+			shouldParenthesiseAlternate = this.alternate.body.length > 1 || this.alternate.body[0].getPrecedence() < 4;
+		} else {
+			shouldParenthesiseAlternate = this.alternate.getPrecedence() < 4;
 		}
+
+		// if ( this.alternate.type === 'BlockStatement' ) {
+		// 	if ( this.alternate.body.length > 1 ) {
+		// 		shouldParenthesiseAlternate = true;
+		// 	} else if ( this.alternate.body[0].type !== 'IfStatement' ) {
+		// 		shouldParenthesiseAlternate = this.alternate.body[0].getPrecedence() < 4;
+		// 	}
+		// }
+
 		// const shouldParenthesiseAlternate = this.alternate.type === 'BlockStatement' ?
 		// 	( this.alternate.body.length === 1 ? getPrecedence( this.alternate.body[0] ) < 4 : true ) :
 		// 	false; // TODO <-- is this right? Ternaries are r-to-l, so... maybe?

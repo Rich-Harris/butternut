@@ -15,7 +15,7 @@ export default class WhileStatement extends Node {
 		}
 
 		// special case — empty body
-		if ( this.body.body.length === 0 || this.body.body.every( node => node.type === 'EmptyStatement' ) ) {
+		if ( this.body.isEmpty() ) {
 			code.appendLeft( this.body.start, ';' );
 			code.remove( this.body.start, this.body.end );
 		}

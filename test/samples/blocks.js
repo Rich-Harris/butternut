@@ -102,7 +102,7 @@ module.exports = [
 				console.log( 'c' );
 			}
 			foo();`,
-		output: `function foo(){console.log('a');console.log('b')}foo()`
+		output: `function foo(){console.log('a'),console.log('b')}foo()`
 	},
 
 	{

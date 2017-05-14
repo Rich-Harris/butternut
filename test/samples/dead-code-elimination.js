@@ -106,7 +106,13 @@ module.exports = [
 	{
 		description: 'removes side-effect-free statement',
 		input: `"use strict"; 1; "test"; foo(); null; bar();`,
-		output: `"use strict";foo();bar()`
+		output: `"use strict";foo(),bar()`
+	},
+
+	{
+		description: 'removes empty block',
+		input: `{1}`,
+		output: ``
 	}
 
 	// TODO uncalled functions, unused variables...

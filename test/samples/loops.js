@@ -203,5 +203,17 @@ module.exports = [
 		description: 'handles empty statement as first item in body',
 		input: `while (a) { ; b(); }`,
 		output: `while(a)b()`
+	},
+
+	{
+		description: 'preserves var in while body',
+		input: `
+			function foo () {
+				while (bar()) {
+					var baz = 1;
+				}
+				result = baz;
+			}`,
+		output: `function foo(){while(bar())var a=1;result=a}`
 	}
 ];
