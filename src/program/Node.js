@@ -81,6 +81,10 @@ export default class Node {
 		}
 	}
 
+	isEmpty () {
+		return this.skip;
+	}
+
 	findVarDeclarations ( varsToHoist ) {
 		for ( var key of this.keys ) {
 			const value = this[ key ];

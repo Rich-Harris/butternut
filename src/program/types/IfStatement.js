@@ -128,7 +128,7 @@ export default class IfStatement extends Node {
 			this.consequent.getPrecedence() < targetPrecedence;
 
 		// special case – empty consequent
-		if ( this.consequent.skip ) {
+		if ( this.consequent.isEmpty() ) {
 			const canRemoveTest = this.test.type === 'Identifier' || this.test.getValue() !== UNKNOWN; // TODO can this ever happen?
 
 			if ( this.alternate ) {
@@ -185,7 +185,7 @@ export default class IfStatement extends Node {
 		}
 
 		// special case - empty alternate
-		if ( this.alternate && this.alternate.skip ) {
+		if ( this.alternate && this.alternate.isEmpty() ) {
 			// don't minify alternate
 			this.consequent.minify( code );
 			code.remove( this.consequent.end, this.end );

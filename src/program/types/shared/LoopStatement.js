@@ -23,7 +23,7 @@ export default class LoopStatement extends Node {
 		if ( this.scope ) this.scope.mangle( code );
 
 		// special case — empty body
-		if ( this.body.skip ) {
+		if ( this.body.isEmpty() ) {
 			code.appendLeft( this.body.start, ';' );
 			code.remove( this.body.start, this.body.end );
 		}

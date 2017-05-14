@@ -3,7 +3,7 @@ import Node from '../Node.js';
 export default class DoWhileStatement extends Node {
 	minify ( code ) {
 		// special case
-		if ( this.body.skip ) {
+		if ( this.body.isEmpty() ) {
 			code.overwrite( this.start + 2, this.test.start, ';while(' );
 		}
 

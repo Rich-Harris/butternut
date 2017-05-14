@@ -73,7 +73,7 @@ export default class BlockStatement extends Node {
 	canSequentialise () {
 		for ( let i = 0; i < this.body.length; i += 1 ) {
 			const node = this.body[i];
-			if ( !node.skip && !node.canSequentialise() ) return false;
+			if ( !node.skip && !node.canSequentialise() ) return false; // TODO what if it's a block with a late-activated declaration...
 		}
 
 		return true;
@@ -154,14 +154,15 @@ export default class BlockStatement extends Node {
 				maybeReturnNode.skip = true;
 			}
 		}
+	}
 
+	isEmpty () {
 		for ( let i = 0; i < this.body.length; i += 1 ) {
 			const node = this.body[i];
-			if ( !node.skip ) {
-				this.skip = false;
-				break;
-			}
+			if ( !node.skip ) return false;
 		}
+
+		return true;
 	}
 
 	minify ( code ) {
