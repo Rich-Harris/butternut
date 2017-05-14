@@ -101,6 +101,6 @@ module.exports = [
 			}
 			console.log(x, y);
 			console.log(x, y);`,
-		output: `var x=1,y,z;console.log(x,y),console.log(x,y)}`
+		output: `var x=1,y,z;console.log(x,y);console.log(x,y)`
 	}
 ];
