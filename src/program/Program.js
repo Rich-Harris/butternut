@@ -24,16 +24,16 @@ export default function Program ( source, ast, options, stats ) {
 
 	this.templateElements = [];
 	if ( DEBUG ) stats.time( 'init body' );
-	const scope = new Scope({
+	this.body.scope = new Scope({
 		block: false,
 		parent: null
 	});
 
 	this.body.body.forEach( node => {
-		node.attachScope( scope );
+		node.attachScope( this.body.scope );
 	});
 
-	this.body.initialise( scope );
+	this.body.initialise( this.body.scope );
 	if ( DEBUG ) stats.timeEnd( 'init body' );
 
 	if ( DEBUG ) stats.time( 'minify' );

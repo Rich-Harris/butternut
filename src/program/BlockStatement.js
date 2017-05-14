@@ -175,7 +175,9 @@ export default class BlockStatement extends Node {
 		const statements = this.body.filter( statement => !statement.skip );
 
 		if ( statements.length ) {
-			let nextSeparator = '';
+			let nextSeparator = ( this.scope && this.scope.useStrict && ( !this.scope.parent || !this.scope.parent.useStrict ) ) ?
+				'"use strict";' :
+				'';
 
 			for ( let i = 0; i < statements.length; i += 1 ) {
 				const statement = statements[i];
