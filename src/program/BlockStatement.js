@@ -55,10 +55,16 @@ function isVarDeclaration ( node ) {
 
 export default class BlockStatement extends Node {
 	attachScope ( parent ) {
-		this.scope = new Scope({
-			block: true,
-			parent
-		});
+		this.parentIsFunction = /Function/.test( this.parent.type );
+
+		if ( this.parentIsFunction ) {
+			this.scope = parent;
+		} else {
+			this.scope = new Scope({
+				block: true,
+				parent
+			});
+		}
 
 		for ( let i = 0; i < this.body.length; i += 1 ) {
 			this.body[i].attachScope( this.scope );
@@ -109,8 +115,6 @@ export default class BlockStatement extends Node {
 	}
 
 	initialise ( scope ) {
-		this.parentIsFunction = /Function/.test( this.parent.type );
-
 		let executionIsBroken = false;
 		let maybeReturnNode;
 		let hasDeclarationsAfterBreak = false;
@@ -168,6 +172,38 @@ export default class BlockStatement extends Node {
 	minify ( code ) {
 		if ( this.scope ) this.scope.mangle( code );
 
+		let insertedVarDeclaration = '';
+
+		if ( this.parentIsFunction || this.parent.type === 'Root' ) {
+			// if there are any vars inside removed blocks, they need
+			// to be declared here
+			const hoisted = [];
+			this.scope.hoistedVars.forEach( name => {
+				const hoistedVar = this.scope.declarations[name];
+				if ( hoistedVar.activated ) {
+					hoisted.push( hoistedVar.alias || hoistedVar.name );
+				}
+			});
+
+			if ( hoisted.length ) {
+				// see if there's an existing var declaration we can glom these onto
+				const varDeclaration = this.scope.varDeclarationNodes.find( node => {
+					while ( node !== this ) {
+						if ( node.skip ) return false;
+						node = node.parent;
+					}
+
+					return true;
+				});
+
+				if ( varDeclaration ) {
+					varDeclaration.rideAlongs = hoisted;
+				} else {
+					insertedVarDeclaration = `var ${hoisted.join(',')};`;
+				}
+			}
+		}
+
 		const sequentialise = !this.parentIsFunction && this.canSequentialise();
 		const removeCurlies = this.canRemoveCurlies();
 		const separator = sequentialise ? ',' : ';';
@@ -179,9 +215,9 @@ export default class BlockStatement extends Node {
 		const statements = this.body.filter( statement => !statement.skip );
 
 		if ( statements.length ) {
-			let nextSeparator = ( this.scope && this.scope.useStrict && ( !this.scope.parent || !this.scope.parent.useStrict ) ) ?
+			let nextSeparator = ( ( this.scope && this.scope.useStrict && ( !this.scope.parent || !this.scope.parent.useStrict ) ) ?
 				'"use strict";' :
-				'';
+				'' ) + insertedVarDeclaration;
 
 			for ( let i = 0; i < statements.length; i += 1 ) {
 				const statement = statements[i];
