@@ -39,10 +39,6 @@ function canRewriteIfStatementAsSequence ( node ) {
 	return true;
 }
 
-function isVarDeclaration ( node ) {
-	return node.kind === 'var';
-}
-
 // TODO this whole thing is kinda messy... refactor it
 
 export default class IfStatement extends Node {
