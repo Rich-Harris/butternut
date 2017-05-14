@@ -1,22 +1,22 @@
 import Node from '../Node.js';
-import { UNKNOWN, FALSY } from '../../utils/sentinels.js';
+import { UNKNOWN } from '../../utils/sentinels.js';
 
 export default class ConditionalExpression extends Node {
 	getLeftHandSide () {
 		const testValue = this.test.getValue();
-		const node = testValue === UNKNOWN ? this.test : ( testValue && testValue !== FALSY ? this.consequent : this.alternate );
+		const node = testValue === UNKNOWN ? this.test : ( testValue ? this.consequent : this.alternate );
 
 		return node.getLeftHandSide();
 	}
 
 	getPrecedence () {
 		const testValue = this.test.getValue();
-		return testValue === UNKNOWN ? 4 : ( testValue && testValue !== FALSY ? this.consequent : this.alternate ).getPrecedence();
+		return testValue === UNKNOWN ? 4 : ( testValue ? this.consequent : this.alternate ).getPrecedence();
 	}
 
 	getRightHandSide () {
 		const testValue = this.test.getValue();
-		const node = testValue === UNKNOWN ? this.alternate : ( testValue && testValue !== FALSY ? this.alternate : this.consequent );
+		const node = testValue === UNKNOWN ? this.alternate : ( testValue ? this.alternate : this.consequent );
 
 		return node.getRightHandSide();
 	}
@@ -28,7 +28,7 @@ export default class ConditionalExpression extends Node {
 
 		if ( testValue === UNKNOWN || consequentValue === UNKNOWN || alternateValue === UNKNOWN ) return UNKNOWN;
 
-		return ( testValue && testValue !== FALSY ) ? consequentValue : alternateValue;
+		return testValue ? consequentValue : alternateValue;
 	}
 
 	initialise ( scope ) {
@@ -59,7 +59,7 @@ export default class ConditionalExpression extends Node {
 			}
 
 			super.minify( code );
-		} else if ( testValue && testValue !== FALSY ) {
+		} else if ( testValue ) {
 			// remove test and alternate
 			code.remove( this.start, this.consequent.start );
 			code.remove( this.consequent.end, this.end );

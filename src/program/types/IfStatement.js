@@ -3,42 +3,6 @@ import { UNKNOWN } from '../../utils/sentinels.js';
 
 const invalidChars = /[a-zA-Z$_0-9/]/;
 
-function canRewriteBlockAsSequence ( body ) {
-	if ( body.type === 'BlockStatement' ) {
-		let i = body.body.length;
-		while ( i-- ) {
-			const child = body.body[i];
-			if ( child.type !== 'ExpressionStatement' /*&& child.type !== 'ReturnStatement'*/ ) {
-				if ( child.type !== 'IfStatement' ) return false;
-				if ( !canRewriteIfStatementAsSequence( child ) ) return false;
-			}
-		}
-
-		return true;
-	}
-
-	return body.type === 'ExpressionStatement';
-}
-
-function canRewriteIfStatementAsSequence ( node ) {
-	if ( !canRewriteBlockAsSequence( node.consequent ) ) return false;
-
-	if ( node.alternate ) {
-		if ( node.alternate.type === 'IfStatement' ) {
-			return canRewriteIfStatementAsSequence( node.alternate );
-		}
-
-		if ( node.alternate.type === 'BlockStatement' ) {
-			if ( !canRewriteBlockAsSequence( node.alternate ) ) return false;
-			return true;
-		}
-
-		return node.alternate.type === 'ExpressionStatement';
-	}
-
-	return true;
-}
-
 // TODO this whole thing is kinda messy... refactor it
 
 export default class IfStatement extends Node {

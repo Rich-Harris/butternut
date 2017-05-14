@@ -1,6 +1,6 @@
 import Node from '../Node.js';
 import reserved from '../../utils/reserved.js';
-import { UNKNOWN, TRUTHY, FALSY } from '../../utils/sentinels.js';
+import { UNKNOWN } from '../../utils/sentinels.js';
 import stringify from '../../utils/stringify.js';
 
 function isValidIdentifier ( str ) {
@@ -11,18 +11,15 @@ function isValidIdentifier ( str ) {
 export default class MemberExpression extends Node {
 	getValue () {
 		const objectValue = this.object.getValue();
-		if ( objectValue === UNKNOWN || objectValue === TRUTHY || objectValue === FALSY ) return UNKNOWN;
+		if ( !objectValue || objectValue === UNKNOWN ) return UNKNOWN;
 
-		if ( this.computed ) {
-			const propertyValue = this.property.getValue();
-			if ( propertyValue === UNKNOWN || propertyValue === TRUTHY || propertyValue === FALSY ) return UNKNOWN;
+		const propertyValue = this.computed ? this.property.getValue() : this.property.name;
+		if ( propertyValue === UNKNOWN ) return UNKNOWN;
 
-			return objectValue[ propertyValue ];
-		}
+		const value = objectValue[ propertyValue ];
+		if ( value === UNKNOWN || typeof value === 'function' ) return UNKNOWN;
 
-		if ( !objectValue ) return UNKNOWN;
-
-		return objectValue[ this.property.name ];
+		return value;
 	}
 
 	getPrecedence () {

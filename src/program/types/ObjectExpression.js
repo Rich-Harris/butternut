@@ -1,10 +1,10 @@
 import Node from '../Node.js';
 import minifyPropertyKey from './shared/minifyPropertyKey.js';
-import { TRUTHY } from '../../utils/sentinels.js';
+import { UNKNOWN } from '../../utils/sentinels.js';
 
 export default class ObjectExpression extends Node {
 	getValue () {
-		return TRUTHY;
+		return UNKNOWN;
 	}
 
 	minify ( code ) {
