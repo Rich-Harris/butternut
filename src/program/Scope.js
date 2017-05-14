@@ -13,6 +13,7 @@ export default function Scope ( options ) {
 	this.parent = options.parent;
 	this.canMangle = !!this.parent;
 	this.isBlockScope = !!options.block;
+	this.useStrict = this.parent && this.parent.useStrict;
 
 	let scope = this;
 	while ( scope.isBlockScope ) scope = scope.parent;

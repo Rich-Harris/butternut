@@ -16,6 +16,7 @@ const shouldPreserveAfterReturn = {
 };
 
 const allowsBlockLessStatement = {
+	BlockStatement: true,
 	ForStatement: true,
 	ForInStatement: true,
 	ForOfStatement: true,
@@ -33,19 +34,23 @@ function endsWithCurlyBrace ( statement ) { // TODO can we just use getRightHand
 			}
 
 			if ( statement.alternate.type !== 'BlockStatement' ) return false;
-			if ( statement.alternate.removeCurlies ) return false;
+			if ( statement.alternate.canRemoveCurlies() ) return false;
 
 			return true;
 		}
 
-		return statement.consequent.type === 'BlockStatement' && !statement.consequent.removeCurlies;
+		return statement.consequent.type === 'BlockStatement' && !statement.consequent.canRemoveCurlies();
 	}
 
 	if ( /^(?:For(?:In|Of)?|While)Statement/.test( statement.type ) ) {
-		return statement.body.type === 'BlockStatement' && !statement.body.removeCurlies;
+		return statement.body.type === 'BlockStatement' && !statement.body.canRemoveCurlies();
 	}
 
 	return /(?:Class|Function)Declaration/.test( statement.type );
+}
+
+function isVarDeclaration ( node ) {
+	return node.kind === 'var';
 }
 
 export default class BlockStatement extends Node {
@@ -58,6 +63,20 @@ export default class BlockStatement extends Node {
 		for ( let i = 0; i < this.body.length; i += 1 ) {
 			this.body[i].attachScope( this.scope );
 		}
+	}
+
+	canRemoveCurlies () {
+		return allowsBlockLessStatement[ this.parent.type ] && ( this.canSequentialise() || ( this.body.length > 0 && this.body.every( isVarDeclaration ) ) );
+	}
+
+	// TODO memoize
+	canSequentialise () {
+		for ( let i = 0; i < this.body.length; i += 1 ) {
+			const node = this.body[i];
+			if ( !node.skip && !node.canSequentialise() ) return false;
+		}
+
+		return true;
 	}
 
 	// TODO what is this about?
@@ -76,14 +95,14 @@ export default class BlockStatement extends Node {
 	}
 
 	getLeftHandSide () {
-		if ( this.removeCurlies ) {
+		if ( this.canSequentialise() || this.body.length > 0 && this.body.every( isVarDeclaration ) ) {
 			return this.body[0].getLeftHandSide();
 		}
 		return this;
 	}
 
 	getRightHandSide () {
-		if ( this.removeCurlies ) {
+		if ( this.canSequentialise() || this.body.length > 0 && this.body.every( isVarDeclaration ) ) {
 			return this.body[this.body.length - 1].getRightHandSide();
 		}
 		return this;
@@ -145,28 +164,15 @@ export default class BlockStatement extends Node {
 	minify ( code ) {
 		if ( this.scope ) this.scope.mangle( code );
 
-		const statements = this.body.filter( statement => !statement.skip );
-
-		// TODO this is confusing. Also, maybe the parent should be responsible for making this determination
-		// TODO make a special case for 'use strict' — ensure it is at the start of the function block
-		const rewriteAsSequence = !this.parentIsFunction && statements.length > 0 && ( this.joinStatements || statements.every( statement => {
-			return ( statement.type === 'ExpressionStatement' && statement.expression.value !== 'use strict' ) ||
-			       statement.rewriteAsSequence;
-		}) );
-
-		const separator = rewriteAsSequence ? ',' : ';';
-
-		// TODO this is confusing
-		let removeCurlies = this.parent.type === 'Root' || (
-			this.parent.type === 'IfStatement' ?
-				this.removeCurlies :
-				( allowsBlockLessStatement[ this.parent.type ] && rewriteAsSequence )
-		);
-
-		this.removeCurlies = removeCurlies;
+		const sequentialise = !this.parentIsFunction && this.canSequentialise();
+		const removeCurlies = this.canRemoveCurlies();
+		const separator = sequentialise ? ',' : ';';
 
 		// remove leading whitespace
 		let lastEnd = ( this.parent.type === 'Root' || removeCurlies ) ? this.start : this.start + 1;
+		const end = ( this.parent.type === 'Root' || removeCurlies ) ? this.end : this.end - 1;
+
+		const statements = this.body.filter( statement => !statement.skip );
 
 		if ( statements.length ) {
 			let nextSeparator = '';
@@ -201,11 +207,10 @@ export default class BlockStatement extends Node {
 				}
 			}
 
-			const end = removeCurlies ? this.end : this.end - 1;
 			if ( end > lastEnd ) code.remove( lastEnd, end );
 		} else {
 			// empty block
-			if ( this.removeCurlies || this.parent.type === 'Root' ) {
+			if ( removeCurlies || this.parent.type === 'Root' ) {
 				code.remove( this.start, this.end );
 			} else if ( this.end > this.start + 2 ) {
 				code.remove( this.start + 1, this.end - 1 );

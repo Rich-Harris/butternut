@@ -46,6 +46,20 @@ function isVarDeclaration ( node ) {
 // TODO this whole thing is kinda messy... refactor it
 
 export default class IfStatement extends Node {
+	canSequentialise () {
+		const testValue = this.test.getValue();
+
+		if ( testValue === UNKNOWN ) {
+			return this.consequent.canSequentialise() && ( !this.alternate || this.alternate.canSequentialise() );
+		}
+
+		if ( testValue ) {
+			return this.consequent.canSequentialise();
+		}
+
+		return this.alternate ? this.alternate.canSequentialise() : false;
+	}
+
 	getRightHandSide () {
 		// TODO what if we know the test value?
 		if ( this.alternate ) return this.alternate.getRightHandSide();
@@ -55,18 +69,6 @@ export default class IfStatement extends Node {
 	initialise ( scope ) {
 		this.skip = false; // TODO skip if known to be safe
 
-		// TODO add a canSequentialise method
-		this.rewriteConsequentAsSequence = this.consequent.type === 'BlockStatement' ?
-			canRewriteBlockAsSequence( this.consequent ) :
-			this.consequent.type === 'ExpressionStatement';
-
-		this.rewriteAlternateAsSequence = !this.alternate ||
-			( this.alternate.type === 'ExpressionStatement' ) ||
-			( this.alternate.type === 'IfStatement' && canRewriteIfStatementAsSequence( this.alternate ) ) ||
-			( this.alternate.type === 'BlockStatement' ) && canRewriteBlockAsSequence( this.alternate );
-
-		this.rewriteAsSequence = this.rewriteConsequentAsSequence && this.rewriteAlternateAsSequence;
-
 		const testValue = this.test.getValue();
 
 		if ( testValue === UNKNOWN ) {
@@ -74,60 +76,18 @@ export default class IfStatement extends Node {
 			this.test.initialise( scope );
 			this.consequent.initialise( scope );
 			if ( this.alternate ) this.alternate.initialise( scope );
-
-			if ( this.rewriteConsequentAsSequence || this.consequent.type === 'BlockStatement' && this.consequent.body.every( isVarDeclaration ) ) {
-				this.consequent.removeCurlies = true;
-			}
-
-			if ( this.alternate ) {
-				if ( this.rewriteAlternateAsSequence || isVarDeclaration( this.alternate ) || ( this.alternate.type === 'BlockStatement' && this.alternate.body.every( isVarDeclaration ) ) ) {
-					this.alternate.removeCurlies = true;
-				}
-			}
 		}
 
 		else if ( testValue ) { // if ( true ) {...}
 			this.consequent.initialise( scope );
-
-			// hoist any var declarations in the alternate, so we can
-			// discard the whole thing
-			if ( this.alternate ) {
-				let varsToHoist = {};
-				this.alternate.findVarDeclarations( varsToHoist );
-
-				// TODO do something with varsToHoist
-			}
-
-			// TODO does this apply equally to else blocks?
-			if ( this.consequent.type === 'BlockStatement' ) {
-				// if there are no let/const/class/function declarations, we can
-				// remove the curlies
-				let removeCurlies = true;
-				let i = this.consequent.body.length;
-				while ( i-- ) {
-					const node = this.consequent.body[i];
-					if ( /Declaration/.test( node.type ) && node.kind !== 'var' ) {
-						removeCurlies = false;
-						break;
-					}
-				}
-
-				this.consequent.removeCurlies = removeCurlies;
-			}
 		}
 
 		else { // if ( false ) {...}
 			if ( this.alternate ) {
-				this.alternate.removeCurlies = this.rewriteAlternateAsSequence;
 				this.alternate.initialise( scope );
 			} else {
 				this.skip = true;
 			}
-
-			let varsToHoist = {};
-			this.consequent.findVarDeclarations( varsToHoist );
-
-			// TODO do something with varsToHoist
 		}
 	}
 
@@ -257,9 +217,7 @@ export default class IfStatement extends Node {
 		this.consequent.minify( code );
 		if ( this.alternate ) this.alternate.minify( code );
 
-		if ( canRewriteIfStatementAsSequence( this ) ) {
-			this.consequent.joinStatements = true;
-
+		if ( this.canSequentialise() ) {
 			if ( inverted ) code.remove( this.test.start, this.test.start + 1 );
 
 			if ( this.alternate ) {
@@ -275,10 +233,7 @@ export default class IfStatement extends Node {
 
 			if ( this.alternate ) {
 				const lastNodeOfConsequent = this.consequent.getRightHandSide();
-
-				const firstNodeOfAlternate = ( this.alternate.type === 'BlockStatement' && this.alternate.removeCurlies ?
-					this.alternate.body[0] :
-					this.alternate ).getLeftHandSide();
+				const firstNodeOfAlternate = this.alternate.getLeftHandSide();
 
 				let gap = ( lastNodeOfConsequent.type === 'BlockStatement' ? '' : ';' ) + 'else';
 				if ( invalidChars.test( code.original[ firstNodeOfAlternate.start ] ) ) gap += ' ';
@@ -321,8 +276,6 @@ export default class IfStatement extends Node {
 	}
 
 	rewriteAsLogicalExpression ( code, inverted, shouldParenthesiseTest, shouldParenthesiseConsequent ) {
-		this.rewriteAsSequence = true;
-
 		code.overwrite( this.start, this.test.start, shouldParenthesiseTest ? '(' : '' );
 
 		let replacement = ( shouldParenthesiseTest ? ')' : '' ) + ( inverted ? '||' : '&&' ) + ( shouldParenthesiseConsequent ? '(' : '' );

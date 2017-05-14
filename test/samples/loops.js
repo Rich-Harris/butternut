@@ -214,6 +214,6 @@ module.exports = [
 				}
 				result = baz;
 			}`,
-		output: `function foo(){while(bar()){var a=1}result=a}`
+		output: `function foo(){while(bar())var a=1;result=a}`
 	}
 ];

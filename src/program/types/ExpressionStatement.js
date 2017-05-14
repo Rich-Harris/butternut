@@ -1,6 +1,10 @@
 import Node from '../Node.js';
 
 export default class ExpressionStatement extends Node {
+	canSequentialise () {
+		return true;
+	}
+
 	getPrecedence () {
 		return this.expression.getPrecedence();
 	}
@@ -8,10 +12,7 @@ export default class ExpressionStatement extends Node {
 	initialise ( scope ) {
 		if ( this.expression.type === 'Literal' ) {
 			// remove side-effect-free statements (TODO others, not just literals)...
-			if ( this.expression.value !== 'use strict' ) {
-				// ...unless this is a 'use strict' pragma (TODO remove if it's not the first node in a function/program block)
-				return;
-			}
+			return;
 		}
 
 		super.initialise( scope );
