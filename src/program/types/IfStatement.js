@@ -127,7 +127,7 @@ export default class IfStatement extends Node {
 			( this.consequent.body.length === 1 ? this.consequent.body[0].getPrecedence() < targetPrecedence : true ) :
 			this.consequent.getPrecedence() < targetPrecedence;
 
-		// special case – empty if block
+		// special case – empty consequent
 		if ( this.consequent.skip ) {
 			const canRemoveTest = this.test.type === 'Identifier' || this.test.getValue() !== UNKNOWN; // TODO can this ever happen?
 
@@ -139,9 +139,7 @@ export default class IfStatement extends Node {
 						code.remove( this.start, this.end );
 						this.removed = true;
 					}
-				} else if ( canRewriteIfStatementAsSequence( this ) ) {
-					this.alternate.joinStatements = true;
-
+				} else if ( this.alternate.canSequentialise() ) {
 					let alternatePrecedence;
 					if ( this.alternate.type === 'IfStatement' ) {
 						alternatePrecedence = this.alternate.alternate ?
@@ -186,13 +184,13 @@ export default class IfStatement extends Node {
 			return;
 		}
 
-		// special case - empty else block
-		if ( this.alternate && this.alternate.type === 'BlockStatement' && this.alternate.body.length === 0 ) {
+		// special case - empty alternate
+		if ( this.alternate && this.alternate.skip ) {
+			// don't minify alternate
+			this.consequent.minify( code );
 			code.remove( this.consequent.end, this.end );
 
-			if ( canRewriteIfStatementAsSequence( this ) ) {
-				this.consequent.joinStatements = true;
-
+			if ( this.consequent.canSequentialise() ) {
 				code.overwrite( this.start, ( inverted ? this.test.argument.start : this.test.start ), shouldParenthesiseTest ? '(' : '' );
 
 				let replacement = shouldParenthesiseTest ? ')' : '';
@@ -202,15 +200,15 @@ export default class IfStatement extends Node {
 				code.overwrite( this.test.end, this.consequent.start, replacement );
 
 				if ( shouldParenthesiseConsequent ) code.appendRight( this.consequent.end, ')' );
-			} else {
+			}
+
+			else {
 				if ( this.test.start > this.start + 3 ) code.overwrite( this.start, this.test.start, 'if(' );
 
 				if ( this.consequent.start > this.test.end + 1 ) code.overwrite( this.test.end, this.consequent.start, ')' );
 				if ( this.end > this.consequent.end + 1 ) code.remove( this.consequent.end, this.end - 1 );
 			}
 
-			// don't minify alternate
-			this.consequent.minify( code );
 			return;
 		}
 
@@ -290,8 +288,6 @@ export default class IfStatement extends Node {
 
 	rewriteAsTernaryExpression ( code, inverted, shouldParenthesiseTest, shouldParenthesiseConsequent ) {
 		this.rewriteAsSequence = true;
-
-		this.alternate.joinStatements = true;
 
 		let shouldParenthesiseAlternate = false;
 		// TODO simplify this

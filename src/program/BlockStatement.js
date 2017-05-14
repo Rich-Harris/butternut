@@ -125,8 +125,6 @@ export default class BlockStatement extends Node {
 				if ( shouldPreserveAfterReturn[ node.type ] ) {
 					hasDeclarationsAfterBreak = true;
 					node.initialise( this.scope || scope );
-
-					if ( !node.skip ) this.skip = false;
 				}
 
 				continue;
@@ -144,9 +142,6 @@ export default class BlockStatement extends Node {
 					// console.log( `${node.type} preventsCollapsedReturns`)
 				}
 			}
-
-			// TODO be smarter about declarations
-			if ( /Declaration/.test( node.type ) || !node.skip ) this.skip = false;
 		}
 
 		this.collapseReturnStatements = canCollapseReturns && returnStatements.length;
@@ -157,6 +152,14 @@ export default class BlockStatement extends Node {
 			// TODO also capture `return undefined` and `return void 0` etc?
 			if ( !maybeReturnNode.argument ) {
 				maybeReturnNode.skip = true;
+			}
+		}
+
+		for ( let i = 0; i < this.body.length; i += 1 ) {
+			const node = this.body[i];
+			if ( !node.skip ) {
+				this.skip = false;
+				break;
 			}
 		}
 	}
