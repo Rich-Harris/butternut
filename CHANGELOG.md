@@ -1,5 +1,15 @@
 # butternut changelog
 
+## 0.4.1
+
+* Remove certain side-effect-free statements ([#27](https://github.com/Rich-Harris/butternut/issues/27))
+* More efficient mangling ([#55](https://github.com/Rich-Harris/butternut/issues/55))
+* Fold constants in template literals ([#62](https://github.com/Rich-Harris/butternut/issues/62))
+* Fold array method calls in some cases ([#67](https://github.com/Rich-Harris/butternut/pull/67))
+* Remove redundant 'use strict' pragmas ([#64](https://github.com/Rich-Harris/butternut/issues/64))
+* Prevent over-eager folding of binary/logical expressions ([#75](https://github.com/Rich-Harris/butternut/issues/75))
+* Remove empty blocks ([#70](https://github.com/Rich-Harris/butternut/issues/70))
+
 ## 0.4.0
 
 * Disallow direct `eval` calls by default, and deopt if explicitly allowed ([#31](https://github.com/Rich-Harris/butternut/issues/31))
