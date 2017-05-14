@@ -3,7 +3,17 @@ import { UNKNOWN, TRUTHY, FALSY } from '../../utils/sentinels.js';
 import stringify from '../../utils/stringify.js';
 
 const safeFunctions = [
+	// TODO this list is possibly a bit arbitrary. Also *technically*
+	// unsafe, though I'm inclined to wait for examples of it causing
+	// breakage in the wild
 	Array.prototype.concat,
+	Array.prototype.indexOf,
+	Array.prototype.join,
+	Array.prototype.lastIndexOf,
+	Array.prototype.reverse,
+	Array.prototype.slice,
+	Array.prototype.sort,
+	Array.prototype.toString,
 
 	String.fromCharCode,
 	String.fromCodePoint,

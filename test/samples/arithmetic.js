@@ -36,6 +36,18 @@ module.exports = [
 	},
 
 	{
+		description: 'rewrites arithmetic with non-simple values',
+		input: `a = [ 1 ] + 2`,
+		output: `a="12"`
+	},
+
+	{
+		description: 'does not rewrite arithmetic with unknown but truthy values',
+		input: `a = [ b ] + 2`,
+		output: `a=[b]+2`
+	},
+
+	{
 		description: 'preserves space before --x expression',
 		input: `Math.sqrt(1 - --t * t)`,
 		output: `Math.sqrt(1- --t*t)`
