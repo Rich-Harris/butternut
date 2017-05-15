@@ -38,4 +38,6 @@ export default function minifyPropertyKey ( code, property, isObject ) {
 	else {
 		code.remove( property.key.end, property.value.start );
 	}
+
+	property.key.minify( code );
 }

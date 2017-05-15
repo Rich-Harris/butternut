@@ -2,10 +2,10 @@ import Node from '../../Node.js';
 import Scope from '../../Scope.js';
 import extractNames from '../../extractNames.js';
 
-function hasFunctionKeyword ( parent ) {
+function hasFunctionKeyword ( node, parent ) {
 	if ( parent.type === 'MethodDefinition' ) return false;
 
-	if ( parent.type === 'Property' ) {
+	if ( parent.type === 'Property' && node === parent.value ) {
 		if ( parent.method ) return false;
 		if ( parent.kind === 'set' || parent.kind === 'get' ) return false;
 	}
@@ -49,7 +49,7 @@ export default class FunctionNode extends Node {
 	minify ( code ) {
 		let c = this.start;
 
-		if ( hasFunctionKeyword( this.parent ) ) {
+		if ( hasFunctionKeyword( this, this.parent ) ) {
 			if ( this.id && !this.removeId ) {
 				code.overwrite( this.start, this.id.start, ( this.async ? 'async function ' : this.generator ? 'function*' : 'function ' ) );
 				c = this.id.end;

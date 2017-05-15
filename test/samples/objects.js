@@ -69,5 +69,14 @@ module.exports = [
 				set  bar  (val) {}
 			}`,
 		output: `obj={get bar(){},set bar(a){}}`
+	},
+
+	{
+		description: 'TK',
+		input: `
+			obj = {
+				[function foo() {}] () {}
+			};`,
+		output: `obj={[function a(){}](){}}`
 	}
 ];
