@@ -20,10 +20,28 @@ export default class IfStatement extends Node {
 		return this.alternate ? this.alternate.canSequentialise() : false;
 	}
 
+	getLeftHandSide () {
+		const testValue = this.test.getValue();
+
+		if ( testValue === UNKNOWN ) {
+			if ( this.canSequentialise() ) return ( this.inverted ? this.test.argument : this.test ).getLeftHandSide();
+			return this;
+		}
+
+		if ( testValue ) return this.consequent.getLeftHandSide();
+		return this.alternate.getLeftHandSide();
+	}
+
 	getRightHandSide () {
-		// TODO what if we know the test value?
-		if ( this.alternate ) return this.alternate.getRightHandSide();
-		return this.consequent.getRightHandSide();
+		const testValue = this.test.getValue();
+
+		if ( testValue === UNKNOWN ) {
+			if ( this.canSequentialise() ) return ( this.alternate ? ( this.inverted ? this.consequent : this.alternate ) : this.consequent ).getRightHandSide()
+			return ( this.alternate || this.consequent ).getRightHandSide();
+		}
+
+		if ( testValue ) return this.consequent.getRightHandSide();
+		return this.alternate.getRightHandSide();
 	}
 
 	initialise ( scope ) {
@@ -61,6 +79,8 @@ export default class IfStatement extends Node {
 				});
 			}
 		}
+
+		this.inverted = this.test.type === 'UnaryExpression' && this.test.operator === '!';
 	}
 
 	minify ( code ) {
@@ -86,16 +106,14 @@ export default class IfStatement extends Node {
 
 		this.test.minify( code );
 
-		const inverted = this.test.type === 'UnaryExpression' && this.test.operator === '!';
-
 		// if we're rewriting as &&, test must be higher precedence than 6
 		// to avoid being wrapped in parens. If ternary, 4
-		const targetPrecedence = this.alternate ? 4 : inverted ? 5 : 6;
+		const targetPrecedence = this.alternate ? 4 : this.inverted ? 5 : 6;
 
 		const shouldParenthesiseTest = (
 			this.test.getPrecedence() < targetPrecedence ||
-			this.test.getLeftHandSide().type !== 'ObjectExpression' ||
-			this.test.getRightHandSide().type !== 'ObjectExpression'
+			this.test.getLeftHandSide().type === 'ObjectExpression' ||
+			this.test.getRightHandSide().type === 'ObjectExpression'
 		);
 
 		// TODO what if nodes in the consequent are skipped...
@@ -129,16 +147,16 @@ export default class IfStatement extends Node {
 						alternatePrecedence = 0; // err on side of caution
 					}
 
-					const shouldParenthesiseAlternate = alternatePrecedence < ( inverted ? 6 : 5 );
+					const shouldParenthesiseAlternate = alternatePrecedence < ( this.inverted ? 6 : 5 );
 					if ( shouldParenthesiseAlternate ) {
 						code.prependRight( this.alternate.start, '(' ).appendLeft( this.alternate.end, ')' );
 					}
 
-					if ( inverted ) code.remove( this.test.start, this.test.argument.start );
+					if ( this.inverted ) code.remove( this.test.start, this.test.argument.start );
 					code.remove( this.start, this.test.start );
-					code.overwrite( this.test.end, this.alternate.start, inverted ? '&&' : '||' );
+					code.overwrite( this.test.end, this.alternate.start, this.inverted ? '&&' : '||' );
 				} else {
-					if ( inverted ) {
+					if ( this.inverted ) {
 						code.overwrite( this.start + 2, this.test.argument.start, '(' );
 					} else {
 						code.overwrite( this.start + 2, this.test.start, '(!' );
@@ -167,10 +185,10 @@ export default class IfStatement extends Node {
 			code.remove( this.consequent.end, this.end );
 
 			if ( this.consequent.canSequentialise() ) {
-				code.overwrite( this.start, ( inverted ? this.test.argument.start : this.test.start ), shouldParenthesiseTest ? '(' : '' );
+				code.overwrite( this.start, ( this.inverted ? this.test.argument.start : this.test.start ), shouldParenthesiseTest ? '(' : '' );
 
 				let replacement = shouldParenthesiseTest ? ')' : '';
-				replacement += inverted ? '||' : '&&';
+				replacement += this.inverted ? '||' : '&&';
 				if ( shouldParenthesiseConsequent ) replacement += '(';
 
 				code.overwrite( this.test.end, this.consequent.start, replacement );
@@ -192,12 +210,12 @@ export default class IfStatement extends Node {
 		if ( this.alternate ) this.alternate.minify( code );
 
 		if ( this.canSequentialise() ) {
-			if ( inverted ) code.remove( this.test.start, this.test.start + 1 );
+			if ( this.inverted ) code.remove( this.test.start, this.test.start + 1 );
 
 			if ( this.alternate ) {
-				this.rewriteAsTernaryExpression( code, inverted, shouldParenthesiseTest, shouldParenthesiseConsequent );
+				this.rewriteAsTernaryExpression( code, shouldParenthesiseTest, shouldParenthesiseConsequent );
 			} else {
-				this.rewriteAsLogicalExpression( code, inverted, shouldParenthesiseTest, shouldParenthesiseConsequent );
+				this.rewriteAsLogicalExpression( code, shouldParenthesiseTest, shouldParenthesiseConsequent );
 			}
 		}
 
@@ -249,7 +267,7 @@ export default class IfStatement extends Node {
 		}
 	}
 
-	rewriteAsLogicalExpression ( code, inverted, shouldParenthesiseTest, shouldParenthesiseConsequent ) {
+	rewriteAsLogicalExpression ( code, shouldParenthesiseTest, shouldParenthesiseConsequent ) {
 		code.remove( this.start, this.test.start );
 
 		if ( shouldParenthesiseTest ) {
@@ -262,10 +280,10 @@ export default class IfStatement extends Node {
 			code.appendLeft( this.consequent.getRightHandSide().end, ')' );
 		}
 
-		code.overwrite( this.test.end, this.consequent.start, inverted ? '||' : '&&' );
+		code.overwrite( this.test.end, this.consequent.start, this.inverted ? '||' : '&&' );
 	}
 
-	rewriteAsTernaryExpression ( code, inverted, shouldParenthesiseTest, shouldParenthesiseConsequent ) {
+	rewriteAsTernaryExpression ( code, shouldParenthesiseTest, shouldParenthesiseConsequent ) {
 		this.rewriteAsSequence = true;
 
 		let shouldParenthesiseAlternate = false;
@@ -293,8 +311,8 @@ export default class IfStatement extends Node {
 		code.overwrite( this.start, this.test.start, shouldParenthesiseTest ? '(' : '' );
 
 		let replacement = shouldParenthesiseTest ? ')?' : '?';
-		if ( inverted && shouldParenthesiseAlternate ) replacement += '(';
-		if ( !inverted && shouldParenthesiseConsequent ) replacement += '(';
+		if ( this.inverted && shouldParenthesiseAlternate ) replacement += '(';
+		if ( !this.inverted && shouldParenthesiseConsequent ) replacement += '(';
 
 		code.overwrite( this.test.end, this.consequent.start, replacement );
 
@@ -306,7 +324,7 @@ export default class IfStatement extends Node {
 
 		code.remove( consequentEnd, this.alternate.start );
 
-		if ( inverted ) {
+		if ( this.inverted ) {
 			let alternateEnd = this.alternate.end;
 			while ( code.original[ alternateEnd - 1 ] === ';' ) alternateEnd -= 1;
 

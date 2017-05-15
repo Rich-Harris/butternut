@@ -4,6 +4,10 @@ function shouldRemoveParens ( expression, parent ) {
 	const expressionPrecedence = expression.getPrecedence();
 	const parentPrecedence = parent.getPrecedence();
 
+	if ( /^Object/.test( expression.getLeftHandSide().type ) || /^Object/.test( expression.getRightHandSide().type ) ) {
+		return false;
+	}
+
 	if ( expression.type === 'CallExpression' ) {
 		return expression.callee.type === 'FunctionExpression'; // TODO is this right?
 	}
