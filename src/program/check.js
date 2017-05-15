@@ -19,26 +19,28 @@ export default function check ( magicString, ast ) {
 		const mappings = decode( map.mappings );
 		const segments = mappings[ line - 1 ];
 
+		let message = err.message;
+		let repro;
+
 		for ( let i = 0; i < segments.length; i += 1 ) {
 			const segment = segments[i];
 			if ( segment[0] >= column ) {
 				const sourceCodeLine = segment[2];
 				const sourceCodeColumn = segment[3];
 
-				err.message = `Butternut generated invalid JS: code in source file near (${sourceCodeLine + 1}:${sourceCodeColumn}) became\n...${snippet}...`;
+				message = `Butternut generated invalid JS: code in source file near (${sourceCodeLine + 1}:${sourceCodeColumn}) became\n...${snippet}...`;
+				repro = createRepro( magicString.original, ast, sourceCodeLine, sourceCodeColumn );
 
-				try {
-					const repro = createRepro( magicString.original, ast, sourceCodeLine, sourceCodeColumn );
-					if ( repro ) err.repro = repro;
-				} catch (err) {
-					// do nothing
-				}
-
-				throw err;
+				break;
 			}
 		}
 
-		throw err;
+		const err2 = new Error( message );
+		err2.check = true;
+		err2.repro = repro;
+		err2.output = code;
+
+		throw err2;
 	}
 }
 
