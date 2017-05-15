@@ -14,8 +14,8 @@ const butternut = require(process.env.COVERAGE ? '../src/index.js' : process.env
 require('source-map-support').install();
 require('console-group').install();
 
-function equal(a, b) {
-	assert.equal(showInvisibles(a), showInvisibles(b));
+function equal(a, b, message) {
+	assert.equal(showInvisibles(a), showInvisibles(b), message);
 }
 
 function showInvisibles(str) {
@@ -64,7 +64,7 @@ describe('butternut', function () {
 
 						// idempotency test
 						if (sample.idempotent !== false ) {
-							equal(butternut.squash(code, sample.options).code, code);
+							equal(butternut.squash(code, sample.options).code, code, 'failed idempotency check');
 						}
 					}
 				});

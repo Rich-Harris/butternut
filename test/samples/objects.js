@@ -44,5 +44,20 @@ module.exports = [
 				}
 			}`,
 		output: `var obj={async foo(){}}`
+	},
+
+	{
+		description: 'preserves parens around object literals',
+		input: `
+			if (true && {}.foo) {
+				bar();
+			}`,
+		output: `({}.foo)&&bar()`
+	},
+
+	{
+		description: 'preserves parens around object patterns',
+		input: `({ foo, bar, baz } = obj);`,
+		output: `({foo,bar,baz}=obj)`
 	}
 ];

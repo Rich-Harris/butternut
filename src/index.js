@@ -13,7 +13,8 @@ export function squash ( source, options = {} ) {
 		ast = parse( source, {
 			ecmaVersion: 8,
 			preserveParens: true,
-			sourceType: 'module'
+			sourceType: 'module',
+			allowReserved: true
 		});
 		if ( DEBUG ) stats.timeEnd( 'parse' );
 	} catch ( err ) {

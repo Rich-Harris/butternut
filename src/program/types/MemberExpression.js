@@ -9,6 +9,10 @@ function isValidIdentifier ( str ) {
 }
 
 export default class MemberExpression extends Node {
+	getLeftHandSide () {
+		return this.object.getLeftHandSide();
+	}
+
 	getValue () {
 		const objectValue = this.object.getValue();
 		if ( !objectValue || objectValue === UNKNOWN ) return UNKNOWN;
@@ -24,6 +28,10 @@ export default class MemberExpression extends Node {
 
 	getPrecedence () {
 		return 18;
+	}
+
+	getRightHandSide () {
+		return this;
 	}
 
 	minify ( code ) {
