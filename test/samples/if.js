@@ -558,5 +558,14 @@ module.exports = [
 				}
 			else z()`,
 		output: `if(x)try{x()}catch(a){y()}else z()`
+	},
+
+	{
+		description: 'does not add semi after for-loop',
+		input: `
+			if(x)
+				for(;;);
+			else { i=0; }`,
+		output: `if(x)for(;;);else i=0`
 	}
 ];
