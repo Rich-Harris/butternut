@@ -59,7 +59,8 @@ function createRepro ( source, ast, line, column ) {
 			ecmaVersion: 8,
 			preserveParens: true,
 			sourceType: 'module',
-			allowReturnOutsideFunction: true
+			allowReturnOutsideFunction: true,
+			allowReserved: true
 		});
 
 		const { code } = new Program( slice, ast, null ).export({});
@@ -68,7 +69,8 @@ function createRepro ( source, ast, line, column ) {
 			parse( code, {
 				ecmaVersion: 8,
 				sourceType: 'module',
-				allowReturnOutsideFunction: true
+				allowReturnOutsideFunction: true,
+				allowReserved: true
 			});
 		} catch ( err ) {
 			return {

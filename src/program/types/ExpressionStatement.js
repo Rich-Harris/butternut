@@ -6,8 +6,16 @@ export default class ExpressionStatement extends Node {
 		return true;
 	}
 
+	getLeftHandSide () {
+		return this.expression.getLeftHandSide();
+	}
+
 	getPrecedence () {
 		return this.expression.getPrecedence();
+	}
+
+	getRightHandSide () {
+		return this.expression.getRightHandSide();
 	}
 
 	initialise ( scope ) {

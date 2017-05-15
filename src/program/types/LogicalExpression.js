@@ -3,7 +3,14 @@ import { UNKNOWN } from '../../utils/sentinels.js';
 
 export default class LogicalExpression extends Node {
 	getLeftHandSide () {
-		return this.left.getLeftHandSide();
+		const leftValue = this.left.getValue();
+
+		if ( leftValue === UNKNOWN ) return this.left.getLeftHandSide();
+
+		return ( this.operator === '&&' ?
+			( leftValue ? this.right : this.left ) :
+			( leftValue ? this.left : this.right )
+		).getLeftHandSide();
 	}
 
 	getPrecedence () {
@@ -13,6 +20,17 @@ export default class LogicalExpression extends Node {
 		if ( leftValue === UNKNOWN || rightValue === UNKNOWN ) return this.operator === '&&' ? 6 : 5;
 
 		return 20; // will be replaced by a literal
+	}
+
+	getRightHandSide () {
+		const leftValue = this.left.getValue();
+
+		if ( leftValue === UNKNOWN ) return this.right.getRightHandSide();
+
+		return ( this.operator === '&&' ?
+			( leftValue ? this.right : this.left ) :
+			( leftValue ? this.left : this.right )
+		).getRightHandSide();
 	}
 
 	getValue () {
