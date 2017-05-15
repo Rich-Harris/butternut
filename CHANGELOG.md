@@ -1,5 +1,12 @@
 # butternut changelog
 
+## 0.4.2
+
+* Hoist `var` declarations out of removed blocks ([#51](https://github.com/Rich-Harris/butternut/issues/51))
+* More conservative constant folding ([#74](https://github.com/Rich-Harris/butternut/issues/74))
+* Allow reserved words ([#79](https://github.com/Rich-Harris/butternut/issues/79))
+* Preserve/insert parens around object literals as necessary ([#77](https://github.com/Rich-Harris/butternut/issues/77))
+
 ## 0.4.1
 
 * Remove certain side-effect-free statements ([#27](https://github.com/Rich-Harris/butternut/issues/27))

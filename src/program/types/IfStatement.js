@@ -36,7 +36,7 @@ export default class IfStatement extends Node {
 		const testValue = this.test.getValue();
 
 		if ( testValue === UNKNOWN ) {
-			if ( this.canSequentialise() ) return ( this.alternate ? ( this.inverted ? this.consequent : this.alternate ) : this.consequent ).getRightHandSide()
+			if ( this.canSequentialise() ) return ( this.alternate ? ( this.inverted ? this.consequent : this.alternate ) : this.consequent ).getRightHandSide();
 			return ( this.alternate || this.consequent ).getRightHandSide();
 		}
 
