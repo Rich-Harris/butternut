@@ -8,6 +8,18 @@ function isValidIdentifier ( str ) {
 	return !reserved[ str ] && /^[a-zA-Z_$][a-zA-Z_$0-9]*$/.test( str );
 }
 
+function canFold ( node, parent ) {
+	while ( parent.type === 'ParenthesizedExpression' ) {
+		node = parent;
+		parent = node.parent;
+	}
+
+	if ( parent.type === 'UpdateExpression' ) return false;
+	if ( parent.type === 'AssignmentExpression' ) return node !== parent.left;
+
+	return true;
+}
+
 export default class MemberExpression extends Node {
 	getLeftHandSide () {
 		return this.object.getLeftHandSide();
@@ -37,7 +49,7 @@ export default class MemberExpression extends Node {
 	minify ( code ) {
 		const value = this.getValue();
 
-		if ( value !== UNKNOWN ) {
+		if ( value !== UNKNOWN && canFold( this, this.parent ) ) {
 			const str = stringify( value );
 
 			if ( str !== null ) {
