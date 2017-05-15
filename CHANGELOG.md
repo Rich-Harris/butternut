@@ -1,5 +1,10 @@
 # butternut changelog
 
+## 0.4.3
+
+* Don't insert semicolons before `else` keywords that follow blocks, try statements or empty statements ([#82](https://github.com/Rich-Harris/butternut/issues/82))
+* More informative CLI error messages if repro is generated ([#82](https://github.com/Rich-Harris/butternut/issues/82))
+
 ## 0.4.2
 
 * Hoist `var` declarations out of removed blocks ([#51](https://github.com/Rich-Harris/butternut/issues/51))
