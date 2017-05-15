@@ -100,5 +100,15 @@ module.exports = [
 				static [ bar ] () {}
 			}`,
 		output: `class Foo{static[bar](){}}`
+	},
+
+	{
+		description: 'minifies getters and setters',
+		input: `
+			class Foo {
+				get  bar  () {}
+				set  bar  (val) {}
+			}`,
+		output: `class Foo{get bar(){}set bar(a){}}`
 	}
 ];

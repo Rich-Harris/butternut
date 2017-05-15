@@ -1,13 +1,19 @@
+function isAccessor ( property ) {
+	return property.kind === 'get' || property.kind === 'set';
+}
+
 export default function minifyPropertyKey ( code, property, isObject ) {
 	if ( property.shorthand ) return;
 
-	const separator = ( isObject && !property.method ) ? ':' : '';
+	const separator = ( isObject && !property.method && !isAccessor( property ) ) ? ':' : '';
 
-	if ( property.value.async || property.value.generator || property.computed || property.static ) {
+	if ( property.value.async || property.value.generator || property.computed || property.static || isAccessor( property ) ) {
 		let prefix = '';
 		if ( property.static ) prefix += 'static'; // only applies to class methods, obviously
 
-		if ( property.value.async ) {
+		if ( isAccessor( property ) ) {
+			prefix += ( property.static ) ? ` ${property.kind}` : property.kind;
+		} else if ( property.value.async ) {
 			prefix += ( property.static ? ' async' : 'async' );
 		} else if ( property.value.generator ) {
 			prefix += '*';
@@ -15,7 +21,7 @@ export default function minifyPropertyKey ( code, property, isObject ) {
 
 		if ( property.computed ) {
 			prefix += '[';
-		} else if ( property.value.async || ( property.static && !property.value.generator ) ) {
+		} else if ( prefix && !property.value.generator ) {
 			prefix += ' ';
 		}
 
