@@ -1,5 +1,4 @@
 import Node from '../Node.js';
-import minifyPropertyKey from './shared/minifyPropertyKey.js';
 
 export default class ClassBody extends Node {
 	attachScope ( parent ) {
@@ -15,13 +14,11 @@ export default class ClassBody extends Node {
 			const method = this.body[i];
 			if ( method.start > c ) code.remove( c, method.start );
 
-			minifyPropertyKey( code, method, false );
+			method.minify( code );
 
 			c = method.end;
 		}
 
 		if ( this.end > c + 1 ) code.remove( c, this.end - 1 );
-
-		super.minify( code );
 	}
 }

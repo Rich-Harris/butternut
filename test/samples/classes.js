@@ -82,5 +82,23 @@ module.exports = [
 				}
 			}`,
 		output: `class Foo{async bar(){}}`
+	},
+
+	{
+		description: 'minifies static method',
+		input: `
+			class Foo {
+				static bar () {}
+			}`,
+		output: `class Foo{static bar(){}}`
+	},
+
+	{
+		description: 'minifies static computed method',
+		input: `
+			class Foo {
+				static [ bar ] () {}
+			}`,
+		output: `class Foo{static[bar](){}}`
 	}
 ];
