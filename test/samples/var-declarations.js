@@ -44,6 +44,7 @@ module.exports = [
 
 	{
 		description: 'variable names that clash with function names are not considered duplicates',
+		idempotent: false,
 		input: `
 			var x = function thing ( scope ) {
 				var thing = fn();
