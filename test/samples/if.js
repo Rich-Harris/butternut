@@ -545,5 +545,18 @@ module.exports = [
 				console.log(x);
 			}`,
 		output: `if(a)b&&c();else{var x=42;console.log(x);console.log(x)}`
+	},
+
+	{
+		description: 'does not insert semi after try-catch block',
+		input: `
+			if(x)
+				try{
+					x()
+				} catch(n) {
+					y()
+				}
+			else z()`,
+		output: `if(x)try{x()}catch(a){y()}else z()`
 	}
 ];
