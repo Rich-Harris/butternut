@@ -5,6 +5,14 @@ const invalidChars = /[a-zA-Z$_0-9/]/;
 
 // TODO this whole thing is kinda messy... refactor it
 
+function endsWithCurlyBraceOrSemicolon ( node ) {
+	return (
+		node.type === 'BlockStatement' ||
+		node.type === 'TryStatement' ||
+		node.type === 'EmptyStatement'
+	);
+}
+
 export default class IfStatement extends Node {
 	canSequentialise () {
 		const testValue = this.test.getValue();
@@ -227,7 +235,7 @@ export default class IfStatement extends Node {
 				const lastNodeOfConsequent = this.consequent.getRightHandSide();
 				const firstNodeOfAlternate = this.alternate.getLeftHandSide();
 
-				let gap = ( lastNodeOfConsequent.type === 'BlockStatement' ? '' : ';' ) + 'else';
+				let gap = ( endsWithCurlyBraceOrSemicolon( lastNodeOfConsequent ) ? '' : ';' ) + 'else';
 				if ( invalidChars.test( code.original[ firstNodeOfAlternate.start ] ) ) gap += ' ';
 
 				let c = this.consequent.end;
