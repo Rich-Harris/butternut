@@ -1,23 +1,37 @@
 import Node from '../../Node.js';
+import isNegativeZero from '../../../utils/isNegativeZero.js';
+import { UNKNOWN } from '../../../utils/sentinels.js';
+
+function shouldParenthesizeSuperclass ( node ) {
+	while ( node.type === 'ParenthesizedExpression' ) node = node.expression;
+
+	const value = node.getValue();
+	if ( value === UNKNOWN ) return node.getPrecedence() < 18;
+
+	return ( value === true || value === false || value === undefined || isNegativeZero( value ) );
+}
 
 export default class Class extends Node {
 	minify ( code ) {
-		let c = this.superClass ? this.superClass.end : this.id ? this.id.end : this.start + 6;
+		let c = this.start + 5;
 
 		if ( this.id ) {
-			if ( this.id.start > this.start + 6 ) {
-				code.remove( this.start + 6, this.id.start );
+			if ( this.id.start > c + 1 ) code.remove( c + 1, this.id.start );
+			c = this.id.end;
+		}
+
+		if ( this.superClass ) {
+			// edge case
+			if ( shouldParenthesizeSuperclass( this.superClass ) ) {
+				code.overwrite( c, this.superClass.start, ' extends(' );
+				code.prependRight( this.body.start, ')' );
 			}
 
-			if ( this.superClass ) {
-				if ( this.superClass.start > this.id.end + 9 ) {
-					code.overwrite( this.id.end, this.superClass.start, ' extends ' );
-				}
+			else if ( this.superClass.start > c + 8 ) {
+				code.overwrite( c, this.superClass.start, ' extends ' );
 			}
-		} else if ( this.superClass ) {
-			if ( this.superClass.start > this.start + 14 ) {
-				code.overwrite( this.start + 6, this.superClass.start, 'extends ' );
-			}
+
+			c = this.superClass.end;
 		}
 
 		if ( this.body.start > c ) code.remove( c, this.body.start );

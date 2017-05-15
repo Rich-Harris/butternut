@@ -1,3 +1,5 @@
+import isNegativeZero from './isNegativeZero.js';
+
 export default function stringify ( value ) {
 	if ( typeof value === 'function' ) return null;
 
@@ -13,8 +15,4 @@ export default function stringify ( value ) {
 	return JSON.stringify( value )
 		.replace( /\u2028/g, '\\u2028' )
 		.replace( /\u2029/g, '\\u2029' );
-}
-
-function isNegativeZero ( num ) {
-	return num === 0 && ( 1 / num < 0 );
 }
