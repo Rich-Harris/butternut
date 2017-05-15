@@ -160,6 +160,8 @@ export default class BlockStatement extends Node {
 		}
 	}
 
+	// TODO remove block.isEmpty() in favour of block.skip — this is a hangover from
+	// when variables could get activated after we'd finished initialising a block
 	isEmpty () {
 		for ( let i = 0; i < this.body.length; i += 1 ) {
 			const node = this.body[i];
