@@ -92,7 +92,11 @@ export default class IfStatement extends Node {
 		// to avoid being wrapped in parens. If ternary, 4
 		const targetPrecedence = this.alternate ? 4 : inverted ? 5 : 6;
 
-		const shouldParenthesiseTest = this.test.getPrecedence() < targetPrecedence;
+		const shouldParenthesiseTest = (
+			this.test.getPrecedence() < targetPrecedence ||
+			this.test.getLeftHandSide().type !== 'ObjectExpression' ||
+			this.test.getRightHandSide().type !== 'ObjectExpression'
+		);
 
 		// TODO what if nodes in the consequent are skipped...
 		const shouldParenthesiseConsequent = this.consequent.type === 'BlockStatement' ?
@@ -246,16 +250,19 @@ export default class IfStatement extends Node {
 	}
 
 	rewriteAsLogicalExpression ( code, inverted, shouldParenthesiseTest, shouldParenthesiseConsequent ) {
-		code.overwrite( this.start, this.test.start, shouldParenthesiseTest ? '(' : '' );
+		code.remove( this.start, this.test.start );
 
-		let replacement = ( shouldParenthesiseTest ? ')' : '' ) + ( inverted ? '||' : '&&' ) + ( shouldParenthesiseConsequent ? '(' : '' );
-		code.overwrite( this.test.end, this.consequent.start, replacement );
+		if ( shouldParenthesiseTest ) {
+			code.prependRight( this.test.getLeftHandSide().start, '(' );
+			code.appendLeft( this.test.getRightHandSide().end, ')' );
+		}
 
 		if ( shouldParenthesiseConsequent ) {
-			let c = this.consequent.end;
-			while ( code.original[ c - 1 ] === ';' ) c -= 1;
-			code.appendLeft( c, ')' );
+			code.prependRight( this.consequent.getLeftHandSide().start, '(' );
+			code.appendLeft( this.consequent.getRightHandSide().end, ')' );
 		}
+
+		code.overwrite( this.test.end, this.consequent.start, inverted ? '||' : '&&' );
 	}
 
 	rewriteAsTernaryExpression ( code, inverted, shouldParenthesiseTest, shouldParenthesiseConsequent ) {
