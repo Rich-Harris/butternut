@@ -3,8 +3,22 @@ export default function minifyPropertyKey ( code, property, isObject ) {
 
 	const separator = ( isObject && !property.method ) ? ':' : '';
 
-	if ( property.value.async || property.value.generator || property.computed ) {
-		const prefix = ( property.value.async ? ( property.computed ? 'async' : 'async ' ) : property.value.generator ? '*' : '' ) + ( property.computed ? '[' : '' );
+	if ( property.value.async || property.value.generator || property.computed || property.static ) {
+		let prefix = '';
+		if ( property.static ) prefix += 'static'; // only applies to class methods, obviously
+
+		if ( property.value.async ) {
+			prefix += ( property.static ? ' async' : 'async' );
+		} else if ( property.value.generator ) {
+			prefix += '*';
+		}
+
+		if ( property.computed ) {
+			prefix += '[';
+		} else if ( property.value.async || ( property.static && !property.value.generator ) ) {
+			prefix += ' ';
+		}
+
 		if ( property.key.start - property.start > prefix.length ) code.overwrite( property.start, property.key.start, prefix );
 
 		const suffix = ( property.computed ? ']' : '' ) + separator;

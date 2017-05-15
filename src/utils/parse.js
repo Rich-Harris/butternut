@@ -6,6 +6,6 @@ export default function parse ( source ) {
 		preserveParens: true,
 		sourceType: 'module',
 		allowReserved: true,
-		allowReturnOutsideFunction: true,
+		allowReturnOutsideFunction: true
 	});
 }
