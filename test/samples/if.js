@@ -184,6 +184,12 @@ module.exports = [
 	},
 
 	{
+		description: 'removes empty if block if both consequent and alternate are empty',
+		input: `if ( foo() ) {} else {}`,
+		output: `foo()`
+	},
+
+	{
 		description: 'removes empty if block in complex if-else',
 		input: `if ( foo () ) {} else { var bar = 'baz'; }`,
 		output: `if(!foo())var bar='baz'`

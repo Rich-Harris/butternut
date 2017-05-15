@@ -140,6 +140,9 @@ export default class IfStatement extends Node {
 					if ( canRemoveTest ) {
 						code.remove( this.start, this.end );
 						this.removed = true;
+					} else {
+						code.remove( this.start, this.test.start );
+						code.remove( this.test.end, this.end );
 					}
 				} else if ( this.alternate.canSequentialise() ) {
 					let alternatePrecedence;
