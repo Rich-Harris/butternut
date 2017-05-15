@@ -63,7 +63,9 @@ describe('butternut', function () {
 						equal(code, sample.output);
 
 						// idempotency test
-						equal(butternut.squash(code, sample.options).code, code);
+						if (sample.idempotent !== false ) {
+							equal(butternut.squash(code, sample.options).code, code);
+						}
 					}
 				});
 			});
