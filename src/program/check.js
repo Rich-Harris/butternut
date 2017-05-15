@@ -1,4 +1,4 @@
-import { parse } from 'acorn';
+import parse from '../utils/parse.js';
 import { decode } from 'sourcemap-codec';
 import keys from './keys.js';
 import Program from './Program.js';
@@ -7,10 +7,7 @@ export default function check ( magicString, ast ) {
 	const code = magicString.toString();
 
 	try {
-		parse( code, {
-			ecmaVersion: 8,
-			sourceType: 'module'
-		});
+		parse( code );
 	} catch ( err ) {
 		const map = magicString.generateMap();
 		const { line, column } = err.loc;
@@ -57,27 +54,21 @@ function createRepro ( source, ast, line, column ) {
 		node = zoomOut( node );
 
 		const slice = source.slice( node.start, node.end );
-		const ast = parse( slice, {
-			ecmaVersion: 8,
-			preserveParens: true,
-			sourceType: 'module',
-			allowReturnOutsideFunction: true,
-			allowReserved: true
-		});
+		const ast = parse( slice );
 
 		const { code } = new Program( slice, ast, null ).export({});
 
 		try {
-			parse( code, {
-				ecmaVersion: 8,
-				sourceType: 'module',
-				allowReturnOutsideFunction: true,
-				allowReserved: true
-			});
+			parse( code );
 		} catch ( err ) {
 			return {
-				input: slice,
-				output: code
+				input: deindent( slice, source, node.start ),
+				output: code,
+				pos: c,
+				loc: {
+					line,
+					column
+				}
 			};
 		}
 	} while ( node );
@@ -120,4 +111,18 @@ function zoomOut ( node ) {
 	}
 
 	return node.parent;
+}
+
+function deindent ( slice, source, start ) {
+	let c = start;
+	while ( /[ \t]/.test( source[c-1] ) ) c -= 1;
+
+	const indent = source.slice( c, start );
+
+	if ( indent ) {
+		const pattern = new RegExp( `^${indent}`, 'gm' );
+		return slice.replace( pattern, '' );
+	}
+
+	return slice;
 }

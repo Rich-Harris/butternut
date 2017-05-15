@@ -1,4 +1,4 @@
-import { parse } from 'acorn';
+import parse from './utils/parse.js';
 import Program from './program/Program.js';
 import Stats from './utils/Stats.js';
 import getSnippet from './utils/getSnippet.js';
@@ -10,12 +10,7 @@ export function squash ( source, options = {} ) {
 
 	try {
 		if ( DEBUG ) stats.time( 'parse' );
-		ast = parse( source, {
-			ecmaVersion: 8,
-			preserveParens: true,
-			sourceType: 'module',
-			allowReserved: true
-		});
+		ast = parse( source );
 		if ( DEBUG ) stats.timeEnd( 'parse' );
 	} catch ( err ) {
 		err.snippet = getSnippet( source, err.loc );

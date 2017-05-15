@@ -28,15 +28,25 @@ module.exports = function handleError ( err ) {
 	if ( handler = handlers[ err && err.code ] ) {
 		handler( err );
 	} else {
-		if ( err.snippet ) console.error( chalk.red( '---\n' + err.snippet ) );
-		console.error( chalk.red( err.message || err ) );
+		if ( err.check ) {
+			console.error( chalk.red( `Butternut generated invalid JavaScript. Please raise an issue at https://github.com/Rich-Harris/butternut/issues` ) );
 
-		if ( err.stack ) {
-			console.error( chalk.grey( err.stack ) );
+			if ( err.repro ) {
+				console.error( chalk.cyan( `Errored minifying code near line ${err.repro.loc.line}, column ${err.repro.loc.column}. Reproducible with this input:` ) );
+				console.error( err.repro.input );
+			}
+		}
+
+		else {
+			console.error( chalk.red( err.message || err ) );
+
+			if ( err.stack ) {
+				console.error( chalk.grey( err.stack ) );
+			}
+
+			console.error( 'Type ' + chalk.cyan( 'squash --help' ) + ' for help, or visit https://github.com/Rich-Harris/butternut' );
 		}
 	}
-
-	console.error( 'Type ' + chalk.cyan( 'squash --help' ) + ' for help, or visit https://butternut.surge.sh/guide' );
 
 	process.exit( 1 );
 };
