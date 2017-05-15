@@ -101,14 +101,14 @@ export default class BlockStatement extends Node {
 	}
 
 	getLeftHandSide () {
-		if ( this.canSequentialise() || this.body.length > 0 && this.body.every( isVarDeclaration ) ) {
+		if ( this.canSequentialise() || ( this.body.length > 0 && this.body.every( isVarDeclaration ) ) ) {
 			return this.body[0].getLeftHandSide();
 		}
 		return this;
 	}
 
 	getRightHandSide () {
-		if ( this.canSequentialise() || this.body.length > 0 && this.body.every( isVarDeclaration ) ) {
+		if ( this.canSequentialise() || ( this.body.length > 0 && this.body.every( isVarDeclaration ) ) ) {
 			return this.body[this.body.length - 1].getRightHandSide();
 		}
 		return this;
