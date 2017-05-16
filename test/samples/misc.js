@@ -23,7 +23,7 @@ module.exports = [
 			var obj = {
 				await: function await () {}
 			};`,
-		output: `var obj={await:function a(){}}`
+		output: `var obj={await:function(){}}`
 	},
 
 	{

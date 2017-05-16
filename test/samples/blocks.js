@@ -30,7 +30,7 @@ module.exports = [
 				console.log(a);
 				console.log(b);
 			}`,
-		output: `var foo=function a(b,c){console.log(b);console.log(c)}`
+		output: `var foo=function(a,b){console.log(a);console.log(b)}`
 	},
 
 	{

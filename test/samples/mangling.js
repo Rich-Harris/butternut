@@ -52,12 +52,12 @@ module.exports = [
 		description: 'function expression IDs are mangled',
 		input: `
 			function foo () {
-				return function baz () {
-					// code goes here
+				return function baz (x) {
+					if (x > 0) baz(x - 1);
 				}
 			}
 			foo()`,
-		output: `function foo(){return function a(){}}foo()`
+		output: `function foo(){return function a(b){b>0&&a(b-1)}}foo()`
 	},
 
 	{

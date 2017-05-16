@@ -15,6 +15,15 @@ function hasFunctionKeyword ( node, parent ) {
 	return true;
 }
 
+function keepId ( node ) {
+	if ( !node.id ) return false;
+	if ( node.type === 'FunctionDeclaration' ) return true;
+
+	// if function expression ID is shadowed, or is not referenced (other than
+	// by the function expression itself), remove it
+	return !node.shadowed && node.scope.declarations[ node.id.name ].instances.length > 1;
+}
+
 export default class FunctionNode extends Node {
 	attachScope ( parent ) {
 		this.scope = new Scope({
@@ -54,7 +63,7 @@ export default class FunctionNode extends Node {
 		let c = this.start;
 
 		if ( hasFunctionKeyword( this, this.parent ) ) {
-			if ( this.id && !this.removeId ) {
+			if ( keepId( this ) ) {
 				code.overwrite( this.start, this.id.start, ( this.async ? 'async function ' : this.generator ? 'function*' : 'function ' ) );
 				c = this.id.end;
 			} else {

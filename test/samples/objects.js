@@ -72,11 +72,11 @@ module.exports = [
 	},
 
 	{
-		description: 'TK',
+		description: 'allows function expressions in computed property keys, because it\'s valid JS',
 		input: `
 			obj = {
 				[function foo() {}] () {}
 			};`,
-		output: `obj={[function a(){}](){}}`
+		output: `obj={[function(){}](){}}`
 	}
 ];
