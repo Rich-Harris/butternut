@@ -615,5 +615,19 @@ module.exports = [
 				}return true
 			}`,
 		output: `function fn_1(){any_condition?fn_3():fn_2();return!0}`
+	},
+
+	{
+		description: 'no semi-colon after switch statement',
+		input: `
+			if(x)
+				switch(foo){
+					default:
+						y()
+				}
+			else {
+				z();
+			}`,
+		output: `if(x)switch(foo){default:y()}else z()`
 	}
 ];

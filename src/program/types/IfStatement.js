@@ -8,6 +8,7 @@ const invalidChars = /[a-zA-Z$_0-9/]/;
 function endsWithCurlyBraceOrSemicolon ( node ) {
 	return (
 		node.type === 'BlockStatement' ||
+		node.type === 'SwitchStatement' ||
 		node.type === 'TryStatement' ||
 		node.type === 'EmptyStatement'
 	);

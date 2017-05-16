@@ -40,6 +40,8 @@ function endsWithCurlyBrace ( statement ) { // TODO can we just use getRightHand
 		return statement.body.type === 'BlockStatement' && !statement.body.canRemoveCurlies();
 	}
 
+	if ( statement.type === 'SwitchStatement' ) return true;
+
 	return /(?:Class|Function)Declaration/.test( statement.type );
 }
 
