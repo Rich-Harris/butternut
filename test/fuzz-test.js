@@ -5,10 +5,10 @@ const { walk } = require('estree-walker');
 
 const butternut = require('../dist/butternut.cjs.js');
 
+const MAX = 1000;
 let tested = 0;
-let disregarded = 0;
 
-for (let i = 0; i < 100; i += 1) {
+while (tested < MAX) {
 	const input = generateRandomJs();
 
 	try {
@@ -20,12 +20,8 @@ for (let i = 0; i < 100; i += 1) {
 			allowReturnOutsideFunction: true
 		});
 
-		if (!isValidInput(ast)) {
-			disregarded += 1;
-			continue;
-		}
+		if (!isValidInput(ast)) continue;
 	} catch (err) {
-		disregarded += 1;
 		continue;
 	}
 
@@ -44,35 +40,39 @@ for (let i = 0; i < 100; i += 1) {
 	}
 }
 
-console.log( `successfully tested ${tested} inputs, disregarded ${disregarded}` );
+console.log( `successfully tested ${tested} inputs` );
 
 function isValidInput(ast) {
 	let valid = true;
 
 	walk(ast, {
 		enter(node, parent) {
+			if (!valid) {
+				this.abort();
+				return;
+			}
+
 			if (node.type === 'MemberExpression') {
 				const object = deparenthesize(node.object);
 
 				// disregard nonsense like false.typeof
-				if (isBoolean(object)) {
-					valid = false;
-					this.abort();
-				}
+				if (isBoolean(object)) valid = false;
 			}
 
 			if (node.type === 'UnaryExpression') {
 				const argument = deparenthesize(node.argument);
 
 				// `true ** x`
-				if (isBoolean(argument)) {
-					valid = false;
-					this.abort();
-				}
+				if (isBoolean(argument)) valid = false;
 			}
-		},
 
-		leave(node, parent) {}
+			if (node.type === 'CallExpression' || node.type === 'NewExpression') {
+				const callee = deparenthesize(node.callee);
+
+				// `true()`
+				if (isBoolean(callee)) valid = false;
+			}
+		}
 	});
 
 	return valid;
