@@ -19,8 +19,8 @@ export default class NewExpression extends Node {
 			if ( this.end > lastNode.end + 1 ) code.overwrite( lastNode.end, this.end, ')' );
 		}
 
-		else if ( this.end > this.callee.end + 2 ) {
-			code.overwrite( this.callee.end, this.end, '()' );
+		else if ( this.end > this.callee.end ) {
+			code.remove( this.callee.end, this.end );
 		}
 
 		super.minify( code );
