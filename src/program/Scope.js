@@ -179,7 +179,7 @@ Scope.prototype = {
 
 		Object.keys( this.references ).forEach( reference => {
 			const declaration = this.parent && this.parent.findDeclaration( reference );
-			used[ declaration ? declaration.alias : reference ] = true;
+			used[ declaration && declaration.alias || reference ] = true;
 		});
 
 		Object.keys( this.declarations ).forEach( name => {
