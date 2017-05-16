@@ -348,9 +348,9 @@ export default class IfStatement extends Node {
 			code.move( this.alternate.start, alternateEnd, this.consequent.start );
 			code.move( this.consequent.start, consequentEnd, alternateEnd );
 
-			code.appendLeft( alternateEnd, ':' );
+			code.prependRight( this.consequent.getLeftHandSide().start, ':' );
 		} else {
-			code.appendLeft( consequentEnd, ':' );
+			code.appendLeft( this.alternate.getLeftHandSide().start, ':' );
 		}
 	}
 }
