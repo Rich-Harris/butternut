@@ -23,6 +23,10 @@ export default class Literal extends Node {
 		return this.value;
 	}
 
+	initialise () {
+		// noop
+	}
+
 	minify ( code ) {
 		if ( this.value === true || this.value === false ) {
 			code.overwrite( this.start, this.end, this.value ? '!0' : '!1' );

@@ -1,6 +1,12 @@
 import Node from '../Node.js';
 import extractNames from '../extractNames.js';
 
+function mightHaveSideEffects ( node ) {
+	// TODO this can get way more sophisticated
+	if ( node.type === 'Identifier' || node.type === 'Literal' ) return false;
+	return true;
+}
+
 export default class VariableDeclarator extends Node {
 	activate () {
 		if ( this.activated ) return;
@@ -19,6 +25,10 @@ export default class VariableDeclarator extends Node {
 
 		if ( this.init ) {
 			this.init.attachScope( scope );
+
+			if ( mightHaveSideEffects( this.init ) ) {
+				this.parent.skip = false;
+			}
 		}
 
 		extractNames( this.id ).forEach( node => {
