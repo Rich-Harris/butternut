@@ -215,6 +215,7 @@ export default class BlockStatement extends Node {
 		const end = ( this.parent.type === 'Root' || removeCurlies ) ? this.end : this.end - 1;
 
 		const statements = this.body.filter( statement => !statement.skip );
+		let lastStatement;
 
 		if ( statements.length ) {
 			let nextSeparator = ( ( this.scope && this.scope.useStrict && ( !this.scope.parent || !this.scope.parent.useStrict ) ) ?
@@ -225,16 +226,10 @@ export default class BlockStatement extends Node {
 				const statement = statements[i];
 				statement.minify( code );
 
-				if ( nextSeparator === '' ) {
-					if ( statement.start > lastEnd ) code.remove( lastEnd, statement.start );
-				} else {
-					if ( statement.start === lastEnd ) {
-						code.appendLeft( lastEnd, separator );
-					} else {
-						if ( code.original.slice( lastEnd, statement.start ) !== nextSeparator ) {
-							code.overwrite( lastEnd, statement.start, nextSeparator );
-						}
-					}
+				if ( statement.start > lastEnd ) code.remove( lastEnd, statement.start );
+
+				if ( nextSeparator ) {
+					code.appendLeft( lastStatement ? lastStatement.getRightHandSide().end : lastEnd, nextSeparator );
 				}
 
 				lastEnd = statement.end;
@@ -244,11 +239,11 @@ export default class BlockStatement extends Node {
 
 				if ( statement.removed ) {
 					nextSeparator = '';
-				}
-
-				else {
+				} else {
 					nextSeparator = endsWithCurlyBrace( statement ) ? '' : separator;
 				}
+
+				lastStatement = statement;
 			}
 
 			if ( end > lastEnd ) code.remove( lastEnd, end );
@@ -262,7 +257,7 @@ export default class BlockStatement extends Node {
 		}
 
 		// combine adjacent var declarations
-		let lastStatement;
+		lastStatement = null;
 		for ( let statement of statements ) {
 			if ( lastStatement && lastStatement.type === 'VariableDeclaration' && statement.type === 'VariableDeclaration' ) {
 				// are they compatible?

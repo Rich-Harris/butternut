@@ -119,6 +119,11 @@ export default class Node {
 		}
 	}
 
+	parenthesize ( code ) {
+		code.prependRight( this.getLeftHandSide().start, '(' );
+		code.appendLeft( this.getRightHandSide().end, ')' );
+	}
+
 	preventsCollapsedReturns ( returnStatements ) {
 		if ( this.type === 'ExpressionStatement' ) return false;
 		if ( this.type === 'ReturnStatement' ) return returnStatements.push( this ), false;
