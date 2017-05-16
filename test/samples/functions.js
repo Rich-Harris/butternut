@@ -57,5 +57,16 @@ module.exports = [
 				return await bar;
 			}`,
 		output: `async function foo(){return await bar}`
+	},
+
+	{
+		description: 'parameters do not shadow non-aliased outside variables',
+		input: `
+			var a = function ( foo ) {
+				console.log( a );
+			};
+
+			a();`,
+		output: `var a=function(b){console.log(a)};a()`
 	}
 ];
