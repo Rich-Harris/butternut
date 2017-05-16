@@ -3,12 +3,6 @@ import Scope from './Scope.js';
 import extractNames from './extractNames.js';
 import breaksExecution from '../analysis/breaksExecution.js';
 
-function compatibleDeclarations ( a, b ) {
-	if ( a === b ) return true;
-	if ( a === 'var' || b === 'var' ) return false;
-	return true;
-}
-
 const shouldPreserveAfterReturn = {
 	FunctionDeclaration: true,
 	VariableDeclaration: true,
@@ -224,12 +218,21 @@ export default class BlockStatement extends Node {
 
 			for ( let i = 0; i < statements.length; i += 1 ) {
 				const statement = statements[i];
+
 				statement.minify( code );
 
-				if ( statement.start > lastEnd ) code.remove( lastEnd, statement.start );
+				if ( !statement.collapsed ) {
+					if ( statement.start > lastEnd ) code.remove( lastEnd, statement.start );
 
-				if ( nextSeparator ) {
-					code.appendLeft( lastStatement ? lastStatement.getRightHandSide().end : lastEnd, nextSeparator );
+					if ( nextSeparator ) {
+						code.appendLeft( lastStatement ? lastStatement.getRightHandSide().end : lastEnd, nextSeparator );
+					}
+
+					if ( statement.removed ) {
+						nextSeparator = '';
+					} else {
+						nextSeparator = endsWithCurlyBrace( statement ) ? '' : separator;
+					}
 				}
 
 				lastEnd = statement.end;
@@ -254,26 +257,6 @@ export default class BlockStatement extends Node {
 			} else if ( this.end > this.start + 2 ) {
 				code.remove( this.start + 1, this.end - 1 );
 			}
-		}
-
-		// combine adjacent var declarations
-		lastStatement = null;
-		for ( let statement of statements ) {
-			if ( lastStatement && lastStatement.type === 'VariableDeclaration' && statement.type === 'VariableDeclaration' ) {
-				// are they compatible?
-				if ( compatibleDeclarations( lastStatement.kind, statement.kind ) ) {
-					const lastDeclarator = lastStatement.declarations[ lastStatement.declarations.length - 1 ];
-					code.overwrite( lastDeclarator.end, statement.declarations[0].start, ',' );
-
-					statement.collapsed = true;
-				}
-			}
-
-			if ( !statement.collapsed && statement.kind === 'const' && ( !lastStatement || lastStatement.kind !== 'VariableDeclaration' ) ) {
-				code.overwrite( statement.start, statement.start + 5, 'let' );
-			}
-
-			lastStatement = statement;
 		}
 	}
 

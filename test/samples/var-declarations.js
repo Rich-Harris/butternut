@@ -103,5 +103,53 @@ module.exports = [
 			console.log(x, y);
 			console.log(x, y);`,
 		output: `var x=1,y,z;console.log(x,y);console.log(x,y)`
+	},
+
+	{
+		description: 'inits with potential side-effects are preserved',
+		input: `
+			function foo () {
+				var unused = mightHaveSideEffects()
+			}`,
+		output: `function foo(){mightHaveSideEffects()}`
+	},
+
+	{
+		description: 'first declaration is unused',
+		input: `
+			function foo () {
+				var unused = mightHaveSideEffects();
+				var a = x();
+				var b = y();
+				console.log(a, b);
+				console.log(a, b);
+			}`,
+		output: `function foo(){mightHaveSideEffects();var a=x(),b=y();console.log(a,b);console.log(a,b)}`
+	},
+
+	{
+		description: 'middle declaration is unused',
+		input: `
+			function foo () {
+				var a = x();
+				var unused = mightHaveSideEffects();
+				var b = y();
+				console.log(a, b);
+				console.log(a, b);
+			}`,
+		output: `function foo(){var a=x();mightHaveSideEffects();var b=y();console.log(a,b);console.log(a,b)}`
+	},
+
+	{
+		description: 'last declaration is unused',
+		input: `
+			function foo () {
+				var a = x();
+				var b = y();
+				var unused = mightHaveSideEffects();
+				console.log(a, b);
+				console.log(a, b);
+			}`,
+		output: `function foo(){var a=x(),b=y();mightHaveSideEffects();console.log(a,b);console.log(a,b)}`
 	}
 ];
