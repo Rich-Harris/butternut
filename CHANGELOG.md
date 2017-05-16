@@ -1,5 +1,13 @@
 # butternut changelog
 
+## 0.4.4
+
+* Dozens of minor fixes ([#91](https://github.com/Rich-Harris/butternut/pull/91))
+* Prevent shadowing of non-aliased variables ([#94](https://github.com/Rich-Harris/butternut/issues/94))
+* Minify static class methods ([#88](https://github.com/Rich-Harris/butternut/pull/88))
+* Handle empty else blocks in if statements ([#89](https://github.com/Rich-Harris/butternut/issues/89))
+* Prevent `a=a!==false` becoming `a!===!1` ([#93](https://github.com/Rich-Harris/butternut/pull/93))
+
 ## 0.4.3
 
 * Don't insert semicolons before `else` keywords that follow blocks, try statements or empty statements ([#82](https://github.com/Rich-Harris/butternut/issues/82))
