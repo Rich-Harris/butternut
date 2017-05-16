@@ -1,4 +1,5 @@
 import Node from '../Node.js';
+import stringify from '../../utils/stringify.js';
 
 export default class Literal extends Node {
 	attachScope ( scope ) {
@@ -25,6 +26,10 @@ export default class Literal extends Node {
 	minify ( code ) {
 		if ( this.value === true || this.value === false ) {
 			code.overwrite( this.start, this.end, this.value ? '!0' : '!1' );
+		}
+
+		else if ( typeof this.value === 'number' ) {
+			code.overwrite( this.start, this.end, stringify( this.value ) );
 		}
 	}
 }

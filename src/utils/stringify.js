@@ -14,6 +14,13 @@ export default function stringify ( value ) {
 	if ( value === undefined ) return 'void 0';
 	if ( isNegativeZero( value ) ) return '-0';
 
+	if ( typeof value === 'number' ) {
+		const str = String( value ).replace( /^(-)?0\./, '$1.' );
+		const exponential = value.toExponential().replace( 'e+', 'e' );
+
+		return exponential.length < str.length ? exponential : str;
+	}
+
 	return JSON.stringify( value )
 		.replace( /\u2028/g, '\\u2028' )
 		.replace( /\u2029/g, '\\u2029' );

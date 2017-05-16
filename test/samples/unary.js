@@ -1,19 +1,19 @@
 module.exports = [
 	{
 		description: 'removes whitespace in unary expression',
-		input: `! x`,
-		output: `!x`
+		input: `foo = ! x`,
+		output: `foo=!x`
 	},
 
 	{
 		description: 'only removes excess whitespace in typeof expression',
-		input: `typeof  banana`,
-		output: `typeof banana`
+		input: `foo = typeof  banana`,
+		output: `foo=typeof banana`
 	},
 
 	{
 		description: 'inserts whitespace after typeof with parenthesized argument',
-		input: `typeof(x)`,
-		output: `typeof x`
+		input: `foo = typeof(x)`,
+		output: `foo=typeof x`
 	}
 ];
