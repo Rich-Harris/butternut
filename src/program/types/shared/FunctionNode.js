@@ -3,11 +3,13 @@ import Scope from '../../Scope.js';
 import extractNames from '../../extractNames.js';
 
 function hasFunctionKeyword ( node, parent ) {
-	if ( parent.type === 'MethodDefinition' ) return false;
+	if ( node === parent.value ) {
+		if ( parent.type === 'MethodDefinition' ) return false;
 
-	if ( parent.type === 'Property' && node === parent.value ) {
-		if ( parent.method ) return false;
-		if ( parent.kind === 'set' || parent.kind === 'get' ) return false;
+		if ( parent.type === 'Property' ) {
+			if ( parent.method ) return false;
+			if ( parent.kind === 'set' || parent.kind === 'get' ) return false;
+		}
 	}
 
 	return true;
