@@ -9,16 +9,18 @@ export default class ForStatement extends LoopStatement {
 		return this.init && this.init.type === 'VariableDeclaration';
 	}
 
-	minify ( code, transforms ) {
+	minify ( code ) {
 		let c = this.start + 3;
 
 		let replacement = '(';
 
 		[ this.init, this.test, this.update ].forEach( ( statement, i ) => {
-			if ( statement ) {
+			if ( statement && !statement.skip ) {
 				if ( statement.start > c + replacement.length ) {
 					code.overwrite( c, statement.start, replacement );
 				}
+
+				statement.minify( code );
 
 				c = statement.end;
 				replacement = '';
@@ -31,6 +33,6 @@ export default class ForStatement extends LoopStatement {
 			code.overwrite( c, this.body.start, replacement );
 		}
 
-		super.minify( code, transforms );
+		super.minify( code );
 	}
 }
