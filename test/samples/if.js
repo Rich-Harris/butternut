@@ -567,5 +567,11 @@ module.exports = [
 				for(;;);
 			else { i=0; }`,
 		output: `if(x)for(;;);else i=0`
+	},
+
+	{
+		description: 'parenthesizes inverted statements if necessary',
+		input: `if (a = b); else throw error;`,
+		output: `if(!(a=b))throw error`
 	}
 ];

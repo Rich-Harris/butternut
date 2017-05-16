@@ -164,13 +164,24 @@ export default class IfStatement extends Node {
 					code.remove( this.start, this.test.start );
 					code.overwrite( this.test.end, this.alternate.start, this.inverted ? '&&' : '||' );
 				} else {
+					let before = '(';
+					let after = ')';
+
+					let start = this.test.start;
+
 					if ( this.inverted ) {
-						code.overwrite( this.start + 2, this.test.argument.start, '(' );
+						start = this.test.argument.start;
 					} else {
-						code.overwrite( this.start + 2, this.test.start, '(!' );
+						before += '!';
+
+						if ( this.test.getPrecedence() < 15 ) { // 15 is the precedence of unary expressions
+							before += '(';
+							after += ')';
+						}
 					}
 
-					code.overwrite( this.test.end, this.alternate.start, ')' );
+					code.overwrite( this.start + 2, start, before );
+					code.overwrite( this.test.end, this.alternate.start, after );
 				}
 			} else {
 				// TODO is `removed` still used?
