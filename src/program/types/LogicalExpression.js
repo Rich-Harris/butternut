@@ -70,7 +70,7 @@ export default class LogicalExpression extends Node {
 
 		else {
 			if ( this.operator === '&&' ) {
-				code.remove( this.left.start, this.end );
+				code.remove( this.left.end, this.end );
 				this.left.minify( code );
 			} else {
 				code.remove( this.start, this.right.start );

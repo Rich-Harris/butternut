@@ -19,6 +19,7 @@ import Identifier from './Identifier.js';
 import IfStatement from './IfStatement.js';
 import ImportDefaultSpecifier from './ImportDefaultSpecifier.js';
 import ImportSpecifier from './ImportSpecifier.js';
+import LabeledStatement from './LabeledStatement.js';
 import Literal from './Literal.js';
 import LogicalExpression from './LogicalExpression.js';
 import MemberExpression from './MemberExpression.js';
@@ -31,6 +32,7 @@ import ReturnStatement from './ReturnStatement.js';
 import SpreadElement from './SpreadElement.js';
 import SwitchCase from './SwitchCase.js';
 import SwitchStatement from './SwitchStatement.js';
+import TaggedTemplateExpression from './TaggedTemplateExpression.js';
 import TemplateLiteral from './TemplateLiteral.js';
 import TryStatement from './TryStatement.js';
 import UnaryExpression from './UnaryExpression.js';
@@ -64,6 +66,7 @@ export default {
 	IfStatement,
 	ImportDefaultSpecifier,
 	ImportSpecifier,
+	LabeledStatement,
 	Literal,
 	LogicalExpression,
 	MemberExpression,
@@ -76,6 +79,7 @@ export default {
 	SpreadElement,
 	SwitchCase,
 	SwitchStatement,
+	TaggedTemplateExpression,
 	TemplateLiteral,
 	TryStatement,
 	UnaryExpression,

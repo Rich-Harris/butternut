@@ -17,6 +17,8 @@ export default class ObjectExpression extends Node {
 				if ( p.start > c + 1 ) code.overwrite( c, p.start, i ? ',' : '{' );
 
 				minifyPropertyKey( code, p, true );
+				p.value.minify( code );
+
 				c = p.end;
 			}
 
@@ -24,7 +26,5 @@ export default class ObjectExpression extends Node {
 		} else if ( this.end > this.start + 2 ) {
 			code.overwrite( this.start, this.end, '{}' );
 		}
-
-		super.minify( code );
 	}
 }

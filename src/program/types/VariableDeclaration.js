@@ -26,7 +26,8 @@ export default class VariableDeclaration extends Node {
 		const declarations = this.declarations.filter( d => !d.skip );
 
 		let allDupes = declarations.every( declarator => {
-			return extractNames( declarator.id ).every( identifier => {
+			const names = extractNames( declarator.id );
+			return names.length > 0 && names.every( identifier => {
 				return identifier.isDuplicate;
 			});
 		});

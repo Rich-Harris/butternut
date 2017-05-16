@@ -63,5 +63,11 @@ module.exports = [
 		description: 'preserves space before parenthesised rewritten ternary --x expression',
 		input: `Math.sqrt(1 - (true ? --t : t) * t)`,
 		output: `Math.sqrt(1- --t*t)`
+	},
+
+	{
+		description: 'preserves parens around unary expression on left hand side of exponentiation operator',
+		input: `x = (-2) ** y`,
+		output: `x=(-2)**y`
 	}
 ];

@@ -59,5 +59,24 @@ module.exports = [
 		description: 'preserves parens around object patterns',
 		input: `({ foo, bar, baz } = obj);`,
 		output: `({foo,bar,baz}=obj)`
+	},
+
+	{
+		description: 'minifies getters and setters',
+		input: `
+			obj = {
+				get  bar  () {},
+				set  bar  (val) {}
+			}`,
+		output: `obj={get bar(){},set bar(a){}}`
+	},
+
+	{
+		description: 'TK',
+		input: `
+			obj = {
+				[function foo() {}] () {}
+			};`,
+		output: `obj={[function a(){}](){}}`
 	}
 ];

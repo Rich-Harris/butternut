@@ -15,6 +15,8 @@ export default class VariableDeclarator extends Node {
 		this.scope = scope;
 		const kind = this.parent.kind;
 
+		this.id.attachScope( scope );
+
 		if ( this.init ) {
 			this.init.attachScope( scope );
 		}

@@ -63,5 +63,11 @@ module.exports = [
 		description: `preserves parens around anonymous function expression`,
 		input: `(function() {});`,
 		output: `(function(){})`
+	},
+
+	{
+		description: `preserves parens around object pattern`,
+		input: `(({x} = y)).z`,
+		output: `({x}=y).z`
 	}
 ];

@@ -9,5 +9,12 @@ module.exports = [
 		description: 'removes whitespace inside parens',
 		input: `new Foo( a, b , c )`,
 		output: `new Foo(a,b,c)`
+	},
+
+	{
+		description: 'preserves parens around improbable callee',
+		input: `new (-1 / 2)`,
+		// TODO remove space
+		output: `new (-0.5)`
 	}
 ];

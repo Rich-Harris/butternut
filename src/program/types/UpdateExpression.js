@@ -3,7 +3,7 @@ import CompileError from '../../utils/CompileError.js';
 
 export default class UpdateExpression extends Node {
 	getPrecedence () {
-		return this.prefix ? 15 : 16;
+		return this.prefix ? 16 : 17;
 	}
 
 	initialise ( scope ) {

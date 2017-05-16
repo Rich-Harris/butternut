@@ -33,6 +33,15 @@ module.exports = [
 	},
 
 	{
+		description: 'preserves * in generator function declarations',
+		input: `
+			function * foo () {
+				yield 42;
+			};`,
+		output: `function*foo(){yield 42}`
+	},
+
+	{
 		description: 'preserves async keyword in function expression',
 		input: `
 			foo = async function () {

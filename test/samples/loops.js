@@ -215,5 +215,12 @@ module.exports = [
 				result = baz;
 			}`,
 		output: `function foo(){while(bar())var a=1;result=a}`
+	},
+
+	{
+		description: 'handle unused var in loop head',
+		input: `for (const e = 0;;) {}`,
+		// TODO remove altogether
+		output: `for(;;);`
 	}
 ];

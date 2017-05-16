@@ -31,11 +31,13 @@ export default class TemplateLiteral extends Node {
 	}
 
 	minify ( code ) {
-		const value = this.getValue();
+		if ( this.parent.type !== 'TaggedTemplateExpression' ) {
+			const value = this.getValue();
 
-		if ( value !== UNKNOWN ) {
-			code.overwrite( this.start, this.end, stringify( value ) );
-			return;
+			if ( value !== UNKNOWN ) {
+				code.overwrite( this.start, this.end, stringify( value ) );
+				return;
+			}
 		}
 
 		let c = this.start;
@@ -56,7 +58,7 @@ export default class TemplateLiteral extends Node {
 				c = ( nextQuasi ? nextQuasi.start : this.end ) - 1;
 				if ( expression.end < c ) code.remove( expression.end, c );
 			} else {
-				code.overwrite( quasi.end, expression.end, stringify( value ) );
+				code.overwrite( quasi.end, expression.end, String( value ) );
 				c = ( nextQuasi ? nextQuasi.start : this.end - 1 );
 				if ( expression.end < c ) code.remove( expression.end, c );
 			}

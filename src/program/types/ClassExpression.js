@@ -8,6 +8,8 @@ export default class ClassExpression extends Class {
 			parent
 		});
 
+		if ( this.id ) this.id.attachScope( this.scope );
+		if ( this.superClass ) this.superClass.attachScope( this.scope );
 		this.body.attachScope( this.scope );
 	}
 

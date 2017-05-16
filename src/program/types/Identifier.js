@@ -12,7 +12,7 @@ export default class Identifier extends Node {
 	}
 
 	getPrecedence () {
-		return 20;
+		return 21;
 	}
 
 	initialise ( scope ) {

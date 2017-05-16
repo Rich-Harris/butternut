@@ -45,5 +45,17 @@ module.exports = [
 		description: 'folds in known values at end',
 		input: '`x * x = ${x * x}, 3 * 3 = ${3 * 3}`',
 		output: '`x * x = ${x*x}, 3 * 3 = 9`'
+	},
+
+	{
+		description: 'does not fold tagged template literals',
+		input: 'foo`bar`',
+		output: 'foo`bar`'
+	},
+
+	{
+		description: 'minifies tagged template literals',
+		input: 'foo   `bar`',
+		output: 'foo`bar`'
 	}
 ];

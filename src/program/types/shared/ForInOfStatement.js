@@ -22,6 +22,8 @@ export default class ForInOfStatement extends LoopStatement {
 			code.overwrite( this.right.end, this.body.start, ')' );
 		}
 
+		this.left.minify( code );
+		this.right.minify( code );
 		super.minify( code, transforms );
 	}
 }

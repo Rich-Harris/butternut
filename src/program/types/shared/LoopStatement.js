@@ -26,8 +26,8 @@ export default class LoopStatement extends Node {
 		if ( this.body.isEmpty() ) {
 			code.appendLeft( this.body.start, ';' );
 			code.remove( this.body.start, this.body.end );
+		} else {
+			this.body.minify( code );
 		}
-
-		super.minify( code );
 	}
 }

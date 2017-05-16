@@ -2,10 +2,23 @@ import Node from '../Node.js';
 import reserved from '../../utils/reserved.js';
 import { UNKNOWN } from '../../utils/sentinels.js';
 import stringify from '../../utils/stringify.js';
+import getValuePrecedence from '../../utils/getValuePrecedence.js';
 
 function isValidIdentifier ( str ) {
 	// TODO there's probably a bit more to it than this
 	return !reserved[ str ] && /^[a-zA-Z_$][a-zA-Z_$0-9]*$/.test( str );
+}
+
+function canFold ( node, parent ) {
+	while ( parent.type === 'ParenthesizedExpression' ) {
+		node = parent;
+		parent = node.parent;
+	}
+
+	if ( parent.type === 'UpdateExpression' ) return false;
+	if ( parent.type === 'AssignmentExpression' || /For(In|Of)Statement/.test( parent.type ) ) return node !== parent.left;
+
+	return true;
 }
 
 export default class MemberExpression extends Node {
@@ -27,7 +40,9 @@ export default class MemberExpression extends Node {
 	}
 
 	getPrecedence () {
-		return 18;
+		const value = this.getValue();
+
+		return value === UNKNOWN ? 19 : getValuePrecedence( value );
 	}
 
 	getRightHandSide () {
@@ -37,7 +52,7 @@ export default class MemberExpression extends Node {
 	minify ( code ) {
 		const value = this.getValue();
 
-		if ( value !== UNKNOWN ) {
+		if ( value !== UNKNOWN && canFold( this, this.parent ) ) {
 			const str = stringify( value );
 
 			if ( str !== null ) {

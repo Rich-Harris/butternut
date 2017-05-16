@@ -2,6 +2,19 @@ import Node from '../../Node.js';
 import Scope from '../../Scope.js';
 import extractNames from '../../extractNames.js';
 
+function hasFunctionKeyword ( node, parent ) {
+	if ( node === parent.value ) {
+		if ( parent.type === 'MethodDefinition' ) return false;
+
+		if ( parent.type === 'Property' ) {
+			if ( parent.method ) return false;
+			if ( parent.kind === 'set' || parent.kind === 'get' ) return false;
+		}
+	}
+
+	return true;
+}
+
 export default class FunctionNode extends Node {
 	attachScope ( parent ) {
 		this.scope = new Scope({
@@ -22,6 +35,8 @@ export default class FunctionNode extends Node {
 		}
 
 		this.params.forEach( param => {
+			param.attachScope( this.scope );
+
 			extractNames( param ).forEach( node => {
 				node.declaration = this;
 				this.scope.addDeclaration( node, 'param' );
@@ -37,29 +52,14 @@ export default class FunctionNode extends Node {
 
 	minify ( code ) {
 		let c = this.start;
-		let openParams;
 
-		if ( this.parent.type === 'MethodDefinition' || this.parent.method ) {
-			// `async` or `*` are dealt with by the parent
-			openParams = '(';
-		}
-
-		else {
-			openParams = this.generator ? '*(' : '(';
-
-			if ( this.async ) {
-				c += 6;
-				while ( code.original[c] !== 'f' ) c += 1;
-				if ( c > this.start + 6 ) code.remove( this.start + 6, c );
-			}
-
-			c += 8;
-
+		if ( hasFunctionKeyword( this, this.parent ) ) {
 			if ( this.id && !this.removeId ) {
-				c += 1;
-
-				if ( this.id.start > c ) code.remove( c, this.id.start );
+				code.overwrite( this.start, this.id.start, ( this.async ? 'async function ' : this.generator ? 'function*' : 'function ' ) );
 				c = this.id.end;
+			} else {
+				while ( code.original[c] !== '(' ) c += 1;
+				code.overwrite( this.start, c, ( this.async ? 'async function' : this.generator ? 'function*' : 'function' ) );
 			}
 		}
 
@@ -68,15 +68,13 @@ export default class FunctionNode extends Node {
 				const param = this.params[i];
 				param.minify( code );
 
-				if ( param.start > c + 1 ) code.overwrite( c, param.start, i ? ',' : openParams );
+				if ( param.start > c + 1 ) code.overwrite( c, param.start, i ? ',' : '(' );
 				c = param.end;
 			}
 
 			if ( this.end > c + 1 ) code.overwrite( c, this.body.start, ')' );
-		}
-
-		else if ( this.body.start > c + 2 ) {
-			code.overwrite( c, this.body.start, `${openParams})` );
+		} else if ( this.body.start > c + 2 ) {
+			code.overwrite( c, this.body.start, `()` );
 		}
 
 		this.body.minify( code );

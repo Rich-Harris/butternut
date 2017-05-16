@@ -133,7 +133,7 @@ export default class IfStatement extends Node {
 		if ( this.consequent.isEmpty() ) {
 			const canRemoveTest = this.test.type === 'Identifier' || this.test.getValue() !== UNKNOWN; // TODO can this ever happen?
 
-			if ( this.alternate ) {
+			if ( this.alternate && !this.alternate.isEmpty() ) {
 				this.alternate.minify( code );
 
 				if ( this.alternate.type === 'BlockStatement' && this.alternate.body.length === 0 ) {
@@ -167,13 +167,24 @@ export default class IfStatement extends Node {
 					code.remove( this.start, this.test.start );
 					code.overwrite( this.test.end, this.alternate.start, this.inverted ? '&&' : '||' );
 				} else {
+					let before = '(';
+					let after = ')';
+
+					let start = this.test.start;
+
 					if ( this.inverted ) {
-						code.overwrite( this.start + 2, this.test.argument.start, '(' );
+						start = this.test.argument.start;
 					} else {
-						code.overwrite( this.start + 2, this.test.start, '(!' );
+						before += '!';
+
+						if ( this.test.getPrecedence() < 16 ) { // 16 is the precedence of unary expressions
+							before += '(';
+							after += ')';
+						}
 					}
 
-					code.overwrite( this.test.end, this.alternate.start, ')' );
+					code.overwrite( this.start + 2, start, before );
+					code.overwrite( this.test.end, this.alternate.start, after );
 				}
 			} else {
 				// TODO is `removed` still used?
@@ -182,7 +193,7 @@ export default class IfStatement extends Node {
 					this.removed = true;
 				} else {
 					code.remove( this.start, this.test.start );
-					code.remove( this.test.end, this.consequent.end );
+					code.remove( this.test.end, this.end );
 				}
 			}
 

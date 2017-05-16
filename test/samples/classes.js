@@ -100,5 +100,23 @@ module.exports = [
 				static [ bar ] () {}
 			}`,
 		output: `class Foo{static[bar](){}}`
+	},
+
+	{
+		description: 'minifies getters and setters',
+		input: `
+			class Foo {
+				get  bar  () {}
+				set  bar  (val) {}
+			}`,
+		output: `class Foo{get bar(){}set bar(a){}}`
+	},
+
+	{
+		description: 'parenthesizes superclasses if necessary',
+		input: `
+			class Foo extends (Bar || Baz) {}
+			class Lol extends false {}`,
+		output: `class Foo extends(Bar||Baz){}class Lol extends(!1){}`
 	}
 ];

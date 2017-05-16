@@ -37,5 +37,17 @@ module.exports = [
 				}
 			};`,
 		output: `function foo(){switch(a){case 0:while(b)c();return}}`
+	},
+
+	{
+		description: 'Removes empty switch statement',
+		input: `switch (x) {}`,
+		output: ``
+	},
+
+	{
+		description: 'Preserves discriminant for empty switch statement',
+		input: `switch (x()) {}`,
+		output: `x()`
 	}
 ];

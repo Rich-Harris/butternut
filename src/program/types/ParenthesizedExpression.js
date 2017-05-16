@@ -1,9 +1,6 @@
 import Node from '../Node.js';
 
 function shouldRemoveParens ( expression, parent ) {
-	const expressionPrecedence = expression.getPrecedence();
-	const parentPrecedence = parent.getPrecedence();
-
 	if ( /^Object/.test( expression.getLeftHandSide().type ) || /^Object/.test( expression.getRightHandSide().type ) ) {
 		return false;
 	}
@@ -18,6 +15,14 @@ function shouldRemoveParens ( expression, parent ) {
 			( parent.type === 'ExpressionStatement' && parent.parent.type === 'CallExpression' )
 		);
 	}
+
+	// special case — `(-x)**y`
+	if ( expression.type === 'UnaryExpression' && parent.type === 'BinaryExpression' && parent.operator === '**' ) {
+		if ( parent.left.contains( expression ) ) return false;
+	}
+
+	const expressionPrecedence = expression.getPrecedence();
+	const parentPrecedence = parent.getPrecedence();
 
 	if ( parentPrecedence > expressionPrecedence ) return false;
 	if ( expressionPrecedence > parentPrecedence ) return true;
@@ -41,26 +46,25 @@ export default class ParenthesizedExpression extends Node {
 		return node.parent;
 	}
 
+	getPrecedence () {
+		return 20;
+	}
+
 	getValue () {
 		return this.expression.getValue();
 	}
 
 	minify ( code ) {
+		let start = this.start;
+		let end = this.end;
 		let parent = this.parent;
 
-		// TODO we can do two remove operations — one at the start, one at the
-		// end. don't need to do it on each descent
-
 		let expression = this.expression;
-		while ( expression.type === 'ParenthesizedExpression' ) {
-			code.remove( this.start, expression.start );
-			code.remove( expression.end, this.end );
-			expression = expression.expression;
-		}
+		while ( expression.type === 'ParenthesizedExpression' ) expression = expression.expression;
 
 		if ( shouldRemoveParens( expression, parent ) ) {
-			code.remove( this.start, expression.start );
-			code.remove( expression.end, this.end );
+			code.remove( start, expression.start );
+			code.remove( expression.end, end );
 		} else {
 			if ( expression.start > this.start + 1 ) code.remove( this.start + 1, expression.start );
 			if ( this.end > expression.end + 1 ) code.remove( expression.end, this.end - 1 );
