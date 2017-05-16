@@ -15,6 +15,6 @@ module.exports = [
 		description: 'preserves parens around improbable callee',
 		input: `new (-1 / 2)`,
 		// TODO remove space
-		output: `new (-0.5)`
+		output: `new (-.5)`
 	}
 ];
