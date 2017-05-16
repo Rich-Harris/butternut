@@ -19,6 +19,7 @@ import Identifier from './Identifier.js';
 import IfStatement from './IfStatement.js';
 import ImportDefaultSpecifier from './ImportDefaultSpecifier.js';
 import ImportSpecifier from './ImportSpecifier.js';
+import LabeledStatement from './LabeledStatement.js';
 import Literal from './Literal.js';
 import LogicalExpression from './LogicalExpression.js';
 import MemberExpression from './MemberExpression.js';
@@ -64,6 +65,7 @@ export default {
 	IfStatement,
 	ImportDefaultSpecifier,
 	ImportSpecifier,
+	LabeledStatement,
 	Literal,
 	LogicalExpression,
 	MemberExpression,

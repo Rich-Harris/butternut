@@ -18,6 +18,8 @@ export default class DoWhileStatement extends Node {
 				while ( code.original[ c - 1 ] === ';' ) c -= 1;
 				code.overwrite( c, this.test.start, '}while(' );
 			}
+
+			this.body.minify( code );
 		}
 
 		if ( this.end > this.test.end + 1 ) {
@@ -26,6 +28,6 @@ export default class DoWhileStatement extends Node {
 			code.overwrite( this.test.end, c, ')' );
 		}
 
-		super.minify( code );
+		this.test.minify( code );
 	}
 }

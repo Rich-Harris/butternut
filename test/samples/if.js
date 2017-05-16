@@ -470,7 +470,7 @@ module.exports = [
 					b();
 				}
 			}`,
-		output: `function foo(){x: {if(a)a();else break x;b()}}`
+		output: `function foo(){x:{if(a)a();else break x;b()}}`
 	},
 
 	{
