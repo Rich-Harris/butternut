@@ -61,7 +61,7 @@ Scope.prototype = {
 			// declarations should just be removed (TODO unless the user wishes
 			// to keep function names — https://github.com/Rich-Harris/butternut/issues/17)
 			if ( existingDeclaration.node.parent.type === 'FunctionExpression' ) {
-				existingDeclaration.node.parent.removeId = true;
+				existingDeclaration.node.parent.shadowed = true;
 			}
 
 			else {
@@ -186,12 +186,14 @@ Scope.prototype = {
 			const declaration = this.declarations[ name ];
 			if ( declaration.instances.length === 0 ) return;
 
+			// special case — function expression IDs may be removed outright
+			if ( declaration.node.parent.type === 'FunctionExpression' && declaration.node === declaration.node.parent.id ) {
+				if ( declaration.node.shadowed || declaration.instances.length === 1 ) return;
+			}
+
 			declaration.alias = this.createIdentifier( used );
 
 			declaration.instances.forEach( instance => {
-				// special case — function expression IDs may be removed outright
-				if ( instance.parent.type === 'FunctionExpression' && instance === instance.parent.id && instance.parent.removeId ) return;
-
 				const replacement = instance.parent.type === 'Property' && instance.parent.shorthand ?
 					`${instance.name}:${declaration.alias}` :
 					declaration.alias;
