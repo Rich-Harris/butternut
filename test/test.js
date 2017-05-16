@@ -4,6 +4,7 @@ const rimraf = require('rimraf');
 const child_process = require('child_process');
 const assert = require('assert');
 const glob = require('glob');
+const UglifyJS = require('uglify-es');
 
 if (process.env.COVERAGE) {
 	require('reify');
@@ -65,6 +66,15 @@ describe('butternut', function () {
 						// idempotency test
 						if (sample.idempotent !== false ) {
 							equal(butternut.squash(code, sample.options).code, code, 'failed idempotency check');
+						}
+
+						const uglified = UglifyJS.minify(sample.input);
+						if ('code' in uglified) {
+							if (uglified.code.length < code.length) {
+								console.warn(`⚠️   uglify-es generated smaller output:\n      butternut: ${code}\n      uglify-es: ${uglified.code}`);
+							}
+						} else {
+							// uglify failed to minify this sample
 						}
 					}
 				});
