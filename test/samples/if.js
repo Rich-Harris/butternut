@@ -589,5 +589,18 @@ module.exports = [
 				if ( foo ) ; else ;
 			}`,
 		output: `while(!0);`
+	},
+
+	{
+		description: 'handles commented out else block',
+		input: `
+			if (a) {
+				if (b) {
+					c;
+				} else {
+					// commented out
+				}
+			}`,
+		output: `a&&(b&&c)`
 	}
 ];
