@@ -1,5 +1,4 @@
 import Node from '../Node.js';
-import isReference from '../../utils/isReference.js';
 import { UNKNOWN } from '../../utils/sentinels.js';
 import stringify from '../../utils/stringify.js';
 
@@ -39,14 +38,33 @@ export default class Identifier extends Node {
 			return;
 		}
 
-		if ( isReference( this, this.parent ) ) {
+		if ( this.isReference() ) {
 			scope.addReference( this );
 		}
 	}
 
+	isReference () {
+		const parent = this.parent;
+
+		if ( parent.type === 'MemberExpression' || parent.type === 'MethodDefinition' ) {
+			return parent.computed || this === parent.object;
+		}
+
+		// disregard the `bar` in `{ bar: foo }`, but keep it in `{ [bar]: foo }`
+		if ( parent.type === 'Property' ) return parent.computed || this === parent.value;
+
+		// disregard the `bar` in `class Foo { bar () {...} }`
+		if ( parent.type === 'MethodDefinition' ) return false;
+
+		// disregard the `bar` in `export { foo as bar }`
+		if ( parent.type === 'ExportSpecifier' && this !== parent.local ) return false;
+
+		return true;
+	}
+
 	minify ( code ) {
 		const value = this.getValue();
-		if ( value !== UNKNOWN ) {
+		if ( value !== UNKNOWN && this.isReference() ) {
 			code.overwrite( this.start, this.end, stringify( value ) );
 		}
 
