@@ -16,7 +16,7 @@ const calculators = {
 export default class UnaryExpression extends Node {
 	getPrecedence () {
 		const value = this.getValue();
-		return value === UNKNOWN ? 15 : getValuePrecedence( value );
+		return value === UNKNOWN ? 16 : getValuePrecedence( value );
 	}
 
 	getValue () {

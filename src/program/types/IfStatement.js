@@ -174,7 +174,7 @@ export default class IfStatement extends Node {
 					} else {
 						before += '!';
 
-						if ( this.test.getPrecedence() < 15 ) { // 15 is the precedence of unary expressions
+						if ( this.test.getPrecedence() < 16 ) { // 16 is the precedence of unary expressions
 							before += '(';
 							after += ')';
 						}

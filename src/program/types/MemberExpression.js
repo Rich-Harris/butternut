@@ -42,7 +42,7 @@ export default class MemberExpression extends Node {
 	getPrecedence () {
 		const value = this.getValue();
 
-		return value === UNKNOWN ? 18 : getValuePrecedence( value );
+		return value === UNKNOWN ? 19 : getValuePrecedence( value );
 	}
 
 	getRightHandSide () {

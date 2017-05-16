@@ -46,7 +46,7 @@ export default class CallExpression extends Node {
 	getPrecedence () {
 		const value = this.getValue();
 
-		return value === UNKNOWN ? 17 : getValuePrecedence( value );
+		return value === UNKNOWN ? 18 : getValuePrecedence( value );
 	}
 
 	getValue () {

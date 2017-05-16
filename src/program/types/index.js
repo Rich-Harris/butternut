@@ -32,6 +32,7 @@ import ReturnStatement from './ReturnStatement.js';
 import SpreadElement from './SpreadElement.js';
 import SwitchCase from './SwitchCase.js';
 import SwitchStatement from './SwitchStatement.js';
+import TaggedTemplateExpression from './TaggedTemplateExpression.js';
 import TemplateLiteral from './TemplateLiteral.js';
 import TryStatement from './TryStatement.js';
 import UnaryExpression from './UnaryExpression.js';
@@ -78,6 +79,7 @@ export default {
 	SpreadElement,
 	SwitchCase,
 	SwitchStatement,
+	TaggedTemplateExpression,
 	TemplateLiteral,
 	TryStatement,
 	UnaryExpression,

@@ -16,6 +16,11 @@ function shouldRemoveParens ( expression, parent ) {
 		);
 	}
 
+	// special case — `(-x)**y`
+	if ( expression.type === 'UnaryExpression' && parent.type === 'BinaryExpression' && parent.operator === '**' ) {
+		if ( parent.left.contains( expression ) ) return false;
+	}
+
 	const expressionPrecedence = expression.getPrecedence();
 	const parentPrecedence = parent.getPrecedence();
 

@@ -37,7 +37,8 @@ const binaryExpressionPrecedence = {};
 	[ 11, 'instanceof in >= > <= <' ],
 	[ 12, '>>> >> <<' ],
 	[ 13, '- +' ],
-	[ 14, '% / * **' ]
+	[ 14, '% / *' ],
+	[ 15, '**' ]
 ].forEach( ([ precedence, operators ]) => {
 	operators.split( ' ' ).forEach( operator => binaryExpressionPrecedence[ operator ] = precedence );
 });

@@ -23,10 +23,8 @@ export default class Literal extends Node {
 	}
 
 	minify ( code ) {
-		if ( this.value === true ) {
-			code.overwrite( this.start, this.end, '!0' );
-		} else if ( this.value === false ) {
-			code.overwrite( this.start, this.end, '!1' );
+		if ( this.value === true || this.value === false ) {
+			code.overwrite( this.start, this.end, this.value ? '!0' : '!1' );
 		}
 	}
 }
