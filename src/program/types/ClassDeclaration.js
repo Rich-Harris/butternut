@@ -17,6 +17,8 @@ export default class ClassDeclaration extends Class {
 		this.name = this.id.name; // TODO what is this used for?
 		scope.addDeclaration( this.id, 'class' );
 
+		this.id.attachScope( this.scope );
+		if ( this.superClass ) this.superClass.attachScope( this.scope );
 		this.body.attachScope( scope );
 	}
 
