@@ -31,11 +31,13 @@ export default class TemplateLiteral extends Node {
 	}
 
 	minify ( code ) {
-		const value = this.getValue();
+		if ( this.parent.type !== 'TaggedTemplateExpression' ) {
+			const value = this.getValue();
 
-		if ( value !== UNKNOWN ) {
-			code.overwrite( this.start, this.end, stringify( value ) );
-			return;
+			if ( value !== UNKNOWN ) {
+				code.overwrite( this.start, this.end, stringify( value ) );
+				return;
+			}
 		}
 
 		let c = this.start;
