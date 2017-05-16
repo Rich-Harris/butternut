@@ -6,6 +6,8 @@ let commutative = {};
 // operating on strings
 for ( let operator of '*&^|' ) commutative[ operator ] = true;
 
+const collapsibleOperators = '** * / % + - << >> >>> & ^ |'.split( ' ' );
+
 export default class AssignmentExpression extends Node {
 	getLeftHandSide () {
 		return this.left.getLeftHandSide();
@@ -32,7 +34,7 @@ export default class AssignmentExpression extends Node {
 		}
 
 		// special case – `a = a + 1` -> `a += 1`
-		if ( this.operator === '=' && this.left.type === 'Identifier' && this.right.type === 'BinaryExpression' ) {
+		if ( this.operator === '=' && this.left.type === 'Identifier' && this.right.type === 'BinaryExpression' && ~collapsibleOperators.indexOf( this.right.operator ) ) {
 			if ( this.right.left.type === 'Identifier' && ( this.right.left.name === this.left.name ) ) {
 				code.appendLeft( this.left.end, this.right.operator );
 				code.remove( this.right.start, this.right.right.start );

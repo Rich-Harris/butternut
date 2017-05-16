@@ -30,6 +30,12 @@ module.exports = [
 	},
 
 	{
+		description: 'does not rewrite `a = a !== false` as `a!===!1`',
+		input: `a = a !== false`,
+		output: `a=a!==!1`
+	},
+
+	{
 		description: 'rewrites arithmetic expression with value',
 		input: `a = 1 + 2 * 3`,
 		output: `a=7`
