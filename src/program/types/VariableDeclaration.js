@@ -42,12 +42,12 @@ export default class VariableDeclaration extends Node {
 			c = declarator.end;
 		}
 
-		// we may have been asked to declare some additional vars, if they were
-		// declared inside blocks that have been removed
-		if ( this.rideAlongs ) code.appendLeft( c, `,` + this.rideAlongs.join( ',' ) );
-
 		if ( this.end > c + 1 ) code.remove( c, this.end - 1 ); // TODO semi-less declarations
 
 		declarations.forEach( declarator => declarator.minify( code ) );
+
+		// we may have been asked to declare some additional vars, if they were
+		// declared inside blocks that have been removed
+		if ( this.rideAlongs ) code.appendLeft( c, `,` + this.rideAlongs.join( ',' ) );
 	}
 }
