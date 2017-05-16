@@ -1,6 +1,7 @@
 import Node from '../Node.js';
 import { UNKNOWN } from '../../utils/sentinels.js';
 import stringify from '../../utils/stringify.js';
+import getValuePrecedence from '../../utils/getValuePrecedence.js';
 
 const safeFunctions = [
 	// TODO this list is possibly a bit arbitrary. Also *technically*
@@ -43,7 +44,9 @@ const safeFunctions = [
 
 export default class CallExpression extends Node {
 	getPrecedence () {
-		return 17;
+		const value = this.getValue();
+
+		return value === UNKNOWN ? 17 : getValuePrecedence( value );
 	}
 
 	getValue () {

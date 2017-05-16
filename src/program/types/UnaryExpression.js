@@ -1,6 +1,7 @@
 import Node from '../Node.js';
 import { UNKNOWN } from '../../utils/sentinels.js';
 import stringify from '../../utils/stringify.js';
+import getValuePrecedence from '../../utils/getValuePrecedence.js';
 
 const calculators = {
 	'!': x => !x,
@@ -14,7 +15,8 @@ const calculators = {
 
 export default class UnaryExpression extends Node {
 	getPrecedence () {
-		return 15;
+		const value = this.getValue();
+		return value === UNKNOWN ? 15 : getValuePrecedence( value );
 	}
 
 	getValue () {

@@ -1,6 +1,7 @@
 import Node from '../Node.js';
 import { UNKNOWN } from '../../utils/sentinels.js';
 import stringify from '../../utils/stringify.js';
+import getValuePrecedence from '../../utils/getValuePrecedence.js';
 
 const calculators = {
 	'**' : ( a, b ) => Math.pow( a, b ),
@@ -47,12 +48,11 @@ export default class BinaryExpression extends Node {
 	}
 
 	getPrecedence () {
-		const left = this.left.getValue();
-		const right = this.right.getValue();
+		const value = this.getValue();
 
-		if ( left === UNKNOWN || right === UNKNOWN ) return binaryExpressionPrecedence[ this.operator ];
-
-		return 20; // will be replaced by a literal
+		return value === UNKNOWN ?
+			binaryExpressionPrecedence[ this.operator ] :
+			getValuePrecedence( value );
 	}
 
 	getValue () {

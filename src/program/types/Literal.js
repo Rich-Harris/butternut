@@ -15,7 +15,7 @@ export default class Literal extends Node {
 	}
 
 	getPrecedence () {
-		return 20;
+		return 21;
 	}
 
 	getValue () {

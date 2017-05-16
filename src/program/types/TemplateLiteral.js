@@ -56,7 +56,7 @@ export default class TemplateLiteral extends Node {
 				c = ( nextQuasi ? nextQuasi.start : this.end ) - 1;
 				if ( expression.end < c ) code.remove( expression.end, c );
 			} else {
-				code.overwrite( quasi.end, expression.end, stringify( value ) );
+				code.overwrite( quasi.end, expression.end, String( value ) );
 				c = ( nextQuasi ? nextQuasi.start : this.end - 1 );
 				if ( expression.end < c ) code.remove( expression.end, c );
 			}

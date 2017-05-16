@@ -2,6 +2,7 @@ import Node from '../Node.js';
 import reserved from '../../utils/reserved.js';
 import { UNKNOWN } from '../../utils/sentinels.js';
 import stringify from '../../utils/stringify.js';
+import getValuePrecedence from '../../utils/getValuePrecedence.js';
 
 function isValidIdentifier ( str ) {
 	// TODO there's probably a bit more to it than this
@@ -39,7 +40,9 @@ export default class MemberExpression extends Node {
 	}
 
 	getPrecedence () {
-		return 18;
+		const value = this.getValue();
+
+		return value === UNKNOWN ? 18 : getValuePrecedence( value );
 	}
 
 	getRightHandSide () {
