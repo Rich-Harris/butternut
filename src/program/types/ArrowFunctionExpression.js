@@ -10,6 +10,8 @@ export default class ArrowFunctionExpression extends Node {
 		});
 
 		this.params.forEach( param => {
+			param.attachScope( this.scope );
+
 			extractNames( param ).forEach( node => {
 				node.declaration = this;
 				this.scope.addDeclaration( node, 'param' );
