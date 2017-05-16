@@ -133,7 +133,7 @@ export default class IfStatement extends Node {
 		if ( this.consequent.isEmpty() ) {
 			const canRemoveTest = this.test.type === 'Identifier' || this.test.getValue() !== UNKNOWN; // TODO can this ever happen?
 
-			if ( this.alternate ) {
+			if ( this.alternate && !this.alternate.isEmpty() ) {
 				this.alternate.minify( code );
 
 				if ( this.alternate.type === 'BlockStatement' && this.alternate.body.length === 0 ) {
@@ -190,7 +190,7 @@ export default class IfStatement extends Node {
 					this.removed = true;
 				} else {
 					code.remove( this.start, this.test.start );
-					code.remove( this.test.end, this.consequent.end );
+					code.remove( this.test.end, this.end );
 				}
 			}
 

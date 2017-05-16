@@ -573,5 +573,15 @@ module.exports = [
 		description: 'parenthesizes inverted statements if necessary',
 		input: `if (a = b); else throw error;`,
 		output: `if(!(a=b))throw error`
+	},
+
+	{
+		skip: true, // need to remove isEmpty, it's messing this up
+		description: 'removes removable block',
+		input: `
+			while ( true ) {
+				if ( foo ) ; else ;
+			}`,
+		output: `while(!0);`
 	}
 ];
