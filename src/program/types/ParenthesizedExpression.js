@@ -42,10 +42,7 @@ export default class ParenthesizedExpression extends Node {
 	}
 
 	getPrecedence () {
-		let expression = this.expression;
-		while ( expression.type === 'ParenthesizedExpression' ) expression = expression.expression;
-
-		return shouldRemoveParens( expression, this.parent ) ? expression.getPrecedence() : 20;
+		return 20;
 	}
 
 	getValue () {
