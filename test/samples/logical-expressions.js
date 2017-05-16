@@ -63,5 +63,11 @@ module.exports = [
 		description: 'does not consider environment-specific methods when folding',
 		input: `var includes = [].includes || function(x) { return this.indexOf(x) !== -1; };`,
 		output: `var includes=[].includes||function(a){return this.indexOf(a)!==-1}`
+	},
+
+	{
+		description: 'stringifies `null && ...` correctly',
+		input: `var x = null && y`,
+		output: `var x=null`
 	}
 ];
