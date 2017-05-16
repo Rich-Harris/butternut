@@ -1,6 +1,12 @@
 import Node from '../Node.js';
 import extractNames from '../extractNames.js';
 
+function compatibleDeclarations ( a, b ) {
+	if ( a === b ) return true;
+	if ( a === 'var' || b === 'var' ) return false;
+	return true;
+}
+
 export default class VariableDeclaration extends Node {
 	attachScope ( scope ) {
 		this.declarations.forEach( declarator => {
@@ -14,37 +20,82 @@ export default class VariableDeclaration extends Node {
 		let _scope = scope;
 		if ( this.kind === 'var' ) while ( _scope.isBlockScope ) _scope = _scope.parent;
 
-		if ( _scope.parent ) {
-			// noop — we wait for this declaration to be activated
-			// TODO what about `var a = b()` — need to init the init
-		} else {
-			super.initialise( scope );
+		if ( !_scope.parent ) {
+			this.skip = false;
 		}
+
+		this.declarations.forEach( declarator => {
+			if ( !_scope.parent ) {
+				// only initialise top-level variables. TODO unless we're in e.g. module mode
+				declarator.initialise( scope );
+			} else {
+				if ( declarator.init ) declarator.init.initialise( scope );
+			}
+		});
 	}
 
 	minify ( code ) {
-		const declarations = this.declarations.filter( d => !d.skip );
+		if ( this.collapsed ) return;
+
+		// collapse consecutive declarations into one
+		const declarations = this.declarations;
+
+		if ( this.parent.type === 'BlockStatement' || this.parent.type === 'Program' ) {
+			let index = this.parent.body.indexOf( this ) + 1;
+			do {
+				const next = this.parent.body[ index ];
+				if ( next && next.type === 'VariableDeclaration' && compatibleDeclarations( next.kind, this.kind ) ) {
+					declarations.push( ...next.declarations );
+					next.collapsed = true;
+				} else {
+					break;
+				}
+
+				index += 1;
+			} while ( index < this.parent.body.length );
+		}
 
 		let allDupes = declarations.every( declarator => {
+			if ( declarator.skip ) return true;
+
 			const names = extractNames( declarator.id );
 			return names.length > 0 && names.every( identifier => {
 				return identifier.isDuplicate;
 			});
 		});
 
-		let c = allDupes ? this.start : this.start + this.kind.length + ( this.declarations[0].id.type === 'Identifier' ? 1 : 0 );
+		const kind = this.kind === 'const' ? 'let' : this.kind; // TODO preserve const at top level?
+		let c = this.start;
+		let first = true;
+		let needsKeyword = !allDupes;
 
 		for ( let i = 0; i < declarations.length; i += 1 ) {
 			const declarator = declarations[i];
-			if ( declarator.skip ) continue;
 
-			if ( declarator.start > c ) code.overwrite( c, declarator.start, i ? ',' : '' );
+			if ( declarator.skip ) {
+				if ( !declarator.init || declarator.init.skip ) continue;
+
+				declarator.init.minify( code );
+
+				// we have a situation like `var unused = x()` — need to preserve `x()`
+				code.overwrite( c, declarator.init.start, first ? '' : ';' );
+				needsKeyword = true;
+			} else {
+				declarator.minify( code );
+
+				let separator = needsKeyword ?
+					( first ? kind : `;${kind}` ) + ( declarator.id.type === 'Identifier' ? ' ' : '' ) :
+					first ? '' : ',';
+
+				code.overwrite( c, declarator.start, separator );
+				needsKeyword = false;
+			}
+
 			c = declarator.end;
+			first = false;
 		}
 
-		if ( this.end > c + 1 ) code.remove( c, this.end - 1 ); // TODO semi-less declarations
-
-		declarations.forEach( declarator => declarator.minify( code ) );
+		if ( this.end > c + 1 ) code.remove( c, this.end - 1 );
 
 		// we may have been asked to declare some additional vars, if they were
 		// declared inside blocks that have been removed
