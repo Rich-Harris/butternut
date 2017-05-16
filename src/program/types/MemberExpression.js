@@ -15,7 +15,7 @@ function canFold ( node, parent ) {
 	}
 
 	if ( parent.type === 'UpdateExpression' ) return false;
-	if ( parent.type === 'AssignmentExpression' ) return node !== parent.left;
+	if ( parent.type === 'AssignmentExpression' || /For(In|Of)Statement/.test( parent.type ) ) return node !== parent.left;
 
 	return true;
 }
