@@ -7,8 +7,8 @@ export default function stringify ( value ) {
 	if ( typeof value === 'function' ) return null;
 
 	if ( value !== value ) return 'NaN';
-	if ( value === Infinity ) return 'Infinity';
-	if ( value === -Infinity ) return '-Infinity';
+	if ( value === Infinity ) return '1/0';
+	if ( value === -Infinity ) return '-1/0';
 	if ( value === true ) return '!0';
 	if ( value === false ) return '!1';
 	if ( value === undefined ) return 'void 0';
