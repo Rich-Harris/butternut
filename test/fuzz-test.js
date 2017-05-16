@@ -5,10 +5,11 @@ const { walk } = require('estree-walker');
 
 const butternut = require('../dist/butternut.cjs.js');
 
+let tested = 0;
+let disregarded = 0;
+
 for (let i = 0; i < 100; i += 1) {
 	const input = generateRandomJs();
-
-	if (!isValidInput(input)) continue;
 
 	try {
 		const ast = acorn.parse(input, {
@@ -19,8 +20,12 @@ for (let i = 0; i < 100; i += 1) {
 			allowReturnOutsideFunction: true
 		});
 
-		if (!isValidInput(ast)) continue;
+		if (!isValidInput(ast)) {
+			disregarded += 1;
+			continue;
+		}
 	} catch (err) {
+		disregarded += 1;
 		continue;
 	}
 
@@ -29,6 +34,8 @@ for (let i = 0; i < 100; i += 1) {
 			check: true,
 			allowDangerousEval: true
 		});
+
+		tested += 1;
 	} catch (err) {
 		if (err.check) {
 			fs.writeFileSync('test/fixture/input/_test.js', input);
@@ -37,20 +44,28 @@ for (let i = 0; i < 100; i += 1) {
 	}
 }
 
+console.log( `successfully tested ${tested} inputs, disregarded ${disregarded}` );
+
 function isValidInput(ast) {
 	let valid = true;
 
 	walk(ast, {
 		enter(node, parent) {
-			if (node.type === 'Literal' && typeof node.value === 'boolean') {
+			if (node.type === 'MemberExpression') {
+				const object = deparenthesize(node.object);
+
 				// disregard nonsense like false.typeof
-				if (parent.type === 'MemberExpression' && node === parent.object) {
+				if (isBoolean(object)) {
 					valid = false;
 					this.abort();
 				}
+			}
+
+			if (node.type === 'UnaryExpression') {
+				const argument = deparenthesize(node.argument);
 
 				// `true ** x`
-				if (parent.type === 'UnaryExpression' && node === parent.left) {
+				if (isBoolean(argument)) {
 					valid = false;
 					this.abort();
 				}
@@ -61,4 +76,13 @@ function isValidInput(ast) {
 	});
 
 	return valid;
+}
+
+function deparenthesize(node) {
+	while (node.type === 'ParenthesizedExpression')
+		node = node.expression;
+}
+
+function isBoolean(node) {
+	return node.type === 'Literal' && typeof node.value === 'boolean';
 }
