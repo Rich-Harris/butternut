@@ -122,7 +122,7 @@ export default class IfStatement extends Node {
 
 		const shouldParenthesiseTest = (
 			test.getPrecedence() < targetPrecedence ||
-			/(?:Object|Function)Expression/.test( test.getLeftHandSide().type ) || // TODO the FunctionExpression special case feels awkward...
+			test.getLeftHandSide().type === 'ObjectExpression' ||
 			test.getRightHandSide().type === 'ObjectExpression'
 		);
 
@@ -288,15 +288,8 @@ export default class IfStatement extends Node {
 	rewriteAsLogicalExpression ( code, shouldParenthesiseTest, shouldParenthesiseConsequent ) {
 		code.remove( this.start, this.test.start );
 
-		if ( shouldParenthesiseTest ) {
-			code.prependRight( this.test.getLeftHandSide().start, '(' );
-			code.appendLeft( this.test.getRightHandSide().end, ')' );
-		}
-
-		if ( shouldParenthesiseConsequent ) {
-			code.prependRight( this.consequent.getLeftHandSide().start, '(' );
-			code.appendLeft( this.consequent.getRightHandSide().end, ')' );
-		}
+		if ( shouldParenthesiseTest ) this.test.parenthesize( code );
+		if ( shouldParenthesiseConsequent ) this.consequent.parenthesize( code );
 
 		code.overwrite( this.test.end, this.consequent.start, this.inverted ? '||' : '&&' );
 	}

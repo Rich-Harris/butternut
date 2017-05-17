@@ -6,7 +6,7 @@ function shouldRemoveParens ( expression, parent ) {
 	}
 
 	if ( expression.type === 'CallExpression' ) {
-		return expression.callee.type === 'FunctionExpression'; // TODO is this right?
+		return expression.callee.type === 'FunctionExpression' && parent.type === 'ExpressionStatement';
 	}
 
 	if ( expression.type === 'FunctionExpression' ) {
@@ -83,7 +83,7 @@ export default class ParenthesizedExpression extends Node {
 				/FunctionExpression/.test( expression.callee.type )
 			)
 		) {
-			code.prependRight( this.start, '!' ); // could be any unary operator – uglify uses !
+			expression.prepend( code, '!' ); // could be any unary operator – uglify uses !
 		}
 
 		expression.minify( code );

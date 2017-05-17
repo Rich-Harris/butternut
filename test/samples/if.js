@@ -655,6 +655,6 @@ module.exports = [
 			}`,
 		// TODO `function fn(){any_value||do_something()}`
 		// (though that would ruin this test)
-		output: `function fn(){(function(){return any_value})()||do_something()}`
+		output: `function fn(){(function(){return any_value}())||do_something()}`
 	}
 ];

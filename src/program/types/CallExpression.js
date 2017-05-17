@@ -49,8 +49,18 @@ export default class CallExpression extends Node {
 
 	getPrecedence () {
 		const value = this.getValue();
+		if ( value === UNKNOWN ) {
+			// function expressions are a special (annoying) case
+			let node = this.callee;
+			while ( node.type === 'ParenthesizedExpression' ) node = node.expression;
+			if ( /FunctionExpression/.test( node.getLeftHandSide().type ) ) {
+				if ( this.parent.type !== 'ExpressionStatement' ) return 0;
+			}
 
-		return value === UNKNOWN ? 18 : getValuePrecedence( value );
+			return 18;
+		} else {
+			return getValuePrecedence( value );
+		}
 	}
 
 	getValue () {

@@ -63,12 +63,28 @@ export default class FunctionNode extends Node {
 		let c = this.start;
 
 		if ( hasFunctionKeyword( this, this.parent ) ) {
-			if ( keepId( this ) ) {
-				code.overwrite( this.start, this.id.start, ( this.async ? 'async function ' : this.generator ? 'function*' : 'function ' ) );
+			// TODO this could probably be simpler
+			const shouldKeepId = keepId( this );
+			if ( shouldKeepId ) {
+				c = this.id.start;
+
+				if ( this.async ) {
+					if ( c > this.start + 15 ) code.overwrite( this.start + 6, c, this.generator ? 'function*' : 'function ' );
+				} else {
+					if ( c > this.start + 9 ) code.overwrite( this.start + 8, c, this.generator ? '*' : ' ' );
+				}
+
 				c = this.id.end;
 			} else {
 				while ( code.original[c] !== '(' ) c += 1;
-				code.overwrite( this.start, c, ( this.async ? 'async function' : this.generator ? 'function*' : 'function' ) );
+
+				if ( this.async ) {
+					const replacement = this.generator ? 'function*' : 'function';
+					if ( c > this.start + 6 + replacement.length ) code.overwrite( this.start + 6, c, replacement );
+				} else {
+					const replacement = this.generator ? '*' : '';
+					if ( c > this.start + 8 + replacement.length ) code.overwrite( this.start + 8, c, replacement );
+				}
 			}
 		}
 
