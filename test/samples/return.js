@@ -24,5 +24,14 @@ module.exports = [
 				return ( value == null ) ? '' : '' + value;
 			}`,
 		output: `function foo(a){return a==null?'':''+a}`
+	},
+
+	{
+		description: 'space before call expression, where callee is new expression',
+		input: `
+			function foo () {
+				return (new Bar(1))()
+			}`,
+		output: `function foo(){return new Bar(1)()}`
 	}
 ];
