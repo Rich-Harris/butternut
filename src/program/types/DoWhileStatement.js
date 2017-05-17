@@ -12,7 +12,8 @@ export default class DoWhileStatement extends Node {
 				code.remove( this.start + 2, this.body.start );
 				code.overwrite( this.body.end, this.test.start, 'while(' );
 			} else {
-				code.overwrite( this.start + 2, this.body.start, '{' );
+				if ( this.body.start > this.start + 2 ) code.remove( this.start + 2, this.body.start );
+				this.body.prepend( code, '{' );
 
 				let c = this.body.end;
 				while ( code.original[ c - 1 ] === ';' ) c -= 1;

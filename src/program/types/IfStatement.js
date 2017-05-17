@@ -8,6 +8,7 @@ const invalidChars = /[a-zA-Z$_0-9/]/;
 function endsWithCurlyBraceOrSemicolon ( node ) {
 	return (
 		node.type === 'BlockStatement' ||
+		node.type === 'SwitchStatement' ||
 		node.type === 'TryStatement' ||
 		node.type === 'EmptyStatement'
 	);
@@ -330,47 +331,27 @@ export default class IfStatement extends Node {
 		// 	( this.alternate.body.length === 1 ? getPrecedence( this.alternate.body[0] ) < 4 : true ) :
 		// 	false; // TODO <-- is this right? Ternaries are r-to-l, so... maybe?
 
-		code.overwrite( this.start, this.test.start, shouldParenthesiseTest ? '(' : '' );
+		if ( shouldParenthesiseTest ) this.test.parenthesize( code );
+		if ( shouldParenthesiseConsequent ) this.consequent.parenthesize( code );
+		if ( shouldParenthesiseAlternate ) this.alternate.parenthesize( code );
 
-		let replacement = shouldParenthesiseTest ? ')?' : '?';
-		if ( this.inverted && shouldParenthesiseAlternate ) replacement += '(';
-		if ( !this.inverted && shouldParenthesiseConsequent ) replacement += '(';
-
-		code.overwrite( this.test.end, this.consequent.start, replacement );
+		code.remove( this.start, this.test.start );
+		code.overwrite( this.test.end, this.consequent.start, '?' );
 
 		let consequentEnd = this.consequent.end;
 		while ( code.original[ consequentEnd - 1 ] === ';' ) consequentEnd -= 1;
+		code.remove( consequentEnd, this.alternate.start );
 
 		let alternateEnd = this.alternate.end;
 		while ( code.original[ alternateEnd - 1 ] === ';' ) alternateEnd -= 1;
 
-		code.remove( consequentEnd, this.alternate.start );
-
 		if ( this.inverted ) {
-			let alternateEnd = this.alternate.end;
-			while ( code.original[ alternateEnd - 1 ] === ';' ) alternateEnd -= 1;
-
-			let consequentEnd = this.consequent.end;
-			while ( code.original[ consequentEnd - 1 ] === ';' ) consequentEnd -= 1;
-
 			code.move( this.alternate.start, alternateEnd, this.consequent.start );
 			code.move( this.consequent.start, consequentEnd, alternateEnd );
 
-			let replacement = shouldParenthesiseAlternate ? '):' : ':';
-			if ( shouldParenthesiseConsequent ) replacement += '(';
-
-			code.prependRight( this.consequent.start, replacement );
-
-			if ( shouldParenthesiseConsequent ) code.appendLeft( consequentEnd, ')' );
+			code.prependRight( this.consequent.getLeftHandSide().start, ':' );
 		} else {
-			let replacement = shouldParenthesiseConsequent ? '):' : ':';
-			if ( shouldParenthesiseAlternate ) replacement += '(';
-
-			code.appendLeft( this.consequent.end, replacement );
-
-			let c = this.alternate.end;
-			while ( code.original[ c - 1 ] === ';' ) c -= 1;
-			if ( shouldParenthesiseAlternate ) code.appendLeft( c, ')' );
+			code.appendLeft( this.alternate.getLeftHandSide().start, ':' );
 		}
 	}
 }

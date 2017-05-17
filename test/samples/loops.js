@@ -222,5 +222,13 @@ module.exports = [
 		input: `for (const e = 0;;) {}`,
 		// TODO remove altogether
 		output: `for(;;);`
+	},
+
+	{
+		description: 'handle do-while loop with expression body and no space',
+		input: `do!x();while(true)`,
+		// TODO don't add the curlies, we can save one byte (meanwhile Uglify
+		// rewrites this as `for(;;)x();`)
+		output: `do{!x()}while(!0)`
 	}
 ];

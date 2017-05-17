@@ -40,6 +40,8 @@ function endsWithCurlyBrace ( statement ) { // TODO can we just use getRightHand
 		return statement.body.type === 'BlockStatement' && !statement.body.canRemoveCurlies();
 	}
 
+	if ( statement.type === 'SwitchStatement' ) return true;
+
 	return /(?:Class|Function)Declaration/.test( statement.type );
 }
 
@@ -209,6 +211,7 @@ export default class BlockStatement extends Node {
 		const end = ( this.parent.type === 'Root' || removeCurlies ) ? this.end : this.end - 1;
 
 		const statements = this.body.filter( statement => !statement.skip );
+		let lastStatement;
 
 		if ( statements.length ) {
 			let nextSeparator = ( ( this.scope && this.scope.useStrict && ( !this.scope.parent || !this.scope.parent.useStrict ) ) ?
@@ -221,16 +224,10 @@ export default class BlockStatement extends Node {
 				statement.minify( code );
 
 				if ( !statement.collapsed ) {
-					if ( nextSeparator === '' ) {
-						if ( statement.start > lastEnd ) code.remove( lastEnd, statement.start );
-					} else {
-						if ( statement.start === lastEnd ) {
-							code.appendLeft( lastEnd, separator );
-						} else {
-							if ( code.original.slice( lastEnd, statement.start ) !== nextSeparator ) {
-								code.overwrite( lastEnd, statement.start, nextSeparator );
-							}
-						}
+					if ( statement.start > lastEnd ) code.remove( lastEnd, statement.start );
+
+					if ( nextSeparator ) {
+						code.appendLeft( lastStatement ? lastStatement.getRightHandSide().end : lastEnd, nextSeparator );
 					}
 
 					if ( statement.removed ) {
@@ -244,6 +241,14 @@ export default class BlockStatement extends Node {
 
 				// remove superfluous semis (TODO is this necessary?)
 				while ( code.original[ lastEnd - 1 ] === ';' ) lastEnd -= 1;
+
+				if ( statement.removed ) {
+					nextSeparator = '';
+				} else {
+					nextSeparator = endsWithCurlyBrace( statement ) ? '' : separator;
+				}
+
+				lastStatement = statement;
 			}
 
 			if ( end > lastEnd ) code.remove( lastEnd, end );

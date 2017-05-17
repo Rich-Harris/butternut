@@ -12,6 +12,10 @@ export default class Node {
 		return node;
 	}
 
+	append ( code, content ) {
+		code.appendLeft( this.getRightHandSide().end, content );
+	}
+
 	attachScope ( scope ) {
 		for ( var key of this.keys ) {
 			const value = this[ key ];
@@ -102,6 +106,10 @@ export default class Node {
 		}
 	}
 
+	move ( code, position ) {
+		code.move( this.getLeftHandSide().start, this.getRightHandSide().end, position );
+	}
+
 	minify ( code ) {
 		for ( var key of this.keys ) {
 			const value = this[ key ];
@@ -117,6 +125,15 @@ export default class Node {
 				}
 			}
 		}
+	}
+
+	parenthesize ( code ) {
+		this.prepend( code, '(' );
+		this.append( code, ')' );
+	}
+
+	prepend ( code, content ) {
+		code.prependRight( this.getLeftHandSide().start, content );
 	}
 
 	preventsCollapsedReturns ( returnStatements ) {
