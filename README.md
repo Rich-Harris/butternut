@@ -29,6 +29,7 @@ The easiest way to use Butternut is to plug it into your existing build process:
 
 * [rollup-plugin-butternut](https://github.com/rollup/rollup-plugin-butternut)
 * [butternut-webpack-plugin](https://github.com/Apercu/butternut-webpack-plugin)
+* [gulp-butternut](https://github.com/etsms/gulp-butternut)
 
 Alternatively, you can use it directly via the CLI or the JavaScript API:
 
