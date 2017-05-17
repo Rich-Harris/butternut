@@ -178,7 +178,7 @@ module.exports = [
 					f(foo);
 				}
 			})();`,
-		output: `!(()=>{let a=0;for(;;)f(a)})()`
+		output: `(()=>{let a=0;for(;;)f(a)})()`
 	},
 
 	{
