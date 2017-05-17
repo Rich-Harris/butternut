@@ -2,7 +2,7 @@ import FunctionNode from './shared/FunctionNode.js';
 
 export default class FunctionExpression extends FunctionNode {
 	getPrecedence () {
-		return 20;
+		return 0;
 	}
 
 	initialise () {

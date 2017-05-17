@@ -43,6 +43,10 @@ const safeFunctions = [
 ];
 
 export default class CallExpression extends Node {
+	getLeftHandSide () {
+		return this.callee.getLeftHandSide();
+	}
+
 	getPrecedence () {
 		const value = this.getValue();
 

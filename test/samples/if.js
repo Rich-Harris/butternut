@@ -629,5 +629,32 @@ module.exports = [
 				z();
 			}`,
 		output: `if(x)switch(foo){default:y()}else z()`
+	},
+
+	{
+		description: 'wraps assignment expression consequent in parens',
+		input: `
+			function fn () {
+				if ( any_condition )
+					global_variable = true;
+				else
+					var local_variable = true;
+			}`,
+		output: `function fn(){any_condition&&(global_variable=!0)}`
+	},
+
+	{
+		description: 'allows an IIFE to be a condition',
+		input: `
+			function fn () {
+				if ( !function () {
+					return any_value
+				}() ) {
+					do_something()
+				}
+			}`,
+		// TODO `function fn(){any_value||do_something()}`
+		// (though that would ruin this test)
+		output: `function fn(){(function(){return any_value})()||do_something()}`
 	}
 ];
