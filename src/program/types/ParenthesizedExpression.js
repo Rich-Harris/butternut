@@ -75,12 +75,12 @@ export default class ParenthesizedExpression extends Node {
 			(
 				this.parent.type === 'CallExpression' &&
 				this.parent.parent.type === 'ExpressionStatement' &&
-				/FunctionExpression/.test( expression.type )
+				expression.type === 'FunctionExpression'
 			) ||
 			(
 				this.parent.type === 'ExpressionStatement' &&
 				expression.type === 'CallExpression' &&
-				/FunctionExpression/.test( expression.callee.type )
+				expression.callee.type === 'FunctionExpression'
 			)
 		) {
 			expression.prepend( code, '!' ); // could be any unary operator – uglify uses !
