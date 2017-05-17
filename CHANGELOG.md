@@ -1,5 +1,14 @@
 # butternut changelog
 
+## 0.4.5
+
+* Remove unused function expression IDs ([#98](https://github.com/Rich-Harris/butternut/pull/98))
+* Rewrite `Infinity` as `1/0` ([#99](https://github.com/Rich-Harris/butternut/pull/99))
+* Remove parentheses from new expression without parameters ([#100](https://github.com/Rich-Harris/butternut/pull/100))
+* Remove leading zero from numbers, use e notation where appropriate ([#102](https://github.com/Rich-Harris/butternut/pull/102))
+* Fix order of edits around if statements ([#109](https://github.com/Rich-Harris/butternut/issues/109), [#115](https://github.com/Rich-Harris/butternut/issues/115), [#117](https://github.com/Rich-Harris/butternut/issues/117))
+* Preserve initialisers of unused variables if they may contain side-effects ([#101](https://github.com/Rich-Harris/butternut/issues/101))
+
 ## 0.4.4
 
 * Dozens of minor fixes ([#91](https://github.com/Rich-Harris/butternut/pull/91))
