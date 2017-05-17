@@ -629,5 +629,17 @@ module.exports = [
 				z();
 			}`,
 		output: `if(x)switch(foo){default:y()}else z()`
+	},
+
+	{
+		description: 'wraps assignment expression consequent in parens',
+		input: `
+			function fn () {
+				if ( any_condition )
+					global_variable = true;
+				else
+					var local_variable = true;
+			}`,
+		output: `function fn(){any_condition&&(global_variable=!0)}`
 	}
 ];

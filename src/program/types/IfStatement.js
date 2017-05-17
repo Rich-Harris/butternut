@@ -160,12 +160,9 @@ export default class IfStatement extends Node {
 					}
 
 					const shouldParenthesiseAlternate = alternatePrecedence < ( this.inverted ? 6 : 5 );
-					if ( shouldParenthesiseAlternate ) {
-						code.prependRight( this.alternate.start, '(' ).appendLeft( this.alternate.end, ')' );
-					}
+					if ( shouldParenthesiseAlternate ) this.alternate.parenthesize( code );
 
-					if ( this.inverted ) code.remove( this.test.start, this.test.argument.start );
-					code.remove( this.start, this.test.start );
+					code.remove( this.start, this.inverted ? this.test.argument.start : this.test.start );
 					code.overwrite( this.test.end, this.alternate.start, this.inverted ? '&&' : '||' );
 				} else {
 					let before = '(';
@@ -208,15 +205,12 @@ export default class IfStatement extends Node {
 			code.remove( this.consequent.end, this.end );
 
 			if ( this.consequent.canSequentialise() ) {
-				code.overwrite( this.start, ( this.inverted ? this.test.argument.start : this.test.start ), shouldParenthesiseTest ? '(' : '' );
+				if ( shouldParenthesiseTest ) this.test.parenthesize( code );
+				if ( shouldParenthesiseConsequent ) this.consequent.parenthesize( code );
 
-				let replacement = shouldParenthesiseTest ? ')' : '';
-				replacement += this.inverted ? '||' : '&&';
-				if ( shouldParenthesiseConsequent ) replacement += '(';
-
-				code.overwrite( this.test.end, this.consequent.start, replacement );
-
-				if ( shouldParenthesiseConsequent ) code.appendRight( this.consequent.end, ')' );
+				code.remove( this.start, ( this.inverted ? this.test.argument.start : this.test.start ) );
+				code.remove( this.consequent.getRightHandSide().end, this.end );
+				code.overwrite( this.test.end, this.consequent.start, this.inverted ? '||' : '&&' );
 			}
 
 			else {
