@@ -167,9 +167,9 @@ export default class BlockStatement extends Node {
 		return true;
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		if ( this.scope ) {
-			this.scope.mangle( code );
+			this.scope.mangle( code, chars );
 		}
 
 		let insertedVarDeclaration = '';
@@ -223,7 +223,7 @@ export default class BlockStatement extends Node {
 			for ( let i = 0; i < statements.length; i += 1 ) {
 				const statement = statements[i];
 
-				statement.minify( code );
+				statement.minify( code, chars );
 
 				if ( !statement.collapsed ) {
 					if ( statement.start > lastEnd ) code.remove( lastEnd, statement.start );
@@ -300,7 +300,7 @@ export default class BlockStatement extends Node {
 	// 	}
 
 	// 	statements.forEach( statement => {
-	// 		statement.minify( code );
+	// 		statement.minify( code, chars );
 	// 	});
 	// }
 }

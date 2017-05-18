@@ -110,7 +110,7 @@ export default class Node {
 		code.move( this.getLeftHandSide().start, this.getRightHandSide().end, position );
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		for ( var key of this.keys ) {
 			const value = this[ key ];
 
@@ -118,10 +118,10 @@ export default class Node {
 				if ( 'length' in value ) {
 					let i = value.length;
 					while ( i-- ) {
-						if ( value[i] ) value[i].minify( code );
+						if ( value[i] ) value[i].minify( code, chars );
 					}
 				} else {
-					value.minify( code );
+					value.minify( code, chars );
 				}
 			}
 		}

@@ -7,7 +7,7 @@ export default class ObjectExpression extends Node {
 		return UNKNOWN;
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		let c = this.start;
 
 		if ( this.properties.length ) {
@@ -16,8 +16,8 @@ export default class ObjectExpression extends Node {
 
 				if ( p.start > c + 1 ) code.overwrite( c, p.start, i ? ',' : '{' );
 
-				minifyPropertyKey( code, p, true );
-				p.value.minify( code );
+				minifyPropertyKey( code, chars, p, true );
+				p.value.minify( code, chars );
 
 				c = p.end;
 			}

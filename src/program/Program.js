@@ -44,14 +44,14 @@ export default function Program ( source, ast, options, stats ) {
 	this.body.initialise( this, this.body.scope );
 	if ( DEBUG ) stats.timeEnd( 'init body' );
 
-	this.body.scope.chars = chars.sort( ( a, b ) => {
+	chars.sort( ( a, b ) => {
 		if ( digit.test( a ) && !digit.test( b ) ) return 1;
 		if ( digit.test( b ) && !digit.test( a ) ) return -1;
 		return this.charFrequency[b] - this.charFrequency[a];
 	});
 
 	if ( DEBUG ) stats.time( 'minify' );
-	this.body.minify( this.magicString );
+	this.body.minify( this.magicString, chars );
 	if ( DEBUG ) stats.timeEnd( 'minify' );
 }
 

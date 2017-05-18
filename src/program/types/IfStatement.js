@@ -92,7 +92,7 @@ export default class IfStatement extends Node {
 		this.inverted = this.test.type === 'UnaryExpression' && this.test.operator === '!';
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		const testValue = this.test.getValue();
 
 		if ( testValue !== UNKNOWN ) {
@@ -103,17 +103,17 @@ export default class IfStatement extends Node {
 				}
 
 				code.remove( this.start, this.consequent.start );
-				this.consequent.minify( code );
+				this.consequent.minify( code, chars );
 			} else { // if ( false ) {...}
 				// we know there's an alternate, otherwise we wouldn't be here
-				this.alternate.minify( code );
+				this.alternate.minify( code, chars );
 				code.remove( this.start, this.alternate.start );
 			}
 
 			return;
 		}
 
-		this.test.minify( code );
+		this.test.minify( code, chars );
 
 		// if we're rewriting as &&, test must be higher precedence than 6
 		// to avoid being wrapped in parens. If ternary, 4
@@ -136,7 +136,7 @@ export default class IfStatement extends Node {
 			const canRemoveTest = this.test.type === 'Identifier' || this.test.getValue() !== UNKNOWN; // TODO can this ever happen?
 
 			if ( this.alternate && !this.alternate.isEmpty() ) {
-				this.alternate.minify( code );
+				this.alternate.minify( code, chars );
 
 				if ( this.alternate.type === 'BlockStatement' && this.alternate.body.length === 0 ) {
 					if ( canRemoveTest ) {
@@ -202,7 +202,7 @@ export default class IfStatement extends Node {
 		// special case - empty alternate
 		if ( this.alternate && this.alternate.isEmpty() ) {
 			// don't minify alternate
-			this.consequent.minify( code );
+			this.consequent.minify( code, chars );
 			code.remove( this.consequent.end, this.end );
 
 			if ( this.consequent.canSequentialise() ) {
@@ -224,8 +224,8 @@ export default class IfStatement extends Node {
 			return;
 		}
 
-		this.consequent.minify( code );
-		if ( this.alternate ) this.alternate.minify( code );
+		this.consequent.minify( code, chars );
+		if ( this.alternate ) this.alternate.minify( code, chars );
 
 		if ( this.canSequentialise() ) {
 			if ( this.inverted ) code.remove( this.test.start, this.test.start + 1 );

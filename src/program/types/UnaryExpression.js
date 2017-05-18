@@ -26,7 +26,7 @@ export default class UnaryExpression extends Node {
 		return calculators[ this.operator ]( arg );
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		const value = this.getValue();
 		if ( value !== UNKNOWN ) {
 			code.overwrite( this.start, this.end, stringify( value ) );
@@ -41,7 +41,7 @@ export default class UnaryExpression extends Node {
 
 			code.remove( start, this.argument.start );
 
-			super.minify( code );
+			super.minify( code, chars );
 		}
 	}
 }

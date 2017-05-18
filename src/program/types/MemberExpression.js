@@ -1,12 +1,12 @@
 import Node from '../Node.js';
-import reserved from '../../utils/reserved.js';
+import { reservedLookup } from '../../utils/reserved.js';
 import { UNKNOWN } from '../../utils/sentinels.js';
 import stringify from '../../utils/stringify.js';
 import getValuePrecedence from '../../utils/getValuePrecedence.js';
 
 function isValidIdentifier ( str ) {
 	// TODO there's probably a bit more to it than this
-	return !reserved[ str ] && /^[a-zA-Z_$][a-zA-Z_$0-9]*$/.test( str );
+	return !reservedLookup[ str ] && /^[a-zA-Z_$][a-zA-Z_$0-9]*$/.test( str );
 }
 
 function canFold ( node, parent ) {
@@ -49,7 +49,7 @@ export default class MemberExpression extends Node {
 		return this;
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		const value = this.getValue();
 
 		if ( value !== UNKNOWN && canFold( this, this.parent ) ) {
@@ -81,7 +81,7 @@ export default class MemberExpression extends Node {
 					code.overwrite( this.property.end, this.end, ']' );
 				}
 
-				this.property.minify( code );
+				this.property.minify( code, chars );
 			}
 		}
 
@@ -91,6 +91,6 @@ export default class MemberExpression extends Node {
 			}
 		}
 
-		this.object.minify( code );
+		this.object.minify( code, chars );
 	}
 }

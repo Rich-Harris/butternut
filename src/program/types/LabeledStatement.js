@@ -1,7 +1,7 @@
 import Node from '../Node.js';
 
 export default class LabeledStatement extends Node {
-	minify ( code ) {
+	minify ( code, chars ) {
 		if ( this.body.start > this.label.end + 1 ) {
 			code.overwrite( this.label.end, this.body.start, ':' );
 		}
@@ -11,7 +11,7 @@ export default class LabeledStatement extends Node {
 			code.appendLeft( this.body.start, ';' );
 			code.remove( this.body.start, this.body.end );
 		} else {
-			this.body.minify( code );
+			this.body.minify( code, chars );
 		}
 	}
 }

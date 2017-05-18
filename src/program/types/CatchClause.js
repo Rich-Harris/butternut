@@ -27,8 +27,8 @@ export default class CatchClause extends Node {
 		super.initialise( program, this.scope );
 	}
 
-	minify ( code ) {
-		this.scope.mangle( code );
+	minify ( code, chars ) {
+		this.scope.mangle( code, chars );
 
 		if ( this.param.start > this.start + 6 ) {
 			code.overwrite( this.start + 5, this.param.start, '(' );
@@ -38,6 +38,6 @@ export default class CatchClause extends Node {
 			code.overwrite( this.param.end, this.body.start, ')' );
 		}
 
-		super.minify( code );
+		super.minify( code, chars );
 	}
 }

@@ -11,10 +11,10 @@ export default class SwitchStatement extends Node {
 		}
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		// special (and unlikely!) case — no cases, but a non-removable discriminant
 		if ( this.cases.length === 0 ) {
-			this.discriminant.minify( code );
+			this.discriminant.minify( code, chars );
 			code.remove( this.start, this.discriminant.start );
 			code.remove( this.discriminant.end, this.end );
 		}
@@ -37,7 +37,7 @@ export default class SwitchStatement extends Node {
 
 			if ( this.end > c + 1 ) code.overwrite( c, this.end, '}' );
 
-			super.minify( code );
+			super.minify( code, chars );
 		}
 	}
 }

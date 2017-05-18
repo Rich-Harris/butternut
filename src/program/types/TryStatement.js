@@ -1,7 +1,7 @@
 import Node from '../Node.js';
 
 export default class TryStatement extends Node {
-	minify ( code ) {
+	minify ( code, chars ) {
 		if ( this.block.start > this.start + 3 ) code.remove( this.start + 3, this.block.start );
 
 		if ( this.handler ) {
@@ -18,6 +18,6 @@ export default class TryStatement extends Node {
 			}
 		}
 
-		super.minify( code );
+		super.minify( code, chars );
 	}
 }

@@ -19,7 +19,7 @@ export default class ArrayExpression extends Node {
 		return values;
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		let c = this.start;
 
 		if ( this.elements.length ) {
@@ -43,6 +43,6 @@ export default class ArrayExpression extends Node {
 			if ( this.end > c + 2 ) code.overwrite( c, this.end, '[]' );
 		}
 
-		super.minify( code );
+		super.minify( code, chars );
 	}
 }

@@ -43,7 +43,7 @@ export default class ConditionalExpression extends Node {
 		}
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		const testValue = this.test.getValue();
 
 		// TODO rewrite `!a ? b() : c()` as `a ? c() : b()`
@@ -58,18 +58,18 @@ export default class ConditionalExpression extends Node {
 				code.overwrite( this.consequent.end, this.alternate.start, ':' );
 			}
 
-			super.minify( code );
+			super.minify( code, chars );
 		} else if ( testValue ) {
 			// remove test and alternate
 			code.remove( this.start, this.consequent.start );
 			code.remove( this.consequent.end, this.end );
 
-			this.consequent.minify( code );
+			this.consequent.minify( code, chars );
 		} else {
 			// remove test and consequent
 			code.remove( this.start, this.alternate.start );
 
-			this.alternate.minify( code );
+			this.alternate.minify( code, chars );
 		}
 	}
 }

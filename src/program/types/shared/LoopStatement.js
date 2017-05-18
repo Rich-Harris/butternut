@@ -19,15 +19,15 @@ export default class LoopStatement extends Node {
 		super.initialise( program, this.scope || scope );
 	}
 
-	minify ( code ) {
-		if ( this.scope ) this.scope.mangle( code );
+	minify ( code, chars ) {
+		if ( this.scope ) this.scope.mangle( code, chars );
 
 		// special case — empty body
 		if ( this.body.isEmpty() ) {
 			code.appendLeft( this.body.start, ';' );
 			code.remove( this.body.start, this.body.end );
 		} else {
-			this.body.minify( code );
+			this.body.minify( code, chars );
 		}
 	}
 }

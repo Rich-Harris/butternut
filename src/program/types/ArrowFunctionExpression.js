@@ -40,8 +40,8 @@ export default class ArrowFunctionExpression extends Node {
 		return this.params.length === 1 ? this.params[0] : this;
 	}
 
-	minify ( code ) {
-		this.scope.mangle( code );
+	minify ( code, chars ) {
+		this.scope.mangle( code, chars );
 
 		let c = this.start;
 		if ( this.async ) c += 5;
@@ -53,7 +53,7 @@ export default class ArrowFunctionExpression extends Node {
 		}
 
 		else if ( this.params.length === 1 ) {
-			this.params[0].minify( code );
+			this.params[0].minify( code, chars );
 
 			if ( this.params[0].type === 'Identifier' ) {
 				// remove parens
@@ -79,7 +79,7 @@ export default class ArrowFunctionExpression extends Node {
 
 		else {
 			this.params.forEach( ( param, i ) => {
-				param.minify( code );
+				param.minify( code, chars );
 				if ( param.start > c + 1 ) code.overwrite( c, param.start, i ? ',' : '(' );
 				c = param.end;
 			});
@@ -89,6 +89,6 @@ export default class ArrowFunctionExpression extends Node {
 			}
 		}
 
-		this.body.minify( code );
+		this.body.minify( code, chars );
 	}
 }

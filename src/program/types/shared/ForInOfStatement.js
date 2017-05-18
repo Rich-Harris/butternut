@@ -9,7 +9,7 @@ export default class ForInOfStatement extends LoopStatement {
 		return this.left.type === 'VariableDeclaration';
 	}
 
-	minify ( code, transforms ) {
+	minify ( code, chars ) {
 		if ( this.left.start > this.start + 4 ) {
 			code.overwrite( this.start + 3, this.left.start, '(' );
 		}
@@ -22,8 +22,8 @@ export default class ForInOfStatement extends LoopStatement {
 			code.overwrite( this.right.end, this.body.start, ')' );
 		}
 
-		this.left.minify( code );
-		this.right.minify( code );
-		super.minify( code, transforms );
+		this.left.minify( code, chars );
+		this.right.minify( code, chars );
+		super.minify( code, chars );
 	}
 }

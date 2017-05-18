@@ -1,7 +1,7 @@
 import Node from '../Node.js';
 
 export default class DoWhileStatement extends Node {
-	minify ( code ) {
+	minify ( code, chars ) {
 		// special case
 		if ( this.body.isEmpty() ) {
 			code.overwrite( this.start + 2, this.test.start, ';while(' );
@@ -20,7 +20,7 @@ export default class DoWhileStatement extends Node {
 				code.overwrite( c, this.test.start, '}while(' );
 			}
 
-			this.body.minify( code );
+			this.body.minify( code, chars );
 		}
 
 		if ( this.end > this.test.end + 1 ) {
@@ -29,6 +29,6 @@ export default class DoWhileStatement extends Node {
 			code.overwrite( this.test.end, c, ')' );
 		}
 
-		this.test.minify( code );
+		this.test.minify( code, chars );
 	}
 }

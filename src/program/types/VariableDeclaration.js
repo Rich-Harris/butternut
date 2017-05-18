@@ -34,7 +34,7 @@ export default class VariableDeclaration extends Node {
 		});
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		if ( this.collapsed ) return;
 
 		// collapse consecutive declarations into one
@@ -75,13 +75,13 @@ export default class VariableDeclaration extends Node {
 			if ( declarator.skip ) {
 				if ( !declarator.init || declarator.init.skip ) continue;
 
-				declarator.init.minify( code );
+				declarator.init.minify( code, chars );
 
 				// we have a situation like `var unused = x()` — need to preserve `x()`
 				code.overwrite( c, declarator.init.start, first ? '' : ';' );
 				needsKeyword = true;
 			} else {
-				declarator.minify( code );
+				declarator.minify( code, chars );
 
 				let separator = needsKeyword ?
 					( first ? kind : `;${kind}` ) + ( declarator.id.type === 'Identifier' ? ' ' : '' ) :

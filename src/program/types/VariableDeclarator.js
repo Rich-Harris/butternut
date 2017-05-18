@@ -39,11 +39,11 @@ export default class VariableDeclarator extends Node {
 		});
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		if ( this.init ) {
 			if ( this.init.start > this.id.end + 1 ) code.overwrite( this.id.end, this.init.start, '=' );
 		}
 
-		super.minify( code );
+		super.minify( code, chars );
 	}
 }

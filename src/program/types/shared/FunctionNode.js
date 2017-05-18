@@ -60,7 +60,7 @@ export default class FunctionNode extends Node {
 		// noop
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		let c = this.start;
 
 		if ( hasFunctionKeyword( this, this.parent ) ) {
@@ -92,7 +92,7 @@ export default class FunctionNode extends Node {
 		if ( this.params.length ) {
 			for ( let i = 0; i < this.params.length; i += 1 ) {
 				const param = this.params[i];
-				param.minify( code );
+				param.minify( code, chars );
 
 				if ( param.start > c + 1 ) code.overwrite( c, param.start, i ? ',' : '(' );
 				c = param.end;
@@ -103,6 +103,6 @@ export default class FunctionNode extends Node {
 			code.overwrite( c, this.body.start, `()` );
 		}
 
-		this.body.minify( code );
+		this.body.minify( code, chars );
 	}
 }

@@ -100,7 +100,7 @@ export default class CallExpression extends Node {
 		super.initialise( program, scope );
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		const value = this.getValue();
 
 		if ( value !== UNKNOWN ) {
@@ -129,6 +129,6 @@ export default class CallExpression extends Node {
 			code.overwrite( this.callee.end, this.end, '()' );
 		}
 
-		super.minify( code );
+		super.minify( code, chars );
 	}
 }

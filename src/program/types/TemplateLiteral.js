@@ -30,7 +30,7 @@ export default class TemplateLiteral extends Node {
 		return result;
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		if ( this.parent.type !== 'TaggedTemplateExpression' ) {
 			const value = this.getValue();
 
@@ -49,7 +49,7 @@ export default class TemplateLiteral extends Node {
 
 			const value = expression.getValue();
 			if ( typeof value === 'object' ) { // includes both UNKNOWN and known non-primitives
-				expression.minify( code );
+				expression.minify( code, chars );
 
 				if ( expression.start > quasi.end + 2 ) {
 					code.remove( quasi.end + 2, expression.start );

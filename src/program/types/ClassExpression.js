@@ -25,8 +25,8 @@ export default class ClassExpression extends Class {
 		super.initialise( program, scope );
 	}
 
-	minify ( code ) {
-		this.scope.mangle( code );
-		super.minify( code );
+	minify ( code, chars ) {
+		this.scope.mangle( code, chars );
+		super.minify( code, chars );
 	}
 }

@@ -5,7 +5,7 @@ import stringify from '../../utils/stringify.js';
 const invalidChars = /[a-zA-Z$_0-9/]/;
 
 export default class ReturnStatement extends Node {
-	minify ( code ) {
+	minify ( code, chars ) {
 		if ( !this.argument ) return;
 
 		const value = this.argument.getValue();
@@ -24,6 +24,6 @@ export default class ReturnStatement extends Node {
 			code.remove( c, this.argument.start );
 		}
 
-		this.argument.minify( code );
+		this.argument.minify( code, chars );
 	}
 }

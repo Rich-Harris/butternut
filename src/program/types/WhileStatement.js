@@ -5,7 +5,7 @@ export default class WhileStatement extends Node {
 		return this.body.getRightHandSide();
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		if ( this.test.start > this.start + 6 ) {
 			code.overwrite( this.start + 5, this.test.start, '(' );
 		}
@@ -20,6 +20,6 @@ export default class WhileStatement extends Node {
 			code.remove( this.body.start, this.body.end );
 		}
 
-		super.minify( code );
+		super.minify( code, chars );
 	}
 }

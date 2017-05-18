@@ -2,7 +2,7 @@ function isAccessor ( property ) {
 	return property.kind === 'get' || property.kind === 'set';
 }
 
-export default function minifyPropertyKey ( code, property, isObject ) {
+export default function minifyPropertyKey ( code, chars, property, isObject ) {
 	if ( property.shorthand ) return;
 
 	const separator = ( isObject && !property.method && !isAccessor( property ) ) ? ':' : '';
@@ -39,5 +39,5 @@ export default function minifyPropertyKey ( code, property, isObject ) {
 		code.remove( property.key.end, property.value.start );
 	}
 
-	property.key.minify( code );
+	property.key.minify( code, chars );
 }

@@ -1,11 +1,11 @@
 import Node from '../Node.js';
 
 export default class SwitchCase extends Node {
-	minify ( code ) {
+	minify ( code, chars ) {
 		let c;
 
 		if ( this.test ) {
-			this.test.minify( code );
+			this.test.minify( code, chars );
 
 			if ( this.test.start > this.start + 5 ) {
 				code.remove( this.start + 5, this.test.start );
@@ -18,7 +18,7 @@ export default class SwitchCase extends Node {
 		}
 
 		this.consequent.forEach( ( statement, i ) => {
-			statement.minify( code );
+			statement.minify( code, chars );
 
 			const separator = i ? ';' : ':'; // TODO can consequents be written as sequences?
 
