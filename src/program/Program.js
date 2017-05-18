@@ -7,6 +7,11 @@ import check from './check.js';
 const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_$0123456789'.split('');
 const digit = /\d/;
 
+const naturalOrder = {};
+chars.forEach( ( char, i ) => {
+	naturalOrder[char] = i;
+});
+
 export default function Program ( source, ast, options, stats ) {
 	this.options = options;
 	this.stats = stats;
@@ -47,7 +52,7 @@ export default function Program ( source, ast, options, stats ) {
 	chars.sort( ( a, b ) => {
 		if ( digit.test( a ) && !digit.test( b ) ) return 1;
 		if ( digit.test( b ) && !digit.test( a ) ) return -1;
-		return this.charFrequency[b] - this.charFrequency[a];
+		return ( this.charFrequency[b] - this.charFrequency[a] ) || ( naturalOrder[a] - naturalOrder[b] );
 	});
 
 	if ( DEBUG ) stats.time( 'minify' );

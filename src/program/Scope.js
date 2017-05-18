@@ -164,6 +164,8 @@ Scope.prototype = {
 			return alias;
 		}
 
+		// TODO sort declarations by number of instances?
+
 		Object.keys( this.declarations ).forEach( name => {
 			const declaration = this.declarations[ name ];
 			if ( declaration.instances.length === 0 ) return;

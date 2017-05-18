@@ -4,7 +4,7 @@ import minifyPropertyKey from './shared/minifyPropertyKey.js';
 export default class MethodDefinition extends Node {
 	initialise ( program, scope ) {
 		if ( !this.computed ) program.addWord( this.key.name );
-		auper.initialise( program, scope );
+		super.initialise( program, scope );
 	}
 
 	minify ( code, chars ) {

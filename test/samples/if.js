@@ -238,7 +238,7 @@ module.exports = [
 	{
 		description: 'preserves necessary curlies with else block',
 		input: `if ( foo ) { let answer = 42; console.log( answer ); } else { z() }`,
-		output: `if(foo){let a=42;console.log(a)}else z()`
+		output: `if(foo){let g=42;console.log(g)}else z()`
 	},
 
 	{
@@ -345,7 +345,7 @@ module.exports = [
 			}
 
 			foo( x );`,
-		output: `function foo(a){bar&&baz(a);return a}foo(x)`
+		output: `function foo(n){bar&&baz(n);return n}foo(x)`
 	},
 
 	{
@@ -361,7 +361,7 @@ module.exports = [
 			}
 
 			foo()`,
-		output: `function foo(a,b,c){if(a===b)return null;if(c){var d=c+1;console.log(d)}}foo()`
+		output: `function foo(n,l,u){if(n===l)return null;if(u){var o=u+1;console.log(o)}}foo()`
 	},
 
 	{
@@ -403,7 +403,7 @@ module.exports = [
 					console.log( answer );
 				}
 			}`,
-		output: `function x(){var a=function(){return 42};if(y){var b=a();console.log(b)}}`
+		output: `function x(){var n=function(){return 42};if(y){var t=n();console.log(t)}}`
 	},
 
 	{
@@ -563,7 +563,7 @@ module.exports = [
 					y()
 				}
 			else z()`,
-		output: `if(x)try{x()}catch(a){y()}else z()`
+		output: `if(x)try{x()}catch(c){y()}else z()`
 	},
 
 	{

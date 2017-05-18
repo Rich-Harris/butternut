@@ -8,13 +8,13 @@ module.exports = [
 	{
 		description: 'mangles variables declared in function',
 		input: `fn=function(){var longname;console.log(longname)}`,
-		output: `fn=function(){var a;console.log(a)}`
+		output: `fn=function(){var n;console.log(n)}`
 	},
 
 	{
 		description: 'mangles function parameters',
 		input: `fn=function(longname){console.log(longname)}`,
-		output: `fn=function(a){console.log(a)}`
+		output: `fn=function(n){console.log(n)}`
 	},
 
 	{
@@ -33,7 +33,7 @@ module.exports = [
 
 			foo();
 			bar();`,
-		output: `function foo(a){console.log(a);return function(a){console.log(a)}}function bar(a){console.log(a)}foo();bar()`
+		output: `function foo(n){console.log(n);return function(n){console.log(n)}}function bar(n){console.log(n)}foo();bar()`
 	},
 
 	{
@@ -45,7 +45,7 @@ module.exports = [
 				};
 			}
 			foo()`,
-		output: `function foo(a){return function(b){return a+b}}foo()`
+		output: `function foo(n){return function(r){return n+r}}foo()`
 	},
 
 	{
@@ -57,7 +57,7 @@ module.exports = [
 				}
 			}
 			foo()`,
-		output: `function foo(){return function a(b){b>0&&a(b-1)}}foo()`
+		output: `function foo(){return function n(t){t>0&&n(t-1)}}foo()`
 	},
 
 	{
@@ -72,7 +72,7 @@ module.exports = [
 
 				foo();
 			}());`,
-		output: `!function(){function a(){b()}function b(){}a()}()`
+		output: `!function(){function n(){c()}function c(){}n()}()`
 	},
 
 	{
@@ -83,7 +83,7 @@ module.exports = [
 			} catch ( err ) {
 				console.error( err )
 			}`,
-		output: `try{foo()}catch(a){console.error(a)}`
+		output: `try{foo()}catch(r){console.error(r)}`
 	},
 
 	{
@@ -94,7 +94,7 @@ module.exports = [
 				function bar ( bar ) {}
 				Foo.prototype.bar = bar;
 			}());`,
-		output: `!function(){function a(){}function b(a){}a.prototype.bar=b}()`
+		output: `!function(){function n(){}function o(n){}n.prototype.bar=o}()`
 	},
 
 	{
@@ -103,7 +103,7 @@ module.exports = [
 			function Foo () {}
 			function bar ( bar ) {}
 			Foo.prototype.bar = bar;`,
-		output: `function Foo(){}function bar(a){}Foo.prototype.bar=bar`
+		output: `function Foo(){}function bar(n){}Foo.prototype.bar=bar`
 	},
 
 	{
@@ -116,6 +116,6 @@ module.exports = [
 
 				console.log( bop );
 			}`,
-		output: `function foo(){var a=3;console.log(a)}`
+		output: `function foo(){var n=3;console.log(n)}`
 	}
 ];

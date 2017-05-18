@@ -3,6 +3,7 @@ import Node from '../Node.js';
 export default class LabeledStatement extends Node {
 	initialise ( program, scope ) {
 		program.addWord( this.label.name );
+		super.initialise( program, scope );
 	}
 
 	minify ( code, chars ) {

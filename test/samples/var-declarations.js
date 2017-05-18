@@ -50,7 +50,7 @@ module.exports = [
 				var thing = fn();
 				return thing;
 			};`,
-		output: `var x=function(b){var a=fn();return a}`
+		output: `var x=function(r){var n=fn();return n}`
 	},
 
 	{
@@ -63,7 +63,7 @@ module.exports = [
 				console.log(x);
 				console.log(x);
 			}`,
-		output: `function foo(){var a;console.log(a);console.log(a)}`
+		output: `function foo(){var o;console.log(o);console.log(o)}`
 	},
 
 	{
@@ -78,7 +78,7 @@ module.exports = [
 				console.log(x, y);
 				console.log(x, y);
 			}`,
-		output: `function foo(){var a=1,b;console.log(a,b);console.log(a,b)}`
+		output: `function foo(){var o=1,g;console.log(o,g);console.log(o,g)}`
 	},
 
 	{
@@ -124,7 +124,7 @@ module.exports = [
 				console.log(a, b);
 				console.log(a, b);
 			}`,
-		output: `function foo(){mightHaveSideEffects();var a=x(),b=y();console.log(a,b);console.log(a,b)}`
+		output: `function foo(){mightHaveSideEffects();var o=x(),g=y();console.log(o,g);console.log(o,g)}`
 	},
 
 	{
@@ -137,7 +137,7 @@ module.exports = [
 				console.log(a, b);
 				console.log(a, b);
 			}`,
-		output: `function foo(){var a=x();mightHaveSideEffects();var b=y();console.log(a,b);console.log(a,b)}`
+		output: `function foo(){var o=x();mightHaveSideEffects();var g=y();console.log(o,g);console.log(o,g)}`
 	},
 
 	{
@@ -150,6 +150,6 @@ module.exports = [
 				console.log(a, b);
 				console.log(a, b);
 			}`,
-		output: `function foo(){var a=x(),b=y();mightHaveSideEffects();console.log(a,b);console.log(a,b)}`
+		output: `function foo(){var o=x(),g=y();mightHaveSideEffects();console.log(o,g);console.log(o,g)}`
 	}
 ];

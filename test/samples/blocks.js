@@ -20,7 +20,7 @@ module.exports = [
 				console.log(a);
 				console.log(b);
 			}`,
-		output: `function foo(a,b){console.log(a);console.log(b)}`
+		output: `function foo(o,g){console.log(o);console.log(g)}`
 	},
 
 	{
@@ -30,7 +30,7 @@ module.exports = [
 				console.log(a);
 				console.log(b);
 			}`,
-		output: `var foo=function(a,b){console.log(a);console.log(b)}`
+		output: `var foo=function(o,g){console.log(o);console.log(g)}`
 	},
 
 	{
@@ -113,7 +113,7 @@ module.exports = [
 			} catch ( a ) {
 				console.error( a );
 			}`,
-		output: `try{foo()}catch(a){console.error(a)}`
+		output: `try{foo()}catch(r){console.error(r)}`
 	},
 
 	{
@@ -137,7 +137,7 @@ module.exports = [
 			} finally {
 				bar();
 			}`,
-		output: `try{foo()}catch(a){console.error(a)}finally{bar()}`
+		output: `try{foo()}catch(r){console.error(r)}finally{bar()}`
 	},
 
 	{

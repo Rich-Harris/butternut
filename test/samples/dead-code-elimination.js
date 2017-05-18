@@ -20,7 +20,7 @@ module.exports = [
 				console.log( 'b' );
 				var x;
 			}`,
-		output: `function foo(){a=42;console.log(a);return;var a}`
+		output: `function foo(){n=42;console.log(n);return;var n}`
 	},
 
 	{
@@ -35,7 +35,7 @@ module.exports = [
 					console.log( 'bar' );
 				}
 			}`,
-		output: `function foo(){a();return;function a(){console.log('bar')}}`
+		output: `function foo(){n();return;function n(){console.log('bar')}}`
 	},
 
 	{
@@ -45,7 +45,7 @@ module.exports = [
 				var a = 1, b = 2, c = 3;
 				console.log( a, b );
 			}`,
-		output: `function foo(){var a=1,b=2;console.log(a,b)}`
+		output: `function foo(){var n=1,o=2;console.log(n,o)}`
 	},
 
 	{
@@ -55,7 +55,7 @@ module.exports = [
 				var a = 1, b = 2, c = 3;
 				console.log( a, c );
 			}`,
-		output: `function foo(){var a=1,b=3;console.log(a,b)}`
+		output: `function foo(){var n=1,o=3;console.log(n,o)}`
 	},
 
 	{
@@ -65,7 +65,7 @@ module.exports = [
 				var a = 1, b = 2, c = 3;
 				console.log( b, c );
 			}`,
-		output: `function foo(){var a=2,b=3;console.log(a,b)}`
+		output: `function foo(){var n=2,o=3;console.log(n,o)}`
 	},
 
 	{
