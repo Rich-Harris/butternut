@@ -230,5 +230,11 @@ module.exports = [
 		// TODO don't add the curlies, we can save one byte (meanwhile Uglify
 		// rewrites this as `for(;;)x();`)
 		output: `do{!x()}while(!0)`
+	},
+
+	{
+		description: 'allow body to be a var declaration',
+		input: `do var any_variable = any_value; while( any_condition );`,
+		output: `do{var any_variable=any_value}while(any_condition)`
 	}
 ];
