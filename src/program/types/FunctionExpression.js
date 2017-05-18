@@ -5,7 +5,7 @@ export default class FunctionExpression extends FunctionNode {
 		return 0;
 	}
 
-	initialise () {
-		super.initialise( this.scope );
+	initialise ( program ) {
+		super.initialise( program, this.scope );
 	}
 }

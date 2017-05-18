@@ -13,7 +13,7 @@ export default class ClassExpression extends Class {
 		this.body.attachScope( this.scope );
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		if ( this.id ) {
 			this.id.declaration = this;
 
@@ -22,7 +22,7 @@ export default class ClassExpression extends Class {
 			this.scope.addReference( this.id );
 		}
 
-		super.initialise( scope );
+		super.initialise( program, scope );
 	}
 
 	minify ( code ) {

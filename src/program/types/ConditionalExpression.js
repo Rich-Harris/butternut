@@ -31,15 +31,15 @@ export default class ConditionalExpression extends Node {
 		return testValue ? consequentValue : alternateValue;
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		const testValue = this.test.getValue();
 
 		if ( testValue === UNKNOWN ) {
-			super.initialise( scope );
+			super.initialise( program, scope );
 		} else if ( testValue ) {
-			this.consequent.initialise( scope );
+			this.consequent.initialise( program, scope );
 		} else {
-			this.alternate.initialise( scope );
+			this.alternate.initialise( program, scope );
 		}
 	}
 

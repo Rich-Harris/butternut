@@ -66,7 +66,7 @@ export default class Node {
 		return UNKNOWN;
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		this.skip = false;
 
 		for ( var key of this.keys ) {
@@ -76,10 +76,10 @@ export default class Node {
 				if ( 'length' in value ) {
 					let i = value.length;
 					while ( i-- ) {
-						if ( value[i] ) value[i].initialise( scope );
+						if ( value[i] ) value[i].initialise( program, scope );
 					}
 				} else {
-					value.initialise( scope );
+					value.initialise( program, scope );
 				}
 			}
 		}

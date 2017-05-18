@@ -32,7 +32,7 @@ export default class Identifier extends Node {
 		return UNKNOWN;
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		// special case
 		if ( ( this.parent.type === 'FunctionExpression' || this.parent.type === 'ClassExpression' ) && this === this.parent.id ) {
 			return;

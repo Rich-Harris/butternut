@@ -110,7 +110,7 @@ export default class BlockStatement extends Node {
 		return this;
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		let executionIsBroken = false;
 		let maybeReturnNode;
 		let hasDeclarationsAfterBreak = false;
@@ -124,7 +124,7 @@ export default class BlockStatement extends Node {
 			if ( executionIsBroken ) {
 				if ( shouldPreserveAfterReturn[ node.type ] ) {
 					hasDeclarationsAfterBreak = true;
-					node.initialise( this.scope || scope );
+					node.initialise( program, this.scope || scope );
 				}
 
 				continue;
@@ -133,7 +133,7 @@ export default class BlockStatement extends Node {
 			maybeReturnNode = breaksExecution( node );
 			if ( maybeReturnNode ) executionIsBroken = true;
 
-			node.initialise( this.scope || scope );
+			node.initialise( program, this.scope || scope );
 
 			if ( canCollapseReturns ) {
 				if ( node.preventsCollapsedReturns( returnStatements ) ) {

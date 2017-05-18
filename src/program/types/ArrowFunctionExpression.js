@@ -28,8 +28,8 @@ export default class ArrowFunctionExpression extends Node {
 
 	}
 
-	initialise () {
-		super.initialise( this.scope );
+	initialise ( program ) {
+		super.initialise( program, this.scope );
 	}
 
 	findVarDeclarations () {

@@ -15,8 +15,8 @@ export default class LoopStatement extends Node {
 		}
 	}
 
-	initialise ( scope ) {
-		super.initialise( this.scope || scope );
+	initialise ( program, scope ) {
+		super.initialise( program, this.scope || scope );
 	}
 
 	minify ( code ) {

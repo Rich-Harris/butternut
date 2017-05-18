@@ -6,7 +6,7 @@ export default class ClassDeclaration extends Class {
 		this.activated = true;
 
 		this.skip = false;
-		super.initialise( this.scope );
+		super.initialise( program, this.scope );
 	}
 
 	attachScope ( scope ) {
@@ -22,11 +22,11 @@ export default class ClassDeclaration extends Class {
 		this.body.attachScope( scope );
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		if ( scope.parent ) {
 			// noop — we wait for this declaration to be activated
 		} else {
-			super.initialise( scope );
+			super.initialise( program, scope );
 		}
 	}
 }

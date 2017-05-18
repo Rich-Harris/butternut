@@ -22,8 +22,8 @@ export default class CatchClause extends Node {
 		}
 	}
 
-	initialise () {
-		super.initialise( this.scope );
+	initialise ( program ) {
+		super.initialise( program, this.scope );
 	}
 
 	minify ( code ) {

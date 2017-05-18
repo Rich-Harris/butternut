@@ -2,8 +2,8 @@ import Node from '../Node.js';
 import { UNKNOWN } from '../../utils/sentinels.js';
 
 export default class SwitchStatement extends Node {
-	initialise ( scope ) {
-		super.initialise( scope );
+	initialise ( program, scope ) {
+		super.initialise( program, scope );
 
 		if ( this.cases.length === 0 ) {
 			const value = this.discriminant.getValue();

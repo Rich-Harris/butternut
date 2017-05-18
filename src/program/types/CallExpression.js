@@ -89,7 +89,7 @@ export default class CallExpression extends Node {
 		return calleeValue.apply( contextValue, argumentValues );
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		if ( this.callee.type === 'Identifier' && this.callee.name === 'eval' && !scope.contains( 'eval' ) ) {
 			if ( this.program.options.allowDangerousEval ) {
 				scope.deopt();
@@ -97,7 +97,7 @@ export default class CallExpression extends Node {
 				this.error( 'Use of direct eval prevents effective minification and can introduce security vulnerabilities. Use `allowDangerousEval: true` if you know what you\'re doing' );
 			}
 		}
-		super.initialise( scope );
+		super.initialise( program, scope );
 	}
 
 	minify ( code ) {

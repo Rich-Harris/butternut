@@ -33,7 +33,7 @@ export default function Program ( source, ast, options, stats ) {
 		node.attachScope( this.body.scope );
 	});
 
-	this.body.initialise( this.body.scope );
+	this.body.initialise( this, this.body.scope );
 	if ( DEBUG ) stats.timeEnd( 'init body' );
 
 	if ( DEBUG ) stats.time( 'minify' );

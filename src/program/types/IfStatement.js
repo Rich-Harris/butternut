@@ -53,20 +53,20 @@ export default class IfStatement extends Node {
 		return this.alternate.getRightHandSide();
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		this.skip = false; // TODO skip if known to be safe
 
 		const testValue = this.test.getValue();
 
 		if ( testValue === UNKNOWN ) {
 			// initialise everything
-			this.test.initialise( scope );
-			this.consequent.initialise( scope );
-			if ( this.alternate ) this.alternate.initialise( scope );
+			this.test.initialise( program, scope );
+			this.consequent.initialise( program, scope );
+			if ( this.alternate ) this.alternate.initialise( program, scope );
 		}
 
 		else if ( testValue ) { // if ( true ) {...}
-			this.consequent.initialise( scope );
+			this.consequent.initialise( program, scope );
 
 			if ( this.alternate && this.alternate.type === 'BlockStatement' ) {
 				this.alternate.scope.varDeclarations.forEach( name => {
@@ -77,7 +77,7 @@ export default class IfStatement extends Node {
 
 		else { // if ( false ) {...}
 			if ( this.alternate ) {
-				this.alternate.initialise( scope );
+				this.alternate.initialise( program, scope );
 			} else {
 				this.skip = true;
 			}

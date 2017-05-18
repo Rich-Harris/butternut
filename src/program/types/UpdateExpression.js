@@ -6,7 +6,7 @@ export default class UpdateExpression extends Node {
 		return this.prefix ? 16 : 17;
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		if ( this.argument.type === 'Identifier' ) {
 			const declaration = scope.findDeclaration( this.argument.name );
 			if ( declaration && declaration.kind === 'const' ) {
@@ -14,6 +14,6 @@ export default class UpdateExpression extends Node {
 			}
 		}
 
-		super.initialise( scope );
+		super.initialise( program, scope );
 	}
 }

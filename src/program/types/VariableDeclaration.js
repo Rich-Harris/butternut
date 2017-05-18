@@ -16,7 +16,7 @@ export default class VariableDeclaration extends Node {
 		scope.functionScope.varDeclarationNodes.push( this );
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		let _scope = scope;
 		if ( this.kind === 'var' ) while ( _scope.isBlockScope ) _scope = _scope.parent;
 
@@ -27,9 +27,9 @@ export default class VariableDeclaration extends Node {
 		this.declarations.forEach( declarator => {
 			if ( !_scope.parent ) {
 				// only initialise top-level variables. TODO unless we're in e.g. module mode
-				declarator.initialise( scope );
+				declarator.initialise( program, scope );
 			} else {
-				if ( declarator.init ) declarator.init.initialise( scope );
+				if ( declarator.init ) declarator.init.initialise( program, scope );
 			}
 		});
 	}

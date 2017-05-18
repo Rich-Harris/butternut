@@ -8,13 +8,13 @@ function mightHaveSideEffects ( node ) {
 }
 
 export default class VariableDeclarator extends Node {
-	activate () {
+	activate ( program ) {
 		if ( this.activated ) return;
 		this.activated = true;
 
 		this.skip = this.parent.skip = false;
-		this.id.initialise( this.scope );
-		if ( this.init ) this.init.initialise( this.scope );
+		this.id.initialise( program, this.scope );
+		if ( this.init ) this.init.initialise( program, this.scope );
 	}
 
 	attachScope ( scope ) {

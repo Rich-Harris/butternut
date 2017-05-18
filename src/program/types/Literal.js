@@ -23,7 +23,7 @@ export default class Literal extends Node {
 		return this.value;
 	}
 
-	initialise () {
+	initialise ( program ) {
 		// noop
 	}
 

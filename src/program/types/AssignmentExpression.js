@@ -17,7 +17,7 @@ export default class AssignmentExpression extends Node {
 		return 3;
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		if ( this.left.type === 'Identifier' ) {
 			const declaration = scope.findDeclaration( this.left.name );
 			if ( declaration && declaration.kind === 'const' ) {
@@ -25,7 +25,7 @@ export default class AssignmentExpression extends Node {
 			}
 		}
 
-		super.initialise( scope );
+		super.initialise( program, scope );
 	}
 
 	minify ( code ) {
