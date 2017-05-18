@@ -106,6 +106,7 @@ module.exports = [
 	},
 
 	{
+		solo: true,
 		description: 'minifies try-catch',
 		input: `
 			try {

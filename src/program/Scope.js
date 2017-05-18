@@ -166,6 +166,9 @@ Scope.prototype = {
 	mangle ( code ) {
 		if ( !this.canMangle ) return;
 
+		const chars = this.chars || this.parent.chars;
+		console.log( chars );
+
 		let used = Object.create( null );
 
 		Object.keys( this.references ).forEach( reference => {
