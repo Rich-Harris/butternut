@@ -15,7 +15,7 @@ export default class ForStatement extends LoopStatement {
 		let replacement = '(';
 
 		[ this.init, this.test, this.update ].forEach( ( statement, i ) => {
-			if ( statement && !statement.skip ) {
+			if ( statement && ( !statement.skip || statement === this.test  ) ) {
 				if ( statement.start > c + replacement.length ) {
 					code.overwrite( c, statement.start, replacement );
 				}
