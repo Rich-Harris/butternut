@@ -5,6 +5,11 @@ import stringify from '../../utils/stringify.js';
 const invalidChars = /[a-zA-Z$_0-9/]/;
 
 export default class ReturnStatement extends Node {
+	initialise ( program, scope ) {
+		program.addWord( 'return' );
+		super.initialise( program, scope );
+	}
+
 	minify ( code, chars ) {
 		if ( !this.argument ) return;
 

@@ -16,6 +16,10 @@ export default class LoopStatement extends Node {
 	}
 
 	initialise ( program, scope ) {
+		program.addWord( 'for' );
+		if ( this.type === 'ForInStatement' ) program.addWord( 'in' );
+		else if ( this.type === 'ForOfStatement' ) program.addWord( 'of' );
+
 		super.initialise( program, this.scope || scope );
 	}
 

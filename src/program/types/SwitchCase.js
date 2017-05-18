@@ -1,6 +1,11 @@
 import Node from '../Node.js';
 
 export default class SwitchCase extends Node {
+	initialise ( program, scope ) {
+		program.addWord( this.test ? 'case' : 'default' );
+		super.initialise( program, scope );
+	}
+
 	minify ( code, chars ) {
 		let c;
 

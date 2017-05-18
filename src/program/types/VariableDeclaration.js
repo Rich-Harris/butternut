@@ -17,6 +17,8 @@ export default class VariableDeclaration extends Node {
 	}
 
 	initialise ( program, scope ) {
+		// TODO `program.addWord(kind)`, but only if this declaration is included...
+
 		let _scope = scope;
 		if ( this.kind === 'var' ) while ( _scope.isBlockScope ) _scope = _scope.parent;
 

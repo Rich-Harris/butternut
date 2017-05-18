@@ -6,6 +6,7 @@ export default class FunctionExpression extends FunctionNode {
 	}
 
 	initialise ( program ) {
+		program.addWord( 'function' );
 		super.initialise( program, this.scope );
 	}
 }

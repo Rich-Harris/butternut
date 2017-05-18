@@ -38,6 +38,8 @@ export default class Identifier extends Node {
 			return;
 		}
 
+		// TODO add global/top-level identifiers to frequency count
+
 		if ( this.isReference() ) {
 			scope.addReference( this );
 		}

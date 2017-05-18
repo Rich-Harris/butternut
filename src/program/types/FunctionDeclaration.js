@@ -7,6 +7,7 @@ export default class FunctionDeclaration extends FunctionNode {
 
 		this.skip = false;
 
+		this.program.addWord( 'function' );
 		if ( this.id ) this.id.initialise( this.program, this.scope.parent );
 		this.params.forEach( param => {
 			param.initialise( this.program, this.scope );

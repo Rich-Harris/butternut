@@ -5,6 +5,11 @@ export default class NewExpression extends Node {
 		return this.arguments.length > 0 ? 19 : 18;
 	}
 
+	initialise ( program, scope ) {
+		program.addWord( 'new' );
+		super.initialise( program, scope );
+	}
+
 	minify ( code, chars ) {
 		if ( this.arguments.length ) {
 			let lastNode = this.callee;

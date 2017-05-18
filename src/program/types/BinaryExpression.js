@@ -56,6 +56,7 @@ export default class BinaryExpression extends Node {
 			getValuePrecedence( value );
 	}
 
+	// TODO `program.addWord( stringify( this.getValue() ) )`...
 	getValue () {
 		const left = this.left.getValue();
 		const right = this.right.getValue();

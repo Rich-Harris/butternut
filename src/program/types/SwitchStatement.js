@@ -9,6 +9,10 @@ export default class SwitchStatement extends Node {
 			const value = this.discriminant.getValue();
 			this.skip = value !== UNKNOWN || this.discriminant.type === 'Identifier';
 		}
+
+		if ( !this.skip ) {
+			program.addWord( 'switch' );
+		}
 	}
 
 	minify ( code, chars ) {

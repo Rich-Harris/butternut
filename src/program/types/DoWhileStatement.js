@@ -1,6 +1,11 @@
 import Node from '../Node.js';
 
 export default class DoWhileStatement extends Node {
+	initialise ( program, scope ) {
+		program.addWord( 'dowhile' );
+		super.initialise( program, scope );
+	}
+
 	minify ( code, chars ) {
 		// special case
 		if ( this.body.isEmpty() ) {

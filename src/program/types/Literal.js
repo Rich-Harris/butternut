@@ -23,8 +23,8 @@ export default class Literal extends Node {
 		return this.value;
 	}
 
-	initialise () {
-		// noop
+	initialise ( program ) {
+		program.addWord( stringify( this.value ) );
 	}
 
 	minify ( code, chars ) {

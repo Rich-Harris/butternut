@@ -60,6 +60,8 @@ export default class FunctionNode extends Node {
 		// noop
 	}
 
+	// TODO `program.addWord('async')` if necessary
+
 	minify ( code, chars ) {
 		let c = this.start;
 

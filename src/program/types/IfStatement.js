@@ -54,6 +54,8 @@ export default class IfStatement extends Node {
 	}
 
 	initialise ( program, scope ) {
+		// TODO add 'if/else' to character frequency, but only if not rewriting as sequence
+
 		this.skip = false; // TODO skip if known to be safe
 
 		const testValue = this.test.getValue();

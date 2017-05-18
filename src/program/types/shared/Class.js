@@ -12,6 +12,11 @@ function shouldParenthesizeSuperclass ( node ) {
 }
 
 export default class Class extends Node {
+	initialise ( program, scope ) {
+		program.addWord( 'class' );
+		super.initialise( program, scope );
+	}
+
 	minify ( code, chars ) {
 		let c = this.start + 5;
 

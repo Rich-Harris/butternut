@@ -49,6 +49,11 @@ export default class MemberExpression extends Node {
 		return this;
 	}
 
+	initialise ( program, scope ) {
+		if ( !this.computed ) program.addWord( this.property.name );
+		super.initialise( program, scope );
+	}
+
 	minify ( code, chars ) {
 		const value = this.getValue();
 
