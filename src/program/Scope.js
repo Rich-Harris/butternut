@@ -36,11 +36,6 @@ export default function Scope ( options ) {
 }
 
 Scope.prototype = {
-	addAlias ( alias ) {
-		this.aliases[ alias ] = true;
-		if ( this.parent ) this.parent.addAlias( alias );
-	},
-
 	addDeclaration ( identifier, kind ) {
 		if ( kind === 'var' && this.isBlockScope ) {
 			this.varDeclarations.add( identifier.name );
@@ -126,10 +121,6 @@ Scope.prototype = {
 	contains ( name ) {
 		return this.declarations[ name ] ||
 		       ( this.parent ? this.parent.contains( name ) : false );
-	},
-
-	containsAlias ( alias ) {
-		return this.aliases[ alias ] || ( this.parent && this.parent.containsAlias( alias ) );
 	},
 
 	createIdentifier ( used ) {
