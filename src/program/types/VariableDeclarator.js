@@ -3,7 +3,7 @@ import extractNames from '../extractNames.js';
 
 function mightHaveSideEffects ( node ) {
 	// TODO this can get way more sophisticated
-	if ( node.type === 'Identifier' || node.type === 'Literal' ) return false;
+	if ( node.type === 'Identifier' || node.type === 'Literal' || /FunctionExpression/.test( node.type ) ) return false;
 	return true;
 }
 

@@ -151,5 +151,15 @@ module.exports = [
 				console.log(a, b);
 			}`,
 		output: `function foo(){var o=x(),g=y();mightHaveSideEffects();console.log(o,g);console.log(o,g)}`
+	},
+
+	{
+		description: 'don\'t turn unused function expression into an illegal declaration',
+		input: `
+			function any_fn () {
+				var any_value_1 = function(d) {}
+				console.log(1);
+			}`,
+		output: `function any_fn(){console.log(1)}`
 	}
 ];
