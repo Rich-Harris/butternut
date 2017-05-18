@@ -17,7 +17,7 @@ export default class AssignmentExpression extends Node {
 		return 3;
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		if ( this.left.type === 'Identifier' ) {
 			const declaration = scope.findDeclaration( this.left.name );
 			if ( declaration && declaration.kind === 'const' ) {
@@ -25,10 +25,10 @@ export default class AssignmentExpression extends Node {
 			}
 		}
 
-		super.initialise( scope );
+		super.initialise( program, scope );
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		if ( this.right.start > this.left.end + this.operator.length ) {
 			code.overwrite( this.left.end, this.right.start, this.operator );
 		}
@@ -39,7 +39,7 @@ export default class AssignmentExpression extends Node {
 				code.appendLeft( this.left.end, this.right.operator );
 				code.remove( this.right.start, this.right.right.start );
 
-				this.right.right.minify( code );
+				this.right.right.minify( code, chars );
 				return;
 			}
 
@@ -48,11 +48,11 @@ export default class AssignmentExpression extends Node {
 				code.appendLeft( this.left.end, this.right.operator );
 				code.remove( this.right.left.end, this.right.end );
 
-				this.right.left.minify( code );
+				this.right.left.minify( code, chars );
 				return;
 			}
 		}
 
-		super.minify( code );
+		super.minify( code, chars );
 	}
 }

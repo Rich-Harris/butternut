@@ -47,7 +47,7 @@ export default class LogicalExpression extends Node {
 		}
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		const leftValue = this.left.getValue();
 
 		if ( leftValue === UNKNOWN ) {
@@ -55,26 +55,26 @@ export default class LogicalExpression extends Node {
 				code.overwrite( this.left.end, this.right.start, this.operator );
 			}
 
-			super.minify( code );
+			super.minify( code, chars );
 		}
 
 		else if ( leftValue ) {
 			if ( this.operator === '&&' ) {
 				code.remove( this.start, this.right.start );
-				this.right.minify( code );
+				this.right.minify( code, chars );
 			} else {
 				code.remove( this.left.end, this.end );
-				this.left.minify( code );
+				this.left.minify( code, chars );
 			}
 		}
 
 		else {
 			if ( this.operator === '&&' ) {
 				code.remove( this.left.end, this.end );
-				this.left.minify( code );
+				this.left.minify( code, chars );
 			} else {
 				code.remove( this.start, this.right.start );
-				this.right.minify( code );
+				this.right.minify( code, chars );
 			}
 		}
 	}

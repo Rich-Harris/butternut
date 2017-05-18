@@ -5,7 +5,12 @@ export default class NewExpression extends Node {
 		return this.arguments.length > 0 ? 19 : 18;
 	}
 
-	minify ( code ) {
+	initialise ( program, scope ) {
+		program.addWord( 'new' );
+		super.initialise( program, scope );
+	}
+
+	minify ( code, chars ) {
 		if ( this.arguments.length ) {
 			let lastNode = this.callee;
 
@@ -23,6 +28,6 @@ export default class NewExpression extends Node {
 			code.remove( this.callee.end, this.end );
 		}
 
-		super.minify( code );
+		super.minify( code, chars );
 	}
 }

@@ -25,7 +25,8 @@ function keepId ( node ) {
 }
 
 export default class FunctionNode extends Node {
-	attachScope ( parent ) {
+	attachScope ( program, parent ) {
+		this.program = program;
 		this.scope = new Scope({
 			block: false,
 			parent
@@ -44,7 +45,7 @@ export default class FunctionNode extends Node {
 		}
 
 		this.params.forEach( param => {
-			param.attachScope( this.scope );
+			param.attachScope( program, this.scope );
 
 			extractNames( param ).forEach( node => {
 				node.declaration = this;
@@ -52,14 +53,16 @@ export default class FunctionNode extends Node {
 			});
 		});
 
-		this.body.attachScope( this.scope );
+		this.body.attachScope( program, this.scope );
 	}
 
 	findVarDeclarations () {
 		// noop
 	}
 
-	minify ( code ) {
+	// TODO `program.addWord('async')` if necessary
+
+	minify ( code, chars ) {
 		let c = this.start;
 
 		if ( hasFunctionKeyword( this, this.parent ) ) {
@@ -91,7 +94,7 @@ export default class FunctionNode extends Node {
 		if ( this.params.length ) {
 			for ( let i = 0; i < this.params.length; i += 1 ) {
 				const param = this.params[i];
-				param.minify( code );
+				param.minify( code, chars );
 
 				if ( param.start > c + 1 ) code.overwrite( c, param.start, i ? ',' : '(' );
 				c = param.end;
@@ -102,6 +105,6 @@ export default class FunctionNode extends Node {
 			code.overwrite( c, this.body.start, `()` );
 		}
 
-		this.body.minify( code );
+		this.body.minify( code, chars );
 	}
 }

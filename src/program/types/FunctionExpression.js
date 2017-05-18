@@ -5,7 +5,8 @@ export default class FunctionExpression extends FunctionNode {
 		return 0;
 	}
 
-	initialise () {
-		super.initialise( this.scope );
+	initialise ( program ) {
+		program.addWord( 'function' ); // TODO only if has function keyword
+		super.initialise( program, this.scope );
 	}
 }

@@ -53,6 +53,6 @@ module.exports = [
 			function foo() {
 				return (a) => a;
 			}`,
-		output: `function foo(){return a=>a}`
+		output: `function foo(){return n=>n}`
 	}
 ];

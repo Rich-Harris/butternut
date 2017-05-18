@@ -50,7 +50,7 @@ function isVarDeclaration ( node ) {
 }
 
 export default class BlockStatement extends Node {
-	attachScope ( parent ) {
+	attachScope ( program, parent ) {
 		this.parentIsFunction = /Function/.test( this.parent.type );
 
 		if ( this.parentIsFunction ) {
@@ -63,7 +63,7 @@ export default class BlockStatement extends Node {
 		}
 
 		for ( let i = 0; i < this.body.length; i += 1 ) {
-			this.body[i].attachScope( this.scope );
+			this.body[i].attachScope( program, this.scope );
 		}
 	}
 
@@ -110,7 +110,7 @@ export default class BlockStatement extends Node {
 		return this;
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		let executionIsBroken = false;
 		let maybeReturnNode;
 		let hasDeclarationsAfterBreak = false;
@@ -124,7 +124,7 @@ export default class BlockStatement extends Node {
 			if ( executionIsBroken ) {
 				if ( shouldPreserveAfterReturn[ node.type ] ) {
 					hasDeclarationsAfterBreak = true;
-					node.initialise( this.scope || scope );
+					node.initialise( program, this.scope || scope );
 				}
 
 				continue;
@@ -133,7 +133,7 @@ export default class BlockStatement extends Node {
 			maybeReturnNode = breaksExecution( node );
 			if ( maybeReturnNode ) executionIsBroken = true;
 
-			node.initialise( this.scope || scope );
+			node.initialise( program, this.scope || scope );
 
 			if ( canCollapseReturns ) {
 				if ( node.preventsCollapsedReturns( returnStatements ) ) {
@@ -167,8 +167,10 @@ export default class BlockStatement extends Node {
 		return true;
 	}
 
-	minify ( code ) {
-		if ( this.scope ) this.scope.mangle( code );
+	minify ( code, chars ) {
+		if ( this.scope ) {
+			this.scope.mangle( code, chars );
+		}
 
 		let insertedVarDeclaration = '';
 
@@ -221,7 +223,7 @@ export default class BlockStatement extends Node {
 			for ( let i = 0; i < statements.length; i += 1 ) {
 				const statement = statements[i];
 
-				statement.minify( code );
+				statement.minify( code, chars );
 
 				if ( !statement.collapsed ) {
 					if ( statement.start > lastEnd ) code.remove( lastEnd, statement.start );
@@ -298,7 +300,7 @@ export default class BlockStatement extends Node {
 	// 	}
 
 	// 	statements.forEach( statement => {
-	// 		statement.minify( code );
+	// 		statement.minify( code, chars );
 	// 	});
 	// }
 }

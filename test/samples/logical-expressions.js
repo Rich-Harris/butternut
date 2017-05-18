@@ -62,7 +62,7 @@ module.exports = [
 	{
 		description: 'does not consider environment-specific methods when folding',
 		input: `var includes = [].includes || function(x) { return this.indexOf(x) !== -1; };`,
-		output: `var includes=[].includes||function(a){return this.indexOf(a)!==-1}`
+		output: `var includes=[].includes||function(n){return this.indexOf(n)!==-1}`
 	},
 
 	{

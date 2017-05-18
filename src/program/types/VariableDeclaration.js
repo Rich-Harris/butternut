@@ -8,15 +8,17 @@ function compatibleDeclarations ( a, b ) {
 }
 
 export default class VariableDeclaration extends Node {
-	attachScope ( scope ) {
+	attachScope ( program, scope ) {
 		this.declarations.forEach( declarator => {
-			declarator.attachScope( scope );
+			declarator.attachScope( program, scope );
 		});
 
 		scope.functionScope.varDeclarationNodes.push( this );
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
+		// TODO `program.addWord(kind)`, but only if this declaration is included...
+
 		let _scope = scope;
 		if ( this.kind === 'var' ) while ( _scope.isBlockScope ) _scope = _scope.parent;
 
@@ -27,14 +29,14 @@ export default class VariableDeclaration extends Node {
 		this.declarations.forEach( declarator => {
 			if ( !_scope.parent ) {
 				// only initialise top-level variables. TODO unless we're in e.g. module mode
-				declarator.initialise( scope );
+				declarator.initialise( program, scope );
 			} else {
-				if ( declarator.init ) declarator.init.initialise( scope );
+				if ( declarator.init ) declarator.init.initialise( program, scope );
 			}
 		});
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		if ( this.collapsed ) return;
 
 		// collapse consecutive declarations into one
@@ -75,13 +77,13 @@ export default class VariableDeclaration extends Node {
 			if ( declarator.skip ) {
 				if ( !declarator.init || declarator.init.skip ) continue;
 
-				declarator.init.minify( code );
+				declarator.init.minify( code, chars );
 
 				// we have a situation like `var unused = x()` — need to preserve `x()`
 				code.overwrite( c, declarator.init.start, first ? '' : ';' );
 				needsKeyword = true;
 			} else {
-				declarator.minify( code );
+				declarator.minify( code, chars );
 
 				let separator = needsKeyword ?
 					( first ? kind : `;${kind}` ) + ( declarator.id.type === 'Identifier' ? ' ' : '' ) :

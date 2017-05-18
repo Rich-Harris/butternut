@@ -23,7 +23,7 @@ module.exports = [
 			function foo( value ) {
 				return ( value == null ) ? '' : '' + value;
 			}`,
-		output: `function foo(a){return a==null?'':''+a}`
+		output: `function foo(n){return n==null?'':''+n}`
 	},
 
 	{

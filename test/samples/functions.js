@@ -8,13 +8,13 @@ module.exports = [
 	{
 		description: 'removes whitespace inside parens',
 		input: `function foo( a, b , c ){console.log(a,b,c)}`,
-		output: `function foo(a,b,c){console.log(a,b,c)}`
+		output: `function foo(n,o,c){console.log(n,o,c)}`
 	},
 
 	{
 		description: 'removes whitespace from anonymous function expression',
 		input: `call(function ( a, b , c ){console.log(a,b,c)})`,
-		output: `call(function(a,b,c){console.log(a,b,c)})`
+		output: `call(function(n,o,c){console.log(n,o,c)})`
 	},
 
 	{
@@ -67,6 +67,6 @@ module.exports = [
 			};
 
 			a();`,
-		output: `var a=function(b){console.log(a)};a()`
+		output: `var a=function(n){console.log(a)};a()`
 	}
 ];

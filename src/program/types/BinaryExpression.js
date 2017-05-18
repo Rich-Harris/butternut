@@ -56,6 +56,7 @@ export default class BinaryExpression extends Node {
 			getValuePrecedence( value );
 	}
 
+	// TODO `program.addWord( stringify( this.getValue() ) )`...
 	getValue () {
 		const left = this.left.getValue();
 		const right = this.right.getValue();
@@ -65,7 +66,7 @@ export default class BinaryExpression extends Node {
 		return calculators[ this.operator ]( left, right );
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		const value = this.getValue();
 
 		if ( value !== UNKNOWN ) {
@@ -87,7 +88,7 @@ export default class BinaryExpression extends Node {
 				code.overwrite( this.left.end, this.right.start, operator );
 			}
 
-			super.minify( code );
+			super.minify( code, chars );
 		}
 	}
 }

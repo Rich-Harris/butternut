@@ -26,7 +26,8 @@ module.exports = [
 					// code goes here
 				}
 			}`,
-		output: `var Foo=class a{bar(){}baz(){}}`
+		// TODO remove class ID if possible
+		output: `var Foo=class n{bar(){}baz(){}}`
 	},
 
 	{
@@ -109,7 +110,7 @@ module.exports = [
 				get  bar  () {}
 				set  bar  (val) {}
 			}`,
-		output: `class Foo{get bar(){}set bar(a){}}`
+		output: `class Foo{get bar(){}set bar(n){}}`
 	},
 
 	{

@@ -18,12 +18,12 @@ export default class ExpressionStatement extends Node {
 		return this.expression.getRightHandSide();
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		if ( this.expression.type === 'Literal' || this.expression.getValue() !== UNKNOWN ) {
 			// remove side-effect-free statements (TODO others, not just literals)...
 			return;
 		}
 
-		super.initialise( scope );
+		super.initialise( program, scope );
 	}
 }

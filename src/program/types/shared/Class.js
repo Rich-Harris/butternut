@@ -12,7 +12,12 @@ function shouldParenthesizeSuperclass ( node ) {
 }
 
 export default class Class extends Node {
-	minify ( code ) {
+	initialise ( program, scope ) {
+		program.addWord( 'class' );
+		super.initialise( program, scope );
+	}
+
+	minify ( code, chars ) {
 		let c = this.start + 5;
 
 		if ( this.id ) {
@@ -36,6 +41,6 @@ export default class Class extends Node {
 
 		if ( this.body.start > c ) code.remove( c, this.body.start );
 
-		super.minify( code );
+		super.minify( code, chars );
 	}
 }

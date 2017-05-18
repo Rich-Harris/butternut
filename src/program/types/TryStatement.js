@@ -1,7 +1,14 @@
 import Node from '../Node.js';
 
 export default class TryStatement extends Node {
-	minify ( code ) {
+	initialise ( program, scope ) {
+		program.addWord( 'try' );
+		if ( this.finalizer ) program.addWord( 'finally' );
+
+		super.initialise( program, scope );
+	}
+
+	minify ( code, chars ) {
 		if ( this.block.start > this.start + 3 ) code.remove( this.start + 3, this.block.start );
 
 		if ( this.handler ) {
@@ -18,6 +25,6 @@ export default class TryStatement extends Node {
 			}
 		}
 
-		super.minify( code );
+		super.minify( code, chars );
 	}
 }

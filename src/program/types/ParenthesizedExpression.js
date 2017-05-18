@@ -54,7 +54,7 @@ export default class ParenthesizedExpression extends Node {
 		return this.expression.getValue();
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		let start = this.start;
 		let end = this.end;
 		let parent = this.parent;
@@ -86,6 +86,6 @@ export default class ParenthesizedExpression extends Node {
 			expression.prepend( code, '!' ); // could be any unary operator – uglify uses !
 		}
 
-		expression.minify( code );
+		expression.minify( code, chars );
 	}
 }

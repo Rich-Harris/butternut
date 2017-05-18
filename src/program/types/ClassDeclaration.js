@@ -6,10 +6,11 @@ export default class ClassDeclaration extends Class {
 		this.activated = true;
 
 		this.skip = false;
-		super.initialise( this.scope );
+		super.initialise( this.program, this.scope );
 	}
 
-	attachScope ( scope ) {
+	attachScope ( program, scope ) {
+		this.program = program;
 		this.scope = scope;
 
 		this.id.declaration = this;
@@ -17,16 +18,16 @@ export default class ClassDeclaration extends Class {
 		this.name = this.id.name; // TODO what is this used for?
 		scope.addDeclaration( this.id, 'class' );
 
-		this.id.attachScope( this.scope );
-		if ( this.superClass ) this.superClass.attachScope( this.scope );
-		this.body.attachScope( scope );
+		this.id.attachScope( program, this.scope );
+		if ( this.superClass ) this.superClass.attachScope( program, this.scope );
+		this.body.attachScope( program, scope );
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		if ( scope.parent ) {
 			// noop — we wait for this declaration to be activated
 		} else {
-			super.initialise( scope );
+			super.initialise( program, scope );
 		}
 	}
 }

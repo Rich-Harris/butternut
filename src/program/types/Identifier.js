@@ -12,7 +12,7 @@ export default class Identifier extends Node {
 		// didn't have a declaration... parameters?
 	}
 
-	attachScope ( scope ) {
+	attachScope ( program, scope ) {
 		this.scope = scope;
 	}
 
@@ -32,11 +32,13 @@ export default class Identifier extends Node {
 		return UNKNOWN;
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		// special case
 		if ( ( this.parent.type === 'FunctionExpression' || this.parent.type === 'ClassExpression' ) && this === this.parent.id ) {
 			return;
 		}
+
+		// TODO add global/top-level identifiers to frequency count
 
 		if ( this.isReference() ) {
 			scope.addReference( this );
@@ -62,7 +64,7 @@ export default class Identifier extends Node {
 		return true;
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		const value = this.getValue();
 		if ( value !== UNKNOWN && this.isReference() ) {
 			code.overwrite( this.start, this.end, stringify( value ) );

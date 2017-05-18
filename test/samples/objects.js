@@ -26,7 +26,7 @@ module.exports = [
 
 				console.log( obj );
 			}`,
-		output: `function foo(){var a=1,b={longname:a};console.log(b)}`
+		output: `function foo(){var n=1,o={longname:n};console.log(o)}`
 	},
 
 	{
@@ -68,7 +68,7 @@ module.exports = [
 				get  bar  () {},
 				set  bar  (val) {}
 			}`,
-		output: `obj={get bar(){},set bar(a){}}`
+		output: `obj={get bar(){},set bar(n){}}`
 	},
 
 	{

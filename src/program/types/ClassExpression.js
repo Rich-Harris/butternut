@@ -2,18 +2,18 @@ import Class from './shared/Class.js';
 import Scope from '../Scope.js';
 
 export default class ClassExpression extends Class {
-	attachScope ( parent ) {
+	attachScope ( program, parent ) {
 		this.scope = new Scope({
 			block: true,
 			parent
 		});
 
-		if ( this.id ) this.id.attachScope( this.scope );
-		if ( this.superClass ) this.superClass.attachScope( this.scope );
-		this.body.attachScope( this.scope );
+		if ( this.id ) this.id.attachScope( program, this.scope );
+		if ( this.superClass ) this.superClass.attachScope( program, this.scope );
+		this.body.attachScope( program, this.scope );
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		if ( this.id ) {
 			this.id.declaration = this;
 
@@ -22,11 +22,11 @@ export default class ClassExpression extends Class {
 			this.scope.addReference( this.id );
 		}
 
-		super.initialise( scope );
+		super.initialise( program, scope );
 	}
 
-	minify ( code ) {
-		this.scope.mangle( code );
-		super.minify( code );
+	minify ( code, chars ) {
+		this.scope.mangle( code, chars );
+		super.minify( code, chars );
 	}
 }

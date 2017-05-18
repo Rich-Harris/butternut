@@ -74,7 +74,7 @@ module.exports = [
 			}
 
 			foo();`,
-		output: `function foo(a){let b=a;while(b--)bar(b);for(;b<a;b+=1)bar(b)}foo()`
+		output: `function foo(f){let i=f;while(i--)bar(i);for(;i<f;i+=1)bar(i)}foo()`
 	},
 
 	{
@@ -124,7 +124,7 @@ module.exports = [
 					console.log(i);
 				}
 			}`,
-		output: `function x(){for(var a=0;a<10;a+=1)console.log(a);for(a=0;a<10;a+=1)console.log(a)}`
+		output: `function x(){for(var o=0;o<10;o+=1)console.log(o);for(o=0;o<10;o+=1)console.log(o)}`
 	},
 
 	{
@@ -166,7 +166,7 @@ module.exports = [
 			for (let x of a) {
 				console.log(x);
 			}`,
-		output: `for(let b of a)console.log(b);for(let b of a)console.log(b)`
+		output: `for(let o of a)console.log(o);for(let o of a)console.log(o)`
 	},
 
 	{
@@ -178,7 +178,7 @@ module.exports = [
 					f(foo);
 				}
 			})();`,
-		output: `(()=>{let a=0;for(;;)f(a)})()`
+		output: `(()=>{let o=0;for(;;)f(o)})()`
 	},
 
 	{
@@ -214,7 +214,7 @@ module.exports = [
 				}
 				result = baz;
 			}`,
-		output: `function foo(){while(bar())var a=1;result=a}`
+		output: `function foo(){while(bar())var i=1;result=i}`
 	},
 
 	{

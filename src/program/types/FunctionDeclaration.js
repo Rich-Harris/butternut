@@ -7,18 +7,19 @@ export default class FunctionDeclaration extends FunctionNode {
 
 		this.skip = false;
 
-		if ( this.id ) this.id.initialise( this.scope.parent );
+		this.program.addWord( 'function' );
+		if ( this.id ) this.id.initialise( this.program, this.scope.parent );
 		this.params.forEach( param => {
-			param.initialise( this.scope );
+			param.initialise( this.program, this.scope );
 		});
-		this.body.initialise( this.scope );
+		this.body.initialise( this.program, this.scope );
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		if ( scope.parent ) {
 			// noop — we wait for this declaration to be activated
 		} else {
-			this.activate();
+			this.activate( program );
 		}
 	}
 }

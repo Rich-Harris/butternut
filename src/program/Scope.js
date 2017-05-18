@@ -1,9 +1,7 @@
-import reserved from '../utils/reserved.js';
+import { reserved } from '../utils/reserved.js';
 import CompileError from '../utils/CompileError.js';
 
 const letConst = /^(?:let|const)$/;
-
-const validChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_$';
 
 export default function Scope ( options ) {
 	options = options || {};
@@ -36,11 +34,6 @@ export default function Scope ( options ) {
 }
 
 Scope.prototype = {
-	addAlias ( alias ) {
-		this.aliases[ alias ] = true;
-		if ( this.parent ) this.parent.addAlias( alias );
-	},
-
 	addDeclaration ( identifier, kind ) {
 		if ( kind === 'var' && this.isBlockScope ) {
 			this.varDeclarations.add( identifier.name );
@@ -128,32 +121,6 @@ Scope.prototype = {
 		       ( this.parent ? this.parent.contains( name ) : false );
 	},
 
-	containsAlias ( alias ) {
-		return this.aliases[ alias ] || ( this.parent && this.parent.containsAlias( alias ) );
-	},
-
-	createIdentifier ( used ) {
-		let alias;
-
-		do {
-			alias = this.idCounter.map( i => validChars[i] ).join( '' );
-
-			let i = this.idCounter.length;
-			while ( i-- ) {
-				this.idCounter[i] += 1;
-				if ( this.idCounter[i] === validChars.length ) {
-					this.idCounter[i] = 0;
-
-					if ( i === 0 ) this.idCounter.push( 0 );
-				} else {
-					break;
-				}
-			}
-		} while ( used[ alias ] || reserved[ alias ] );
-
-		return alias;
-	},
-
 	deopt () {
 		if ( !this.deopted ) {
 			this.deopted = true;
@@ -172,15 +139,32 @@ Scope.prototype = {
 		       ( this.parent && this.parent.findDeclaration( name ) );
 	},
 
-	mangle ( code ) {
+	mangle ( code, chars ) {
 		if ( !this.canMangle ) return;
 
 		let used = Object.create( null );
+		reserved.forEach( word => {
+			used[ word ] = true;
+		});
 
 		Object.keys( this.references ).forEach( reference => {
 			const declaration = this.parent && this.parent.findDeclaration( reference );
 			used[ declaration && declaration.alias || reference ] = true;
 		});
+
+		let i = -1;
+		function getNextAlias () {
+			let alias;
+
+			do {
+				i += 1;
+				alias = getAlias( chars, i );
+			} while ( alias in used );
+
+			return alias;
+		}
+
+		// TODO sort declarations by number of instances?
 
 		Object.keys( this.declarations ).forEach( name => {
 			const declaration = this.declarations[ name ];
@@ -191,7 +175,7 @@ Scope.prototype = {
 				if ( declaration.node.shadowed || declaration.instances.length === 1 ) return;
 			}
 
-			declaration.alias = this.createIdentifier( used );
+			declaration.alias = getNextAlias();
 
 			declaration.instances.forEach( instance => {
 				const replacement = instance.parent.type === 'Property' && instance.parent.shorthand ?
@@ -203,3 +187,19 @@ Scope.prototype = {
 		});
 	}
 };
+
+// adapted from https://github.com/mishoo/UglifyJS2/blob/master/lib/scope.js
+function getAlias ( chars, i ) {
+	let alias = '';
+	let base = 54;
+
+	i++;
+	do {
+		i--;
+		alias += chars[ i % base ];
+		i = Math.floor( i / base );
+		base = 64;
+	} while ( i > 0 );
+
+	return alias;
+}

@@ -16,7 +16,7 @@ export default class Node {
 		code.appendLeft( this.getRightHandSide().end, content );
 	}
 
-	attachScope ( scope ) {
+	attachScope ( program, scope ) {
 		for ( var key of this.keys ) {
 			const value = this[ key ];
 
@@ -24,10 +24,10 @@ export default class Node {
 				if ( 'length' in value ) {
 					let i = value.length;
 					while ( i-- ) {
-						if ( value[i] ) value[i].attachScope( scope );
+						if ( value[i] ) value[i].attachScope( program, scope );
 					}
 				} else {
-					value.attachScope( scope );
+					value.attachScope( program, scope );
 				}
 			}
 		}
@@ -66,7 +66,7 @@ export default class Node {
 		return UNKNOWN;
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		this.skip = false;
 
 		for ( var key of this.keys ) {
@@ -76,10 +76,10 @@ export default class Node {
 				if ( 'length' in value ) {
 					let i = value.length;
 					while ( i-- ) {
-						if ( value[i] ) value[i].initialise( scope );
+						if ( value[i] ) value[i].initialise( program, scope );
 					}
 				} else {
-					value.initialise( scope );
+					value.initialise( program, scope );
 				}
 			}
 		}
@@ -110,7 +110,7 @@ export default class Node {
 		code.move( this.getLeftHandSide().start, this.getRightHandSide().end, position );
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		for ( var key of this.keys ) {
 			const value = this[ key ];
 
@@ -118,10 +118,10 @@ export default class Node {
 				if ( 'length' in value ) {
 					let i = value.length;
 					while ( i-- ) {
-						if ( value[i] ) value[i].minify( code );
+						if ( value[i] ) value[i].minify( code, chars );
 					}
 				} else {
-					value.minify( code );
+					value.minify( code, chars );
 				}
 			}
 		}

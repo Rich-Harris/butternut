@@ -1,20 +1,20 @@
 import Node from '../Node.js';
 
 export default class ClassBody extends Node {
-	attachScope ( parent ) {
+	attachScope ( program, parent ) {
 		for ( let i = 0; i < this.body.length; i += 1 ) {
-			this.body[i].attachScope( parent );
+			this.body[i].attachScope( program, parent );
 		}
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		let c = this.start + 1;
 
 		for ( let i = 0; i < this.body.length; i += 1 ) {
 			const method = this.body[i];
 			if ( method.start > c ) code.remove( c, method.start );
 
-			method.minify( code );
+			method.minify( code, chars );
 
 			c = method.end;
 		}

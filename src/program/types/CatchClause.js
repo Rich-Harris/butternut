@@ -3,7 +3,7 @@ import Scope from '../Scope.js';
 import extractNames from '../extractNames.js';
 
 export default class CatchClause extends Node {
-	attachScope ( parent ) {
+	attachScope ( program, parent ) {
 		this.scope = new Scope({
 			block: true,
 			parent
@@ -14,20 +14,21 @@ export default class CatchClause extends Node {
 		});
 
 		for ( let i = 0; i < this.body.body.length; i += 1 ) {
-			this.body.body[i].attachScope( this.scope );
+			this.body.body[i].attachScope( program, this.scope );
 		}
 
 		if ( this.finalizer ) {
-			this.finalizer.attachScope( this.scope );
+			this.finalizer.attachScope( program, this.scope );
 		}
 	}
 
-	initialise () {
-		super.initialise( this.scope );
+	initialise ( program ) {
+		program.addWord( 'catch' );
+		super.initialise( program, this.scope );
 	}
 
-	minify ( code ) {
-		this.scope.mangle( code );
+	minify ( code, chars ) {
+		this.scope.mangle( code, chars );
 
 		if ( this.param.start > this.start + 6 ) {
 			code.overwrite( this.start + 5, this.param.start, '(' );
@@ -37,6 +38,6 @@ export default class CatchClause extends Node {
 			code.overwrite( this.param.end, this.body.start, ')' );
 		}
 
-		super.minify( code );
+		super.minify( code, chars );
 	}
 }

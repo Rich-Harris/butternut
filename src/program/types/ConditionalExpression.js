@@ -31,19 +31,19 @@ export default class ConditionalExpression extends Node {
 		return testValue ? consequentValue : alternateValue;
 	}
 
-	initialise ( scope ) {
+	initialise ( program, scope ) {
 		const testValue = this.test.getValue();
 
 		if ( testValue === UNKNOWN ) {
-			super.initialise( scope );
+			super.initialise( program, scope );
 		} else if ( testValue ) {
-			this.consequent.initialise( scope );
+			this.consequent.initialise( program, scope );
 		} else {
-			this.alternate.initialise( scope );
+			this.alternate.initialise( program, scope );
 		}
 	}
 
-	minify ( code ) {
+	minify ( code, chars ) {
 		const testValue = this.test.getValue();
 
 		// TODO rewrite `!a ? b() : c()` as `a ? c() : b()`
@@ -58,18 +58,18 @@ export default class ConditionalExpression extends Node {
 				code.overwrite( this.consequent.end, this.alternate.start, ':' );
 			}
 
-			super.minify( code );
+			super.minify( code, chars );
 		} else if ( testValue ) {
 			// remove test and alternate
 			code.remove( this.start, this.consequent.start );
 			code.remove( this.consequent.end, this.end );
 
-			this.consequent.minify( code );
+			this.consequent.minify( code, chars );
 		} else {
 			// remove test and consequent
 			code.remove( this.start, this.alternate.start );
 
-			this.alternate.minify( code );
+			this.alternate.minify( code, chars );
 		}
 	}
 }
