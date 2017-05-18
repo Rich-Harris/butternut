@@ -68,5 +68,17 @@ module.exports = [
 
 			a();`,
 		output: `var a=function(n){console.log(a)};a()`
+	},
+
+	{
+		description: 'preserves space before preserved function expression ID',
+		input: `
+			function fn () {
+				return function any_fn ( any_var ){
+					var any_var = 1
+					any_fn( any_var )
+				}()
+			}`,
+		output: `function fn(){return function n(t){t=1;n(t)}()}`
 	}
 ];
