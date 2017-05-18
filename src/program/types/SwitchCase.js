@@ -1,6 +1,14 @@
 import Node from '../Node.js';
 
 export default class SwitchCase extends Node {
+	getRightHandSide () {
+		if ( this.consequent.length > 0 ) {
+			return this.consequent[ this.consequent.length - 1 ].getRightHandSide();
+		}
+
+		return this;
+	}
+
 	initialise ( program, scope ) {
 		program.addWord( this.test ? 'case' : 'default' );
 		super.initialise( program, scope );

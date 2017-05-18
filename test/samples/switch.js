@@ -49,5 +49,18 @@ module.exports = [
 		description: 'Preserves discriminant for empty switch statement',
 		input: `switch (x()) {}`,
 		output: `x()`
+	},
+
+	{
+		description: 'adds semi-colon if necessary between cases',
+		input: `
+			switch ( any_value ) {
+				case 1:
+					if ( any_condition ) {
+						any_fn_1()
+					}case 2:
+				break
+			}`,
+		output: `switch(any_value){case 1:any_condition&&any_fn_1();case 2:break}`
 	}
 ];
