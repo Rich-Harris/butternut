@@ -13,6 +13,8 @@ export default class DoWhileStatement extends Node {
 		}
 
 		else {
+			this.body.minify( code, chars );
+
 			if ( this.body.type === 'BlockStatement' ) {
 				code.remove( this.start + 2, this.body.start );
 				code.overwrite( this.body.end, this.test.start, 'while(' );
@@ -24,8 +26,6 @@ export default class DoWhileStatement extends Node {
 				while ( code.original[ c - 1 ] === ';' ) c -= 1;
 				code.overwrite( c, this.test.start, '}while(' );
 			}
-
-			this.body.minify( code, chars );
 		}
 
 		if ( this.end > this.test.end + 1 ) {
