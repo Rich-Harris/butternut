@@ -84,9 +84,7 @@ export default class BinaryExpression extends Node {
 				operator = ` ${operator} `;
 			}
 
-			if ( this.right.start > this.left.end + operator.length ) {
-				code.overwrite( this.left.end, this.right.start, operator );
-			}
+			code.overwrite( this.left.end, this.right.start, operator );
 
 			super.minify( code, chars );
 		}
