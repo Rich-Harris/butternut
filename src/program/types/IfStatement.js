@@ -49,7 +49,7 @@ export default class IfStatement extends Node {
 			return ( this.alternate || this.consequent ).getRightHandSide();
 		}
 
-		if ( testValue ) return this.consequent.getRightHandSide();
+		if ( testValue || !this.alternate ) return this.consequent.getRightHandSide();
 		return this.alternate.getRightHandSide();
 	}
 
