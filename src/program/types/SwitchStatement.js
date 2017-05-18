@@ -31,9 +31,8 @@ export default class SwitchStatement extends Node {
 			let c = this.discriminant.end;
 
 			this.cases.forEach( ( switchCase, i ) => {
-				if ( switchCase.start > c + ( i ? 1 : 2 ) ) {
-					code.overwrite( c, switchCase.start, i ? ';' : '){' );
-				}
+				code.remove( c, switchCase.start );
+				switchCase.prepend( code, i > 0 ? ';' : '){' );
 
 				c = switchCase.end;
 				while ( code.original[ c - 1 ] === ';' ) c -= 1;
