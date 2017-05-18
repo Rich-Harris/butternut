@@ -20,7 +20,7 @@ export default class ClassDeclaration extends Class {
 
 		this.id.attachScope( program, this.scope );
 		if ( this.superClass ) this.superClass.attachScope( program, this.scope );
-		this.body.attachScope( scope );
+		this.body.attachScope( program, scope );
 	}
 
 	initialise ( program, scope ) {

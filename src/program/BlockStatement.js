@@ -168,7 +168,9 @@ export default class BlockStatement extends Node {
 	}
 
 	minify ( code ) {
-		if ( this.scope ) this.scope.mangle( code );
+		if ( this.scope ) {
+			this.scope.mangle( code );
+		}
 
 		let insertedVarDeclaration = '';
 
