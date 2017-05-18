@@ -101,7 +101,8 @@ describe('butternut', function () {
 
 				try {
 					result = butternut.squash(source, {
-						check: true
+						check: true,
+						allowDangerousEval: true
 					});
 
 					fs.writeFileSync(`test/fixture/output/butternut/${file}`, `${result.code}\n//# sourceMappingURL=${result.map.toUrl()}`);
