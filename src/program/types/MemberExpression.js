@@ -57,7 +57,7 @@ export default class MemberExpression extends Node {
 	minify ( code, chars ) {
 		const value = this.getValue();
 
-		if ( value !== UNKNOWN && canFold( this, this.parent ) ) {
+		if ( value && value !== UNKNOWN && canFold( this, this.parent ) ) {
 			const str = stringify( value );
 
 			if ( str !== null ) {

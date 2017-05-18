@@ -25,5 +25,11 @@ module.exports = [
 				Infinity:1
 			};`,
 		output: `obj={undefined:1,Infinity:1}`
+	},
+
+	{
+		description: 'does not call unknown properties of strings',
+		input: `x = "a"[ "b" ]( c ) ? any_value_1 : any_value_2`,
+		output: `x="a".b(c)?any_value_1:any_value_2`
 	}
 ];
