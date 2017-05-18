@@ -4,6 +4,8 @@ import BlockStatement from './BlockStatement.js';
 import Scope from './Scope.js';
 import check from './check.js';
 
+const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_$0123456789'.split('');
+
 export default function Program ( source, ast, options, stats ) {
 	this.options = options;
 	this.stats = stats;
@@ -30,7 +32,12 @@ export default function Program ( source, ast, options, stats ) {
 	});
 
 	this.body.body.forEach( node => {
-		node.attachScope( this.body.scope );
+		node.attachScope( this, this.body.scope );
+	});
+
+	this.charFrequency = {};
+	chars.forEach( char => {
+		this.charFrequency[char] = 0;
 	});
 
 	this.body.initialise( this, this.body.scope );
@@ -42,6 +49,12 @@ export default function Program ( source, ast, options, stats ) {
 }
 
 Program.prototype = {
+	addWord ( word ) {
+		for ( let i = 0; i < word.length; i += 1 ) {
+			this.charFrequency[word[i]] += 1;
+		}
+	},
+
 	export ( options ) {
 		const stats = this.stats;
 

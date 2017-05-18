@@ -2,16 +2,16 @@ import Node from '../../Node.js';
 import Scope from '../../Scope.js';
 
 export default class LoopStatement extends Node {
-	attachScope ( parent ) {
+	attachScope ( program, parent ) {
 		if ( this.hasVariableDeclaration() ) {
 			this.scope = new Scope({
 				block: true,
 				parent
 			});
 
-			super.attachScope( this.scope );
+			super.attachScope( program, this.scope );
 		} else {
-			super.attachScope( parent );
+			super.attachScope( program, parent );
 		}
 	}
 

@@ -12,7 +12,7 @@ export default class Identifier extends Node {
 		// didn't have a declaration... parameters?
 	}
 
-	attachScope ( scope ) {
+	attachScope ( program, scope ) {
 		this.scope = scope;
 	}
 

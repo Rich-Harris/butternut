@@ -50,7 +50,7 @@ function isVarDeclaration ( node ) {
 }
 
 export default class BlockStatement extends Node {
-	attachScope ( parent ) {
+	attachScope ( program, parent ) {
 		this.parentIsFunction = /Function/.test( this.parent.type );
 
 		if ( this.parentIsFunction ) {
@@ -63,7 +63,7 @@ export default class BlockStatement extends Node {
 		}
 
 		for ( let i = 0; i < this.body.length; i += 1 ) {
-			this.body[i].attachScope( this.scope );
+			this.body[i].attachScope( program, this.scope );
 		}
 	}
 

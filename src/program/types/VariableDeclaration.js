@@ -8,9 +8,9 @@ function compatibleDeclarations ( a, b ) {
 }
 
 export default class VariableDeclaration extends Node {
-	attachScope ( scope ) {
+	attachScope ( program, scope ) {
 		this.declarations.forEach( declarator => {
-			declarator.attachScope( scope );
+			declarator.attachScope( program, scope );
 		});
 
 		scope.functionScope.varDeclarationNodes.push( this );

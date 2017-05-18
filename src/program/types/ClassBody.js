@@ -1,9 +1,9 @@
 import Node from '../Node.js';
 
 export default class ClassBody extends Node {
-	attachScope ( parent ) {
+	attachScope ( program, parent ) {
 		for ( let i = 0; i < this.body.length; i += 1 ) {
-			this.body[i].attachScope( parent );
+			this.body[i].attachScope( program, parent );
 		}
 	}
 

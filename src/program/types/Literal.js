@@ -2,7 +2,7 @@ import Node from '../Node.js';
 import stringify from '../../utils/stringify.js';
 
 export default class Literal extends Node {
-	attachScope ( scope ) {
+	attachScope ( program, scope ) {
 		if ( this.value === 'use strict' ) {
 			const block = this.parent.parent;
 			if ( block.type === 'Program' || /Function/.test( block.parent.type ) ) {
@@ -23,7 +23,7 @@ export default class Literal extends Node {
 		return this.value;
 	}
 
-	initialise ( program ) {
+	initialise () {
 		// noop
 	}
 

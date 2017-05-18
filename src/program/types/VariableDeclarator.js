@@ -8,23 +8,25 @@ function mightHaveSideEffects ( node ) {
 }
 
 export default class VariableDeclarator extends Node {
-	activate ( program ) {
+	activate () {
 		if ( this.activated ) return;
 		this.activated = true;
 
 		this.skip = this.parent.skip = false;
-		this.id.initialise( program, this.scope );
-		if ( this.init ) this.init.initialise( program, this.scope );
+		this.id.initialise( this.program, this.scope );
+		if ( this.init ) this.init.initialise( this.program, this.scope );
 	}
 
-	attachScope ( scope ) {
+	attachScope ( program, scope ) {
+		this.program = program;
 		this.scope = scope;
+
 		const kind = this.parent.kind;
 
-		this.id.attachScope( scope );
+		this.id.attachScope( program, scope );
 
 		if ( this.init ) {
-			this.init.attachScope( scope );
+			this.init.attachScope( program, scope );
 
 			if ( mightHaveSideEffects( this.init ) ) {
 				this.parent.skip = false;

@@ -2,15 +2,15 @@ import Class from './shared/Class.js';
 import Scope from '../Scope.js';
 
 export default class ClassExpression extends Class {
-	attachScope ( parent ) {
+	attachScope ( program, parent ) {
 		this.scope = new Scope({
 			block: true,
 			parent
 		});
 
-		if ( this.id ) this.id.attachScope( this.scope );
-		if ( this.superClass ) this.superClass.attachScope( this.scope );
-		this.body.attachScope( this.scope );
+		if ( this.id ) this.id.attachScope( program, this.scope );
+		if ( this.superClass ) this.superClass.attachScope( program, this.scope );
+		this.body.attachScope( program, this.scope );
 	}
 
 	initialise ( program, scope ) {

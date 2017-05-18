@@ -16,7 +16,7 @@ export default class Node {
 		code.appendLeft( this.getRightHandSide().end, content );
 	}
 
-	attachScope ( scope ) {
+	attachScope ( program, scope ) {
 		for ( var key of this.keys ) {
 			const value = this[ key ];
 
@@ -24,10 +24,10 @@ export default class Node {
 				if ( 'length' in value ) {
 					let i = value.length;
 					while ( i-- ) {
-						if ( value[i] ) value[i].attachScope( scope );
+						if ( value[i] ) value[i].attachScope( program, scope );
 					}
 				} else {
-					value.attachScope( scope );
+					value.attachScope( program, scope );
 				}
 			}
 		}

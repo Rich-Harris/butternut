@@ -25,7 +25,8 @@ function keepId ( node ) {
 }
 
 export default class FunctionNode extends Node {
-	attachScope ( parent ) {
+	attachScope ( program, parent ) {
+		this.program = program;
 		this.scope = new Scope({
 			block: false,
 			parent
@@ -44,7 +45,7 @@ export default class FunctionNode extends Node {
 		}
 
 		this.params.forEach( param => {
-			param.attachScope( this.scope );
+			param.attachScope( program, this.scope );
 
 			extractNames( param ).forEach( node => {
 				node.declaration = this;
@@ -52,7 +53,7 @@ export default class FunctionNode extends Node {
 			});
 		});
 
-		this.body.attachScope( this.scope );
+		this.body.attachScope( program, this.scope );
 	}
 
 	findVarDeclarations () {

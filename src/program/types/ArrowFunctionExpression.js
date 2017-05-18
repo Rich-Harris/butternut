@@ -3,14 +3,14 @@ import Scope from '../Scope.js';
 import extractNames from '../extractNames.js';
 
 export default class ArrowFunctionExpression extends Node {
-	attachScope ( parent ) {
+	attachScope ( program, parent ) {
 		this.scope = new Scope({
 			block: false,
 			parent
 		});
 
 		this.params.forEach( param => {
-			param.attachScope( this.scope );
+			param.attachScope( program, this.scope );
 
 			extractNames( param ).forEach( node => {
 				node.declaration = this;
@@ -20,10 +20,10 @@ export default class ArrowFunctionExpression extends Node {
 
 		if ( this.body.type === 'BlockStatement' ) {
 			this.body.body.forEach( node => {
-				node.attachScope( this.scope );
+				node.attachScope( program, this.scope );
 			});
 		} else {
-			this.body.attachScope( this.scope );
+			this.body.attachScope( program, this.scope );
 		}
 
 	}
