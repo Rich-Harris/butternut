@@ -236,5 +236,14 @@ module.exports = [
 		description: 'allow body to be a var declaration',
 		input: `do var any_variable = any_value; while( any_condition );`,
 		output: `do{var any_variable=any_value}while(any_condition)`
+	},
+
+	{
+		description: 'always preserve test in for-loop head',
+		input: `
+			for ( let i = 1; condition; i++ ) {
+				do_anything()
+			}`,
+		output: `for(let f=1;condition;f++)do_anything()`
 	}
 ];
