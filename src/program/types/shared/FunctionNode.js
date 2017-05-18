@@ -37,10 +37,10 @@ export default class FunctionNode extends Node {
 
 			// function expression IDs belong to the child scope...
 			if ( this.type === 'FunctionExpression' ) {
-				this.scope.addDeclaration( this.id, 'function' );
+				this.scope.addDeclaration( this.id, this.type );
 				this.scope.addReference( this.id );
 			} else {
-				parent.addDeclaration( this.id, 'function' );
+				parent.addDeclaration( this.id, this.type );
 			}
 		}
 

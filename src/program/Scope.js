@@ -53,7 +53,7 @@ Scope.prototype = {
 			// special case — function expression IDs that are shadowed by
 			// declarations should just be removed (TODO unless the user wishes
 			// to keep function names — https://github.com/Rich-Harris/butternut/issues/17)
-			if ( existingDeclaration.node.parent.type === 'FunctionExpression' ) {
+			if ( existingDeclaration.kind === 'FunctionExpression' ) {
 				existingDeclaration.node.parent.shadowed = true;
 			}
 
