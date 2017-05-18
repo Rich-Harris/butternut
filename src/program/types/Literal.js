@@ -27,13 +27,17 @@ export default class Literal extends Node {
 		program.addWord( stringify( this.value ) );
 	}
 
-	minify ( code, chars ) {
+	minify ( code ) {
 		if ( this.value === true || this.value === false ) {
-			code.overwrite( this.start, this.end, this.value ? '!0' : '!1' );
+			code.overwrite( this.start, this.end, this.value ? '!0' : '!1', {
+				contentOnly: true
+			});
 		}
 
 		else if ( typeof this.value === 'number' ) {
-			code.overwrite( this.start, this.end, stringify( this.value ) );
+			code.overwrite( this.start, this.end, stringify( this.value ), {
+				contentOnly: true
+			});
 		}
 	}
 }

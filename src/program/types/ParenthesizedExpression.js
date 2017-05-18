@@ -46,6 +46,17 @@ export default class ParenthesizedExpression extends Node {
 		return node.parent;
 	}
 
+	getRightHandSide () {
+		let node = this;
+
+		while ( node.type === 'ParenthesizedExpression' ) {
+			node = node.expression;
+		}
+
+		if ( shouldRemoveParens( node, this.parent ) ) return node.getRightHandSide();
+		return node.parent;
+	}
+
 	getPrecedence () {
 		return 20;
 	}

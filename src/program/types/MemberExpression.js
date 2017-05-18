@@ -66,6 +66,12 @@ export default class MemberExpression extends Node {
 			}
 		}
 
+		// special case — numbers
+		const objectValue = this.object.getValue();
+		if ( typeof objectValue === 'number' && objectValue === parseInt( objectValue, 10 ) ) {
+			this.object.append( code, '.' );
+		}
+
 		if ( this.computed ) {
 			const value = this.property.getValue();
 
