@@ -1,6 +1,10 @@
 import Node from '../Node.js';
 
 export default class LabeledStatement extends Node {
+	getRightHandSide () {
+		return this.body.getRightHandSide();
+	}
+
 	initialise ( program, scope ) {
 		program.addWord( this.label.name );
 		super.initialise( program, scope );

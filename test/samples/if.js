@@ -656,5 +656,18 @@ module.exports = [
 		// TODO `function fn(){any_value||do_something()}`
 		// (though that would ruin this test)
 		output: `function fn(){(function(){return any_value}())||do_something()}`
+	},
+
+	{
+		description: 'does not insert semi after labeled statement with block',
+		input: `
+			if ( any_condition_1 )
+				label: while ( any_condition_2 ) {
+					var any_value
+					any_fn_1()
+					break label
+				}
+			else any_fn_2()`,
+		output: `if(any_condition_1)label:while(any_condition_2){var any_value;any_fn_1();break label}else any_fn_2()`
 	}
 ];
