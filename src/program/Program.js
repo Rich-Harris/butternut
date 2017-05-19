@@ -37,13 +37,13 @@ export default function Program ( source, ast, options, stats ) {
 		parent: null
 	});
 
-	this.body.body.forEach( node => {
-		node.attachScope( this, this.body.scope );
-	});
-
 	this.charFrequency = {};
 	chars.forEach( char => {
 		this.charFrequency[char] = 0;
+	});
+	
+	this.body.body.forEach( node => {
+		node.attachScope( this, this.body.scope );
 	});
 
 	this.body.initialise( this, this.body.scope );
