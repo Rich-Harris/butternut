@@ -245,5 +245,23 @@ module.exports = [
 				do_anything()
 			}`,
 		output: `for(let f=1;condition;f++)do_anything()`
+	},
+
+	{
+		description: 'preserves parens around `x in y` expression',
+		input: `
+			for (any_value = ("key" in any_object); any_condition;) {
+				any_fn()
+			}`,
+		output: `for(any_value=("key" in any_object);any_condition;)any_fn()`
+	},
+
+	{
+		description: 'preserves parens around `x in y` expression in var declaration',
+		input: `
+			for (var any_value = ("key" in any_object); any_condition;) {
+				any_fn()
+			}`,
+		output: `for(var any_value=("key" in any_object);any_condition;)any_fn()`
 	}
 ];
