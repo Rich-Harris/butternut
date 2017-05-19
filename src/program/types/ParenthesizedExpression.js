@@ -21,6 +21,16 @@ function shouldRemoveParens ( expression, parent ) {
 		if ( parent.left.contains( expression ) ) return false;
 	}
 
+	// special case — `for (x=(y in z);...)`. This is a bit ugly
+	if ( expression.type === 'BinaryExpression' && expression.operator === 'in' ) {
+		let maybeForStatement = parent;
+		while ( maybeForStatement && maybeForStatement.type !== 'ForStatement' ) {
+			maybeForStatement = maybeForStatement.parent;
+		}
+
+		if ( maybeForStatement && maybeForStatement.init && maybeForStatement.init.contains( parent ) ) return false;
+	}
+
 	const expressionPrecedence = expression.getPrecedence();
 	const parentPrecedence = parent.getPrecedence();
 
