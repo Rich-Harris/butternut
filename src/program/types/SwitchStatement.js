@@ -16,9 +16,10 @@ export default class SwitchStatement extends Node {
 	}
 
 	minify ( code, chars ) {
+		this.discriminant.minify( code, chars );
+
 		// special (and unlikely!) case — no cases, but a non-removable discriminant
 		if ( this.cases.length === 0 ) {
-			this.discriminant.minify( code, chars );
 			code.remove( this.start, this.discriminant.start );
 			code.remove( this.discriminant.end, this.end );
 		}
@@ -32,6 +33,7 @@ export default class SwitchStatement extends Node {
 
 			this.cases.forEach( ( switchCase, i ) => {
 				code.remove( c, switchCase.start );
+				switchCase.minify( code, chars );
 				switchCase.prepend( code, i > 0 ? ';' : '){' );
 
 				c = switchCase.end;
@@ -39,8 +41,6 @@ export default class SwitchStatement extends Node {
 			});
 
 			if ( this.end > c + 1 ) code.overwrite( c, this.end, '}' );
-
-			super.minify( code, chars );
 		}
 	}
 }

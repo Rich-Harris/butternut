@@ -30,21 +30,23 @@ export default class SwitchCase extends Node {
 			c = this.start + 7;
 		}
 
+		let lastStatement;
 		this.consequent.forEach( ( statement, i ) => {
-			statement.minify( code, chars );
-
-			const separator = i ? ';' : ':'; // TODO can consequents be written as sequences?
-
-			if ( statement.start === c ) {
-				code.appendLeft( c, separator );
+			if ( i === 0 ) {
+				code.overwrite( c, statement.start, ':' );
 			} else {
-				if ( code.original.slice( c, statement.start ) !== separator ) {
-					code.overwrite( c, statement.start, separator );
-				}
+				code.remove( c, statement.start );
+				lastStatement.append( code, ';' );
 			}
 
-			c = statement.end;
-			while ( code.original[ c - 1 ] === ';' ) c -= 1;
+			statement.minify( code, chars );
+
+			if ( i < this.consequent.length - 1 ) {
+				c = statement.end;
+				while ( code.original[c - 1] === ';' ) c -= 1;
+			}
+
+			lastStatement = statement;
 		});
 	}
 }

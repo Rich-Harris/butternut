@@ -669,5 +669,20 @@ module.exports = [
 				}
 			else any_fn_2()`,
 		output: `if(any_condition_1)label:while(any_condition_2){var any_value;any_fn_1();break label}else any_fn_2()`
+	},
+
+	{
+		description: 'inserts semi-colon in correct place when inverting if statement inside switch block',
+		input: `
+			switch ( any_value ) {
+				case 'any_case':
+					if ( !any_condition ) {
+						any_fn_1()
+					} else {
+						any_fn_2()
+					}any_statement()
+				break
+			}`,
+		output: `switch(any_value){case 'any_case':any_condition?any_fn_2():any_fn_1();any_statement();break}`
 	}
 ];
