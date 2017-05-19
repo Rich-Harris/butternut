@@ -1,5 +1,9 @@
 # butternut changelog
 
+## 0.4.6
+
+* Too many fixes to list individually!
+
 ## 0.4.5
 
 * Remove unused function expression IDs ([#98](https://github.com/Rich-Harris/butternut/pull/98))
