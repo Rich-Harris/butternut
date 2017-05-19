@@ -182,7 +182,7 @@ Scope.prototype = {
 					`${instance.name}:${declaration.alias}` :
 					declaration.alias;
 
-				code.overwrite( instance.start, instance.end, replacement, true );
+				code.overwrite( instance.start, instance.end, replacement, { storeName: true } );
 			});
 		});
 	}
