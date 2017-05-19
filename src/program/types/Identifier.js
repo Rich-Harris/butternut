@@ -64,7 +64,7 @@ export default class Identifier extends Node {
 		return true;
 	}
 
-	minify ( code, chars ) {
+	minify ( code ) {
 		const value = this.getValue();
 		if ( value !== UNKNOWN && this.isReference() ) {
 			code.overwrite( this.start, this.end, stringify( value ) );
